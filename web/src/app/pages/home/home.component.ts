@@ -105,19 +105,29 @@ import { burstConfetti } from '../../shared/confetti';
               </div>
             </app-restaurant-card>
 
-            <!-- Alternatifler -->
+            <!-- Alternatifler (Lokasyona En Uygun 15 Restoran) -->
             @if (suggestion()?.alternatives?.length ?? 0; as count) {
-              <div class="section-title">Diğer Yakın Alternatifler</div>
+              <div class="alternatives-header">
+                <div>
+                  <h3 class="section-title">📍 Çevrendeki En Uygun Restoranlar</h3>
+                  <p class="muted sub-note">5 km yarıçapta 4+ yıldızlı mekanlar arasından seçilen alternatifler:</p>
+                </div>
+                <span class="alt-count-badge">{{ count + 1 }} Mekan</span>
+              </div>
               <div class="alternatives-list">
-                @for (alt of suggestion()!.alternatives; track alt.id) {
-                  <div class="alt-item glass" (click)="selectAlternative(alt)">
+                @for (alt of suggestion()!.alternatives; track alt.id; let idx = $index) {
+                  <div class="alt-item glass" (click)="selectAlternative(alt)" title="Bu mekanı seçmek için tıkla">
+                    <div class="alt-rank">#{{ idx + 2 }}</div>
                     <div class="alt-emo">{{ alt.cuisines[0] ? fs.emoji(alt.cuisines[0]) : '🍽️' }}</div>
                     <div class="alt-info">
                       <h4>{{ alt.name }}</h4>
-                      <p class="muted">{{ alt.cuisineLabels || 'Restoran' }} · {{ alt.distanceM }}m</p>
+                      <p class="muted">{{ alt.cuisineLabels || 'Restoran' }} · 🚶 {{ alt.distanceM >= 1000 ? (alt.distanceM / 1000).toFixed(1) + 'km' : alt.distanceM + 'm' }} @if (alt.priceTl) { · ₺{{ alt.priceTl }} }</p>
                     </div>
-                    <div class="alt-stars">
-                      @if (alt.googleRating) { ⭐ {{ alt.googleRating.toFixed(1) }} }
+                    <div class="alt-meta">
+                      @if (alt.googleRating) {
+                        <span class="alt-stars">⭐ {{ alt.googleRating.toFixed(1) }}</span>
+                      }
+                      <span class="alt-pick-btn">Seç ➔</span>
                     </div>
                   </div>
                 }
@@ -332,6 +342,20 @@ import { burstConfetti } from '../../shared/confetti';
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
+    .alternatives-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      .section-title { font-size: 16px; font-weight: 700; margin: 0; }
+      .sub-note { font-size: 12px; margin: 3px 0 0; }
+    }
+    .alt-count-badge {
+      font-size: 12px; font-weight: 700; color: #ff7a18;
+      background: rgba(255,122,24,0.12); border: 1px solid rgba(255,122,24,0.25);
+      padding: 4px 10px; border-radius: 99px;
+    }
     .alternatives-list {
       display: flex;
       flex-direction: column;
@@ -344,12 +368,22 @@ import { burstConfetti } from '../../shared/confetti';
       padding: 12px 14px;
       cursor: pointer;
       border-radius: 16px;
-      transition: background .2s;
-      &:hover { background: rgba(255,255,255,0.08); }
+      transition: all .2s;
+      &:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+    }
+    .alt-rank {
+      font-size: 12.5px; font-weight: 700; color: var(--muted); min-width: 24px; text-align: center;
     }
     .alt-emo { font-size: 24px; }
-    .alt-info { flex: 1; h4 { font-size: 15.5px; } p { font-size: 12.5px; margin-top: 2px; } }
+    .alt-info { flex: 1; h4 { font-size: 15.5px; margin: 0; } p { font-size: 12px; margin-top: 3px; } }
+    .alt-meta {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    }
     .alt-stars { font-size: 13px; font-weight: 600; color: var(--star); }
+    .alt-pick-btn {
+      font-size: 11px; font-weight: 600; color: #ff7a18;
+      background: rgba(255,122,24,0.12); padding: 2px 8px; border-radius: 6px;
+    }
     .wheel-area {
       text-align: center;
     }
@@ -567,13 +601,14 @@ export class HomeComponent implements OnInit {
       const res = await this.api.suggest({
         lat: coords.lat,
         lng: coords.lng,
-        radius: currentFilters.radius,
+        radius: currentFilters.radius || 5000,
         cuisines: currentFilters.cuisines,
         mealCards: currentFilters.mealCards,
         minPriceTl: currentFilters.minPriceTl,
         maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,
         avoidDays: currentFilters.avoidDays,
+        limit: 15,
         excludeIds
       });
 
@@ -595,14 +630,14 @@ export class HomeComponent implements OnInit {
       const list = await this.api.candidates({
         lat: coords.lat,
         lng: coords.lng,
-        radius: currentFilters.radius,
+        radius: currentFilters.radius || 5000,
         cuisines: currentFilters.cuisines,
         mealCards: currentFilters.mealCards,
         minPriceTl: currentFilters.minPriceTl,
         maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,
         avoidDays: currentFilters.avoidDays,
-        limit: 10
+        limit: 15
       });
       this.candidates.set(list);
       if (this.wheelSource() === 'candidates') {
@@ -697,7 +732,7 @@ export class HomeComponent implements OnInit {
   }
 
   resetFiltersAndRetry() {
-    this.fs.set({ cuisines: [], maxPrice: null, radius: 2500 });
+    this.fs.set({ cuisines: [], maxPrice: null, radius: 5000 });
     this.loadSuggestion();
   }
 

@@ -9,18 +9,27 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
 {
     public async Task<List<CandidateDto>> GetCandidatesAsync(int userId, CandidateQuery q, CancellationToken ct)
     {
-        q.Radius = Math.Clamp(q.Radius, 200, 20000);
+        // Varsayılan 5 km (5000 metre) yarıçap
+        q.Radius = q.Radius <= 0 ? 5000 : Math.Clamp(q.Radius, 500, 25000);
         var nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
+
+        // Kullanıcının lokasyonuna en uygun 10-15 restoranı eksiksiz sunabilmek için:
+        if (nearby.Count < 15)
+        {
+            var expandedRadius = Math.Max(q.Radius, 5000);
+            var expanded = await places.GetNearbyAsync(q.Lat, q.Lng, expandedRadius, ct);
+            if (expanded.Count > nearby.Count) nearby = expanded;
+        }
 
         if (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false))
         {
             var totalCount = await db.Restaurants.CountAsync(ct);
             var needsSeed = await db.Restaurants.AnyAsync(r => r.MealCards == null, ct)
                 || !await db.Restaurants.AnyAsync(r => r.Name.Contains("Street Burger"), ct);
-            if (needsSeed || totalCount < 55 || nearby.Count < 6)
+            if (needsSeed || totalCount < 55 || nearby.Count < 15)
             {
                 await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
-                nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
+                nearby = await places.GetNearbyAsync(q.Lat, q.Lng, Math.Max(q.Radius, 5000), ct);
             }
         }
 
@@ -37,11 +46,15 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         var avoidSince = DateTime.UtcNow.Date.AddDays(-q.AvoidDays);
         var rnd = Random.Shared;
 
+        // 4 yıldız üzerindeki restoranları filtrele (yeterli sayıda varsa)
+        var hasEnoughHighRated = nearby.Count(r => (r.GoogleRating ?? 4.0) >= 4.0) >= 15;
+
         var all = nearby
             .GroupBy(r => r.Name.Trim().ToLowerInvariant())
             .Select(g => g.First())
             .Where(r => !exclude.Contains(r.Id))
             .Where(r => !prefs.TryGetValue(r.Id, out var t) || t != PreferenceType.Blacklist)
+            .Where(r => !hasEnoughHighRated || (r.GoogleRating ?? 4.0) >= 4.0)
             .Where(r => wanted.Count == 0 || CuisineCatalog.Split(r.Cuisines).Any(wanted.Contains))
             .Where(r => wantedCards.Count == 0 || MealCardCatalog.Split(r.MealCards).Any(wantedCards.Contains))
             .Where(r =>
@@ -62,14 +75,14 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                 var last = rv.FirstOrDefault();
                 var recent = last is not null && last.VisitedAt >= avoidSince;
 
-                // Çeşitlilik ve canlılık için rastgelelik katsayısı
-                var score = (r.GoogleRating ?? 3.8) / 5.0 * 2.0
-                            + (my.HasValue ? (my.Value - 3) * 0.6 : 0)
-                            + (fav ? 0.8 : 0)
-                            + (rv.Count == 0 ? 0.4 : 0)
-                            - dist / (q.Radius * 1.5)
-                            - (recent ? 3.0 : 0)
-                            + rnd.NextDouble() * 1.8;
+                // 4 yıldız üzeri, 5km çevrede, mesafeye ve puana göre dengeli rastgele 15 restoran seçimi
+                var baseScore = (r.GoogleRating ?? 4.2) / 5.0 * 2.5
+                                + (my.HasValue ? (my.Value - 3) * 0.8 : 0)
+                                + (fav ? 1.2 : 0)
+                                + (rv.Count == 0 ? 0.5 : 0)
+                                - dist / (q.Radius * 1.5);
+                var randomBonus = rnd.NextDouble() * 2.5; // Her girişte ve aramada rastgele canlı 15 alternatif sunması için
+                var score = baseScore + randomBonus;
 
                 var priceTl = EstimatePriceTl(r);
 
@@ -83,7 +96,7 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                     Math.Round(score, 3));
             })
             .OrderByDescending(c => c.Score)
-            .Take(Math.Clamp(q.Limit, 2, 30))
+            .Take(Math.Clamp(q.Limit, 10, 15))
             .ToList();
 
         return all;
@@ -133,7 +146,8 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         db.SuggestionLogs.Add(log);
         await db.SaveChangesAsync(ct);
 
-        return new SuggestionResponse(chosen, reason, pick is not null, log.Id, candidates.Where(c => c.Id != chosen.Id).Take(7).ToList());
+        // Toplam 10-15 restoran: 1 seçilen mekan + en iyi 14 alternatif
+        return new SuggestionResponse(chosen, reason, pick is not null, log.Id, candidates.Where(c => c.Id != chosen.Id).Take(14).ToList());
     }
 
     private static string LocalReason(CandidateDto c)

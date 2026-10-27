@@ -137,26 +137,6 @@ public static class DemoSeeder
 
     public static async Task SeedAroundAsync(AppDbContext db, double lat, double lng, CancellationToken ct)
     {
-        // 1. Önce veritabanındaki mükerrer ya da eski sahte demo kayıtlarını çekelim
-        var allDemoRestaurants = await db.Restaurants
-            .Where(r => r.GooglePlaceId == null || r.GooglePlaceId.StartsWith("demo_"))
-            .ToListAsync(ct);
-
-        // Kullanıcıların ziyaret veya tercih bağladığı mekanları koruyalım
-        var usedIds = await db.Visits.Select(v => v.RestaurantId).Distinct()
-            .Union(db.Preferences.Select(p => p.RestaurantId).Distinct())
-            .ToListAsync(ct);
-        var usedSet = new HashSet<int>(usedIds);
-
-        // Kullanıcı bağlı olmayan eski sahte kayıtları silelim (temiz bir başlangıç)
-        var toRemove = allDemoRestaurants.Where(r => !usedSet.Contains(r.Id)).ToList();
-        if (toRemove.Count > 0)
-        {
-            db.Restaurants.RemoveRange(toRemove);
-            await db.SaveChangesAsync(ct);
-        }
-
-        // 2. Güncel kalanların isim sözlüğünü alalım
         var remainingList = await db.Restaurants.ToListAsync(ct);
         var existingDict = remainingList.ToDictionary(r => r.Name.Trim().ToLower(), r => r);
 
@@ -173,11 +153,10 @@ public static class DemoSeeder
                 var key = v.Name.Trim().ToLower();
                 if (existingDict.TryGetValue(key, out var existing))
                 {
-                    // Eski koordinatı varsa bile gerçek koordinat ve adresle güncelle
                     existing.Lat = v.RealLat ?? existing.Lat;
                     existing.Lng = v.RealLng ?? existing.Lng;
                     existing.Address = v.Address;
-                    existing.GoogleRating = v.Rating;
+                    existing.GoogleRating = v.Rating >= 4.0 ? v.Rating : 4.4;
                     existing.GoogleRatingCount = v.RatingCount;
                     existing.AvgPriceTl = v.PriceTl;
                     existing.PriceLevel = v.PriceLevel;
@@ -195,7 +174,7 @@ public static class DemoSeeder
                         MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
                         PriceLevel = v.PriceLevel,
                         AvgPriceTl = v.PriceTl,
-                        GoogleRating = v.Rating,
+                        GoogleRating = v.Rating >= 4.0 ? v.Rating : 4.4,
                         GoogleRatingCount = v.RatingCount,
                         Lat = v.RealLat ?? lat,
                         Lng = v.RealLng ?? lng,
@@ -207,33 +186,38 @@ public static class DemoSeeder
         }
         else
         {
-            // Ankara dışı bir il/ilçe seçildiyse:
-            // Seçilen koordinatın etrafına gerçekçi mesafelerde (350m ile 4.5km arası) farklı yönlerde dağıt
-            foreach (var v in AnkaraVenues)
+            // Ankara dışı herhangi bir il veya ilçe (İstanbul, İzmir, Bursa, Antalya, vb.)
+            // Bu koordinatın 5 km yarıçapında zaten mekan var mı kontrol et
+            var nearbyVenues = remainingList.Where(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000).ToList();
+            if (nearbyVenues.Count < 15)
             {
-                var key = v.Name.Trim().ToLower();
-                if (existingDict.ContainsKey(key)) continue;
-
-                var angle = rnd.NextDouble() * Math.PI * 2;
-                var dist = 350 + rnd.NextDouble() * 4200; // 350m ile 4.5km arası
-                var dLat = dist * Math.Cos(angle) / 111_000.0;
-                var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
-
-                toAdd.Add(new Restaurant
+                int addedCount = 0;
+                foreach (var v in AnkaraVenues)
                 {
-                    GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}",
-                    Name = v.Name,
-                    Cuisines = v.Cuisines,
-                    MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
-                    PriceLevel = v.PriceLevel,
-                    AvgPriceTl = v.PriceTl,
-                    GoogleRating = v.Rating,
-                    GoogleRatingCount = v.RatingCount,
-                    Lat = lat + dLat,
-                    Lng = lng + dLng,
-                    Address = $"{v.Name} Şubesi (Merkez Mah. No: {rnd.Next(1, 95)})",
-                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat},{lng + dLng}"
-                });
+                    if (nearbyVenues.Count + addedCount >= 25) break;
+
+                    var angle = rnd.NextDouble() * Math.PI * 2;
+                    var dist = 350 + rnd.NextDouble() * 4200; // 350m ile 4.5km arası (5km içi)
+                    var dLat = dist * Math.Cos(angle) / 111_000.0;
+                    var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
+
+                    toAdd.Add(new Restaurant
+                    {
+                        GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}_{lat:F2}_{lng:F2}_{addedCount}",
+                        Name = v.Name,
+                        Cuisines = v.Cuisines,
+                        MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
+                        PriceLevel = v.PriceLevel,
+                        AvgPriceTl = v.PriceTl,
+                        GoogleRating = Math.Clamp(v.Rating >= 4.0 ? v.Rating : 4.3 + rnd.NextDouble() * 0.5, 4.0, 4.9),
+                        GoogleRatingCount = v.RatingCount > 0 ? v.RatingCount : rnd.Next(300, 2500),
+                        Lat = Math.Round(lat + dLat, 6),
+                        Lng = Math.Round(lng + dLng, 6),
+                        Address = $"{v.Name} Şubesi (Merkez Mah. No: {rnd.Next(1, 110)})",
+                        MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
+                    });
+                    addedCount++;
+                }
             }
         }
 

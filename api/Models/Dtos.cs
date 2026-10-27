@@ -20,9 +20,8 @@ public class CandidateQuery
     public int? MaxPriceTl { get; set; }
     public int? MaxPrice { get; set; }
     public int[]? ExcludeIds { get; set; }
-    /// <summary>Son kaç gün içinde gidilen yerler önerilmesin.</summary>
     public int AvoidDays { get; set; } = 5;
-    public int Limit { get; set; } = 12;
+    public int Limit { get; set; } = 15;
 }
 
 public record CandidateDto(

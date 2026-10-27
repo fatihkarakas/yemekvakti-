@@ -21,16 +21,25 @@ export class FilterService {
   readonly all = signal<Cuisine[]>([]);
   readonly allMealCards = signal<MealCard[]>([]);
 
-  readonly filters = signal<Filters>({
-    cuisines: [],
-    mealCards: [],
-    radius: 1500,
-    minPriceTl: null,
-    maxPriceTl: null,
-    maxPrice: null,
-    avoidDays: 5,
-    ...JSON.parse(localStorage.getItem(FILTER_KEY) ?? '{}'),
-  });
+  private getInitialFilters(): Filters {
+    try {
+      const saved = JSON.parse(localStorage.getItem(FILTER_KEY) ?? '{}');
+      return {
+        cuisines: [],
+        mealCards: [],
+        minPriceTl: null,
+        maxPriceTl: null,
+        maxPrice: null,
+        avoidDays: 5,
+        ...saved,
+        radius: saved.radius ?? 5000,
+      };
+    } catch {
+      return { cuisines: [], mealCards: [], radius: 5000, minPriceTl: null, maxPriceTl: null, maxPrice: null, avoidDays: 5 };
+    }
+  }
+
+  readonly filters = signal<Filters>(this.getInitialFilters());
 
   async load() {
     if (this.all().length === 0) {
