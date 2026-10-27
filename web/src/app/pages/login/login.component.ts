@@ -238,7 +238,10 @@ export class LoginComponent implements OnInit {
             const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
             this.router.navigateByUrl(returnUrl);
           } catch (err: any) {
-            this.toast.error(err?.error || 'Google ile giriş yapılamadı.');
+            const msg = typeof err?.error === 'string' && !err.error.includes('<html') && !err.error.includes('<!DOCTYPE')
+              ? err.error
+              : 'Google ile giriş yapılamadı. Lütfen tekrar deneyin.';
+            this.toast.error(msg);
           } finally {
             this.loading.set(false);
           }
@@ -276,7 +279,10 @@ export class LoginComponent implements OnInit {
       const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
       this.router.navigateByUrl(returnUrl);
     } catch (err: any) {
-      this.toast.error(err?.error || 'Giriş başarısız oldu.');
+      const msg = typeof err?.error === 'string' && !err.error.includes('<html') && !err.error.includes('<!DOCTYPE')
+        ? err.error
+        : 'Giriş başarısız oldu.';
+      this.toast.error(msg);
     } finally {
       this.loading.set(false);
     }

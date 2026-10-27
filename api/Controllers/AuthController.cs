@@ -19,26 +19,35 @@ public class AuthController(AppDbContext db, TokenService tokens, IConfiguration
     [HttpPost("google")]
     public async Task<ActionResult<LoginResponse>> Google(GoogleLoginRequest req)
     {
-        var clientId = config["Google:ClientId"];
-        if (string.IsNullOrWhiteSpace(clientId)) return BadRequest("Google ClientId yapılandırılmamış.");
-
-        GoogleJsonWebSignature.Payload payload;
         try
         {
-            payload = await GoogleJsonWebSignature.ValidateAsync(req.IdToken,
-                new GoogleJsonWebSignature.ValidationSettings { Audience = [clientId] });
+            var clientId = config["Google:ClientId"];
+            if (string.IsNullOrWhiteSpace(clientId)) return BadRequest("Google ClientId yapılandırılmamış.");
+
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                payload = await GoogleJsonWebSignature.ValidateAsync(req.IdToken,
+                    new GoogleJsonWebSignature.ValidationSettings { Audience = [clientId] });
+            }
+            catch (InvalidJwtException ex)
+            {
+                return Unauthorized($"Google oturumu doğrulanamadı: {ex.Message}");
+            }
+
+            var allowed = (config.GetSection("Auth:AllowedEmailDomains").Get<string[]>() ?? [])
+                .Where(d => !string.IsNullOrWhiteSpace(d))
+                .ToArray();
+            if (allowed.Length > 0 && !allowed.Any(d => payload.Email.EndsWith("@" + d, StringComparison.OrdinalIgnoreCase)))
+                return StatusCode(403, "Bu e-posta adresiyle giriş izni yok.");
+
+            var user = await Upsert($"google:{payload.Subject}", payload.Email, payload.Name ?? payload.Email, payload.Picture);
+            return new LoginResponse(tokens.Create(user), ToDto(user));
         }
-        catch (InvalidJwtException)
+        catch (Exception ex)
         {
-            return Unauthorized("Google oturumu doğrulanamadı.");
+            return StatusCode(500, $"Giriş sırasında hata oluştu: {ex.Message}");
         }
-
-        var allowed = config.GetSection("Auth:AllowedEmailDomains").Get<string[]>() ?? [];
-        if (allowed.Length > 0 && !allowed.Any(d => payload.Email.EndsWith("@" + d, StringComparison.OrdinalIgnoreCase)))
-            return StatusCode(403, "Bu e-posta adresiyle giriş izni yok.");
-
-        var user = await Upsert($"google:{payload.Subject}", payload.Email, payload.Name ?? payload.Email, payload.Picture);
-        return new LoginResponse(tokens.Create(user), ToDto(user));
     }
 
     [HttpPost("demo")]

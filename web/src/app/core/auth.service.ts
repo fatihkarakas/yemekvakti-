@@ -44,7 +44,9 @@ export class AuthService {
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.token();
-  const authReq = token && req.url.startsWith('/api') ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
+  const authReq = token && req.url.startsWith('/api') && !req.url.startsWith('/api/auth')
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401 && !req.url.includes('/api/auth/')) auth.logout();
