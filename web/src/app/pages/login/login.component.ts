@@ -55,6 +55,12 @@ import { FormsModule } from '@angular/forms';
           <div class="feat-item">⭐ <span>Geçmişini puanla ve not al</span></div>
           <div class="feat-item">👥 <span>Ekipçe toplanıp oylama yap</span></div>
         </div>
+
+        <div class="login-brand-footer">
+          <a href="https://fatihkarakas.com.tr" target="_blank" rel="noopener" class="creator-badge">
+            ⚡ <strong>fatihkarakas.com.tr</strong> ↗
+          </a>
+        </div>
       </div>
     </main>
   `,
@@ -157,6 +163,32 @@ import { FormsModule } from '@angular/forms';
       align-items: center;
       gap: 6px;
     }
+    .login-brand-footer {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      text-align: center;
+      .creator-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.2s;
+        strong { color: #fff; font-weight: 600; }
+        &:hover {
+          background: rgba(255, 122, 69, 0.15);
+          border-color: rgba(255, 122, 69, 0.4);
+          color: #ff7a45;
+          strong { color: #ff7a45; }
+        }
+      }
+    }
   `
 })
 export class LoginComponent implements OnInit {
@@ -190,13 +222,10 @@ export class LoginComponent implements OnInit {
   }
 
   private initGoogleBtn(clientId: string) {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
+    const render = () => {
       const g = (window as any).google?.accounts?.id;
-      if (!g) return;
+      const container = document.getElementById('google-btn-container');
+      if (!g || !container) return;
       g.initialize({
         client_id: clientId,
         callback: async (res: any) => {
@@ -215,7 +244,7 @@ export class LoginComponent implements OnInit {
           }
         }
       });
-      g.renderButton(document.getElementById('google-btn-container'), {
+      g.renderButton(container, {
         theme: 'filled_black',
         size: 'large',
         shape: 'pill',
@@ -223,6 +252,17 @@ export class LoginComponent implements OnInit {
         locale: 'tr'
       });
     };
+
+    if ((window as any).google?.accounts?.id) {
+      setTimeout(render, 50);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => setTimeout(render, 50);
     document.head.appendChild(script);
   }
 

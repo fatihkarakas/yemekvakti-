@@ -12,6 +12,13 @@
 <!-- Sayfa İçeriği -->
 <router-outlet />
 
+<!-- Alt Bilgi & Geliştirici Bağlantısı (Tüm Sayfalarda) -->
+<footer class="global-creator-footer">
+  <a href="https://fatihkarakas.com.tr" target="_blank" rel="noopener" class="creator-badge" title="Geliştirici Web Sitesi">
+    ⚡ Bir <strong>fatihkarakas.com.tr</strong> Projesidir ↗
+  </a>
+</footer>
+
 <!-- Mobil Alt Navigasyon Barı (Giriş Yapılmışsa) -->
 @if (auth.isLoggedIn()) {
   <nav class="bottom-nav glass" aria-label="Ana Menü">
@@ -28,6 +35,11 @@
     <a routerLink="/history" routerLinkActive="active" class="nav-item">
       <span class="icon">📖</span>
       <span class="lbl">Geçmiş</span>
+    </a>
+
+    <a href="https://fatihkarakas.com.tr" target="_blank" rel="noopener" class="nav-item creator-nav" title="fatihkarakas.com.tr">
+      <span class="icon">🌐</span>
+      <span class="lbl">Geliştirici</span>
     </a>
 
     <button type="button" class="nav-item nav-btn" (click)="logout()" title="Çıkış Yap">
