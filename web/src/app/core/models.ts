@@ -138,5 +138,9 @@ export interface Room {
   myVotedOptionId: number | null;
   options: RoomOption[];
   totalVotes: number;
+  isConfirmed?: boolean;
+  confirmedBy?: string | null;
+  winningRestaurantMapsUrl?: string | null;
+  winningRestaurantAddress?: string | null;
 }
 

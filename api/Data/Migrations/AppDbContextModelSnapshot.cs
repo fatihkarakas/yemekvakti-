@@ -134,6 +134,9 @@ namespace YemekVakti.Api.Data.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
 
+                    b.Property<string>("ConfirmedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -144,6 +147,9 @@ namespace YemekVakti.Api.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")

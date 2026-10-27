@@ -81,5 +81,20 @@ public record CastVoteRequest(int RoomOptionId);
 public record CloseRoomRequest(int? WinningRestaurantId);
 
 public record RoomOptionDto(int Id, int RestaurantId, string RestaurantName, string CuisineLabels, double? GoogleRating, int VoteCount, List<string> Voters);
-public record RoomDto(int Id, string Code, string Title, int CreatorUserId, bool IsClosed, int? WinningRestaurantId, string? WinningRestaurantName, int? MyVotedOptionId, List<RoomOptionDto> Options, int TotalVotes);
+public record RoomDto(
+    int Id,
+    string Code,
+    string Title,
+    int CreatorUserId,
+    bool IsClosed,
+    int? WinningRestaurantId,
+    string? WinningRestaurantName,
+    int? MyVotedOptionId,
+    List<RoomOptionDto> Options,
+    int TotalVotes,
+    bool IsConfirmed = false,
+    string? ConfirmedBy = null,
+    string? WinningRestaurantMapsUrl = null,
+    string? WinningRestaurantAddress = null
+);
 

@@ -88,27 +88,72 @@ import { FormsModule } from '@angular/forms';
               }
             </div>
 
-            <div class="share-row">
-              <button type="button" class="btn btn-sm" (click)="copyShareLink()">
-                📋 Oylama Linkini Kopyala
-              </button>
-              <button type="button" class="btn btn-sm" (click)="refreshRoom()">
-                🔄 Oyları Yenile
-              </button>
-              @if (!r.isClosed && r.options.length >= 2) {
-                <button type="button" class="btn btn-sm btn-primary" (click)="showWheelModal.set(!showWheelModal())">
-                  🎡 Çarkla Seç
+            <!-- Ekip Paylaşım & Kopyalama Kutusu -->
+            <div class="share-box glass pop-in">
+              <div class="share-box-header">
+                <span class="share-label">📢 <strong>Ekibe Oylama Linki Gönder</strong></span>
+                <span class="code-badge" title="Oda Kodu">{{ r.code }}</span>
+              </div>
+
+              <!-- Mobil & Masaüstü İçin Tek Tıkla Kopyalama Çubuğu -->
+              <div class="share-input-group">
+                <input #shareInput type="text" readonly [value]="getShareUrl()" class="share-url-input" (click)="copyShareLink(shareInput)" title="Kopyalamak için tıkla" />
+                <button type="button" class="btn btn-sm btn-copy" [class.copied]="isCopied()" (click)="copyShareLink(shareInput)">
+                  {{ isCopied() ? '✓ Kopyalandı!' : '📋 Kopyala' }}
                 </button>
-              }
+              </div>
+
+              <div class="share-buttons-row">
+                <a [href]="getWhatsAppShareUrl()" target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                  🟢 WhatsApp ile Paylaş
+                </a>
+                <button type="button" class="btn btn-sm btn-primary" (click)="shareRoomLink()">
+                  📲 Paylaş (Uygulamalar)
+                </button>
+                <button type="button" class="btn btn-sm btn-ghost" (click)="refreshRoom()">
+                  🔄 Yenile
+                </button>
+                @if (!r.isClosed && r.options.length >= 2) {
+                  <button type="button" class="btn btn-sm btn-ghost" style="color: #fbbf24;" (click)="showWheelModal.set(!showWheelModal())">
+                    🎡 Çarkla Seç
+                  </button>
+                }
+              </div>
             </div>
           </div>
 
-          <!-- Kazanan Belli Olduysa -->
-          @if (r.isClosed && r.winningRestaurantName) {
-            <div class="winner-box glass pop-in">
-              <span class="winner-tag">🏆 Oylama Tamamlandı! Kazanan:</span>
+          <!-- Kazanan Belli Olduysa VEYA Karar Verildiyse -->
+          @if (r.winningRestaurantName) {
+            <div class="winner-box glass pop-in" [class.confirmed]="r.isConfirmed">
+              <span class="winner-tag">
+                {{ r.isConfirmed ? '🎉 EKİP KARARI KESİNLEŞTİ!' : '🏆 Oylama Tamamlandı! Kazanan:' }}
+              </span>
               <h3>{{ r.winningRestaurantName }}</h3>
-              <p class="muted">Ekip kararını verdi, afiyet olsun!</p>
+              <p class="muted">
+                @if (r.isConfirmed) {
+                  {{ r.confirmedBy ? r.confirmedBy + ' tarafından "Buraya Gidilecek" olarak kaydedildi! Ekip yola çıkıyor 🚀' : 'Ekip yola çıkıyor, afiyet olsun! 🚀' }}
+                } @else {
+                  Ekip kararını verdi, gitmeye hazır mısınız?
+                }
+              </p>
+
+              <div class="winner-actions" style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+                @if (!r.isConfirmed && isCreator()) {
+                  <button id="confirm-lunch-btn" type="button" class="btn btn-success btn-block" [disabled]="loading()" (click)="confirmLunch(r.winningRestaurantId)">
+                    ✅ Buraya Gidilecek Olarak Kaydet (Ekibe Yansıt) 🚀
+                  </button>
+                }
+                @if (r.isConfirmed) {
+                  <div class="confirmed-badge">
+                    ✓ Karar kesinleşti ve tüm ekibin ziyaret geçmişine kaydedildi!
+                  </div>
+                }
+                @if (r.winningRestaurantMapsUrl) {
+                  <a [href]="r.winningRestaurantMapsUrl" target="_blank" rel="noopener" class="btn btn-sm btn-ghost maps-link">
+                    🧭 Google Maps ile Yol Tarifi Al ↗
+                  </a>
+                }
+              </div>
             </div>
           }
 
@@ -155,10 +200,15 @@ import { FormsModule } from '@angular/forms';
                 }
 
                 @if (!r.isClosed) {
-                  <div class="opt-action">
+                  <div class="opt-action" style="display: flex; flex-direction: column; gap: 6px;">
                     <button type="button" class="btn btn-sm btn-block" [class.btn-primary]="r.myVotedOptionId === opt.id" (click)="castVote(opt.id)">
                       {{ r.myVotedOptionId === opt.id ? '✓ Oyun Burada' : 'Buna Oy Ver 👍' }}
                     </button>
+                    @if (isCreator()) {
+                      <button type="button" class="btn btn-sm btn-ghost" style="font-size: 12px; color: var(--success); border-color: rgba(34, 197, 94, 0.3);" (click)="confirmLunch(opt.restaurantId)">
+                        🎯 Buraya Gidelim (Seç & Kesinleştir)
+                      </button>
+                    }
                   </div>
                 }
               </div>
@@ -252,16 +302,18 @@ import { FormsModule } from '@angular/forms';
       border-radius: 6px;
       letter-spacing: 1px;
     }
-    .share-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
     .winner-box {
       padding: 20px;
       text-align: center;
       background: linear-gradient(135deg, hsla(158, 68%, 50%, 0.15), hsla(180, 70%, 42%, 0.15));
-      border-color: hsla(158, 68%, 50%, 0.5);
+      border: 1px solid hsla(158, 68%, 50%, 0.5);
+      border-radius: 18px;
+      transition: all 0.3s;
+      &.confirmed {
+        background: linear-gradient(135deg, hsla(158, 68%, 50%, 0.25), hsla(180, 70%, 42%, 0.25));
+        border: 2px solid var(--success);
+        box-shadow: 0 12px 36px -10px hsla(158, 68%, 50%, 0.55);
+      }
       h3 { font-size: 24px; margin: 8px 0 4px; color: #fff; }
     }
     .winner-tag {
@@ -270,6 +322,88 @@ import { FormsModule } from '@angular/forms';
       color: var(--success);
       text-transform: uppercase;
       letter-spacing: 1px;
+    }
+    .confirmed-badge {
+      background: hsla(158, 68%, 50%, 0.18);
+      border: 1px solid hsla(158, 68%, 50%, 0.5);
+      color: #4ade80;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 12px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .maps-link {
+      color: #38bdf8 !important;
+      border-color: rgba(56, 189, 248, 0.4) !important;
+      &:hover { background: rgba(56, 189, 248, 0.15) !important; }
+    }
+    .share-box {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .share-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .share-label { font-size: 13.5px; color: #fff; }
+    }
+    .share-input-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .share-url-input {
+      flex: 1;
+      min-width: 0;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #38bdf8;
+      font-size: 13px;
+      font-family: monospace;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      &:focus, &:hover {
+        border-color: #38bdf8;
+        background: rgba(0, 0, 0, 0.7);
+      }
+    }
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s;
+      &.copied {
+        background: var(--success);
+        color: #fff;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+      }
+    }
+    .share-buttons-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-whatsapp {
+      background: #25D366 !important;
+      color: #fff !important;
+      font-weight: 600 !important;
+      border: none !important;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+      &:hover {
+        background: #1ebc57 !important;
+        transform: translateY(-1px);
+      }
     }
     .wheel-modal {
       padding: 20px;
@@ -338,10 +472,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   readonly selectedRestaurantIds = signal<number[]>([]);
   readonly loading = signal(false);
   readonly showWheelModal = signal(false);
+  readonly isCopied = signal(false);
 
   joinCode = '';
   roomTitle = 'Bugünkü Ekip Yemeği';
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private copyTimeout: any = null;
 
   async ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -356,6 +492,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopPolling();
+    if (this.copyTimeout) clearTimeout(this.copyTimeout);
   }
 
   isCreator() {
@@ -529,13 +666,109 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.showWheelModal.set(false);
   }
 
-  copyShareLink() {
+  async confirmLunch(restaurantId?: number | null) {
     const r = this.currentRoom();
     if (!r) return;
-    const url = `${window.location.origin}/room?code=${r.code}`;
-    navigator.clipboard.writeText(url).then(() => {
-      this.toast.success('Oylama linki panoya kopyalandı! 📋');
-    });
+    this.loading.set(true);
+    try {
+      const updated = await this.api.confirmRoom(r.code, restaurantId);
+      this.currentRoom.set(updated);
+      burstConfetti(100);
+      this.toast.success('Karar onaylandı ve tüm ekibin geçmişine kaydedildi! 🚀');
+    } catch {
+      this.toast.error('Karar kaydedilemedi.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  getShareUrl(): string {
+    const r = this.currentRoom();
+    if (!r) return '';
+    return `${window.location.origin}/room?code=${r.code}`;
+  }
+
+  getWhatsAppShareUrl(): string {
+    const r = this.currentRoom();
+    if (!r) return '';
+    const text = `🍽️ *${r.title}*\nBugün öğle yemeğinde nereye gidiyoruz? Oylamaya katıl, oyunu ver:\n${this.getShareUrl()}`;
+    return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+  }
+
+  shareRoomLink() {
+    const r = this.currentRoom();
+    if (!r) return;
+    const url = this.getShareUrl();
+    const title = `${r.title} - YemekVakti`;
+    const text = `Bugün öğle yemeğinde nereye gidelim? Oylamaya katıl, oyunu ver:`;
+
+    if (navigator.share) {
+      navigator.share({ title, text, url }).catch(() => {
+        this.copyShareLink();
+      });
+    } else {
+      this.copyShareLink();
+    }
+  }
+
+  async copyShareLink(inputEl?: HTMLInputElement) {
+    const url = this.getShareUrl();
+    if (!url) return;
+
+    if (inputEl) {
+      inputEl.focus();
+      inputEl.select();
+      inputEl.setSelectionRange(0, 99999);
+    }
+
+    let copied = false;
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(url);
+        copied = true;
+      } catch {
+        copied = this.fallbackCopy(url);
+      }
+    } else {
+      copied = this.fallbackCopy(url);
+    }
+
+    if (copied) {
+      this.isCopied.set(true);
+      if (this.copyTimeout) clearTimeout(this.copyTimeout);
+      this.copyTimeout = setTimeout(() => this.isCopied.set(false), 2500);
+      this.toast.success('Oylama linki kopyalandı! WhatsApp veya grupta paylaşabilirsiniz 📋');
+    }
+  }
+
+  private fallbackCopy(text: string): boolean {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.width = '2em';
+    ta.style.height = '2em';
+    ta.style.padding = '0';
+    ta.style.border = 'none';
+    ta.style.outline = 'none';
+    ta.style.boxShadow = 'none';
+    ta.style.background = 'transparent';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+    if (!ok) {
+      this.toast.info(`Link: ${text}`);
+    }
+    return ok;
   }
 
   leaveRoom() {

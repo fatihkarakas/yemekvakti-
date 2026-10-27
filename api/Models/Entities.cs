@@ -88,6 +88,8 @@ public class Room
     public bool IsClosed { get; set; }
     public int? WinningRestaurantId { get; set; }
     public Restaurant? WinningRestaurant { get; set; }
+    public bool IsConfirmed { get; set; } = false;
+    public string? ConfirmedBy { get; set; }
     public List<RoomOption> Options { get; set; } = [];
     public List<RoomVote> Votes { get; set; } = [];
 }

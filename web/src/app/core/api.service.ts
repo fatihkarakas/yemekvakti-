@@ -79,4 +79,7 @@ export class ApiService {
   closeRoom(code: string, winningRestaurantId?: number | null) {
     return this.post<Room>(`/api/rooms/${code}/close`, { winningRestaurantId });
   }
+  confirmRoom(code: string, winningRestaurantId?: number | null) {
+    return this.post<Room>(`/api/rooms/${code}/confirm`, { winningRestaurantId });
+  }
 }

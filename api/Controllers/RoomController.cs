@@ -130,6 +130,71 @@ public class RoomController(AppDbContext db) : ControllerBase
         return await GetRoomByCodeInternal(room.Code);
     }
 
+    [HttpPost("{code}/confirm")]
+    public async Task<ActionResult<RoomDto>> ConfirmDecision(string code, CloseRoomRequest req)
+    {
+        var userId = User.UserId();
+        var userName = User.UserName();
+        var room = await db.Rooms
+            .Include(r => r.Options).ThenInclude(o => o.Restaurant)
+            .Include(r => r.Votes)
+            .FirstOrDefaultAsync(r => r.Code == code.ToUpperInvariant());
+
+        if (room is null) return NotFound("Oda bulunamadı.");
+        if (room.CreatorUserId != userId) return Forbid("Sadece odayı oluşturan kişi kararı kesinleştirebilir.");
+
+        room.IsClosed = true;
+        room.IsConfirmed = true;
+        room.ConfirmedBy = userName;
+
+        if (req.WinningRestaurantId.HasValue)
+        {
+            room.WinningRestaurantId = req.WinningRestaurantId;
+        }
+        else if (!room.WinningRestaurantId.HasValue)
+        {
+            var topGroup = room.Votes
+                .GroupBy(v => v.RoomOptionId)
+                .OrderByDescending(g => g.Count())
+                .FirstOrDefault();
+
+            if (topGroup is not null)
+            {
+                var winningOpt = room.Options.FirstOrDefault(o => o.Id == topGroup.Key);
+                room.WinningRestaurantId = winningOpt?.RestaurantId;
+            }
+            else
+            {
+                room.WinningRestaurantId = room.Options.FirstOrDefault()?.RestaurantId;
+            }
+        }
+
+        if (room.WinningRestaurantId.HasValue)
+        {
+            var winnerId = room.WinningRestaurantId.Value;
+            var participantIds = room.Votes.Select(v => v.UserId).Append(userId).Distinct().ToList();
+            var today = DateTime.UtcNow.Date;
+
+            foreach (var pId in participantIds)
+            {
+                var alreadyLogged = await db.Visits.AnyAsync(v => v.UserId == pId && v.RestaurantId == winnerId && v.VisitedAt >= today);
+                if (!alreadyLogged)
+                {
+                    db.Visits.Add(new Visit
+                    {
+                        UserId = pId,
+                        RestaurantId = winnerId,
+                        Source = "room",
+                        VisitedAt = DateTime.UtcNow
+                    });
+                }
+            }
+        }
+
+        await db.SaveChangesAsync();
+        return await GetRoomByCodeInternal(room.Code);
+    }
+
     private async Task<ActionResult<RoomDto>> GetRoomByCodeInternal(string code)
     {
         var userId = User.UserId();
@@ -167,7 +232,11 @@ public class RoomController(AppDbContext db) : ControllerBase
             room.WinningRestaurant?.Name,
             myVote?.RoomOptionId,
             optionsDto,
-            room.Votes.Count
+            room.Votes.Count,
+            room.IsConfirmed,
+            room.ConfirmedBy,
+            room.WinningRestaurant?.MapsUrl,
+            room.WinningRestaurant?.Address
         );
 
         return dto;
