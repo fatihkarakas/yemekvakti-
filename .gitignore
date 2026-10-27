@@ -1,0 +1,30 @@
+## .NET
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+.vs/
+.idea/
+
+## Node & Web
+web/node_modules/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.angular/
+
+## Local Databases & secrets
+*.dev.db
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+## OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,38 @@
+<!-- Toasts Bildirimleri -->
+@if (toast.toasts(); as list) {
+  <div class="toast-container" aria-live="polite">
+    @for (t of list; track t.id) {
+      <div class="toast-item pop-in" [class]="t.kind">
+        {{ t.text }}
+      </div>
+    }
+  </div>
+}
+
+<!-- Sayfa İçeriği -->
+<router-outlet />
+
+<!-- Mobil Alt Navigasyon Barı (Giriş Yapılmışsa) -->
+@if (auth.isLoggedIn()) {
+  <nav class="bottom-nav glass" aria-label="Ana Menü">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+      <span class="icon">🍱</span>
+      <span class="lbl">Yemek</span>
+    </a>
+
+    <a routerLink="/room" routerLinkActive="active" class="nav-item">
+      <span class="icon">👥</span>
+      <span class="lbl">Ekip</span>
+    </a>
+
+    <a routerLink="/history" routerLinkActive="active" class="nav-item">
+      <span class="icon">📖</span>
+      <span class="lbl">Geçmiş</span>
+    </a>
+
+    <button type="button" class="nav-item nav-btn" (click)="logout()" title="Çıkış Yap">
+      <span class="icon">🚪</span>
+      <span class="lbl">Çıkış</span>
+    </button>
+  </nav>
+}
