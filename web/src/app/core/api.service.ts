@@ -25,6 +25,12 @@ export class ApiService {
   mealCards() { return this.get<MealCard[]>('/api/meal-cards'); }
   candidates(q: CandidateQuery) { return this.post<Candidate[]>('/api/candidates', q); }
   suggest(q: CandidateQuery) { return this.post<SuggestionResponse>('/api/suggest', q); }
+  searchRestaurants(q: string, lat?: number, lng?: number) {
+    const params = new URLSearchParams({ q });
+    if (lat !== undefined) params.set('lat', lat.toString());
+    if (lng !== undefined) params.set('lng', lng.toString());
+    return this.get<Candidate[]>(`/api/restaurants/search?${params.toString()}`);
+  }
   addRestaurant(r: { name: string; lat: number; lng: number; cuisines?: string[]; mealCards?: string[]; priceLevel?: number | null; priceTl?: number; address?: string }) {
     return this.post<number>('/api/restaurants', r);
   }

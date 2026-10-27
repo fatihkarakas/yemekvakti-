@@ -55,6 +55,10 @@ public static class DemoSeeder
         new("Herd's BBQ & Burger Bilkent", "burger", 2, 390, 4.5, 1120, "Bilkent Station No: 3/74, Bilkent", 39.8736, 32.7512),
         new("Piel Roja Burger Ankuva", "burger", 2, 350, 4.4, 1650, "Ankuva AVM No: 16, Üniversiteler Mah., Bilkent", 39.8748, 32.7525),
         new("HMBRGR Bilkent Center", "burger", 2, 320, 4.3, 1200, "Bilkent Center Kat 1 Food Court, Bilkent", 39.8729, 32.7509),
+        new("The Street Burger Bahçelievler", "burger", 2, 340, 4.6, 1420, "Bahçelievler Mah. Aşkabat Cad. (7. Cad) No: 54, Çankaya", 39.9215, 32.8235),
+        new("The Street Burger Çayyolu", "burger", 2, 360, 4.5, 980, "Prof. Dr. Ahmet Taner Kışlalı Mah. 2864. Cad. No: 14, Çayyolu", 39.8640, 32.7020),
+        new("Streetfood Burger & Fries Tunalı", "burger", 2, 330, 4.5, 1150, "Tunalı Hilmi Cad. Bestekar Sok. No: 44, Kavaklıdere", 39.9040, 32.8590),
+        new("Burger Street Çukurambar", "burger", 2, 350, 4.4, 880, "Kızılırmak Mah. 1445. Sok. No: 6, Çukurambar", 39.9085, 32.8125),
 
         // ==========================================
         // 2. ÇUKURAMBAR & BALGAT & SÖĞÜTÖZÜ (İş ve Plaza Aksı)

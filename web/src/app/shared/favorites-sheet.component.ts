@@ -67,6 +67,13 @@ import { Candidate, Preference } from '../core/models';
                 </div>
               }
             </div>
+          } @else if (hasSearched() && !searching()) {
+            <div class="no-res-box pop-in">
+              <span class="muted" style="font-size: 13px;">Veritabanında bulunamadı.</span>
+              <button type="button" class="btn btn-sm btn-primary quick-add-btn" (click)="quickAddSearched()">
+                ➕ "{{ searchQuery }}" Mekanını Kaydet ve Favoriye Ekle
+              </button>
+            </div>
           }
         </div>
 
@@ -250,6 +257,22 @@ import { Candidate, Preference } from '../core/models';
     }
     .added-badge { font-size: 12px; color: var(--success); font-weight: 600; }
     .add-fav-btn { font-size: 12px; padding: 5px 10px; }
+    .no-res-box {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .quick-add-btn {
+      font-size: 12.5px;
+      padding: 7px 14px;
+      background: linear-gradient(135deg, #ff7a18, #af002d);
+    }
 
     /* Liste */
     .fav-list-section {
@@ -425,28 +448,52 @@ export class FavoritesSheetComponent implements OnInit {
     return this.favorites().some(f => f.restaurantId === restId);
   }
 
+  hasSearched = signal(false);
+
   async searchRestaurants() {
-    const q = this.searchQuery.trim().toLowerCase();
+    const q = this.searchQuery.trim();
     if (!q) return;
 
     this.searching.set(true);
+    this.hasSearched.set(true);
     try {
       const coords = await this.loc.locate();
-      const res = await this.api.candidates({
-        lat: coords.lat,
-        lng: coords.lng,
-        radius: 20000,
-        limit: 30,
-      });
-      const filtered = res.filter(c => c.name.toLowerCase().includes(q) || (c.address && c.address.toLowerCase().includes(q)));
-      this.searchResults.set(filtered);
-      if (filtered.length === 0) {
-        this.toast.show('Bu aramayla eşleşen mekan bulunamadı.');
+      const res = await this.api.searchRestaurants(q, coords.lat, coords.lng);
+      this.searchResults.set(res);
+      if (res.length === 0) {
+        this.toast.show('Bu aramayla eşleşen mekan bulunamadı. Dilerseniz hemen ekleyebilirsiniz.');
       }
     } catch {
       this.toast.error('Mekan aranırken hata oluştu.');
     } finally {
       this.searching.set(false);
+    }
+  }
+
+  async quickAddSearched() {
+    const q = this.searchQuery.trim();
+    if (!q) return;
+    try {
+      const coords = await this.loc.locate();
+      const isBurger = q.toLowerCase().includes('burger');
+      const isPizza = q.toLowerCase().includes('pizza');
+      const cuisines = isBurger ? ['burger'] : isPizza ? ['pizza'] : ['evyemegi'];
+      const newId = await this.api.addRestaurant({
+        name: q,
+        lat: coords.lat,
+        lng: coords.lng,
+        cuisines,
+        mealCards: ['multinet', 'setcard', 'sodexo', 'ticket'],
+        priceTl: 320
+      });
+      await this.api.setPreference(newId, 'Favorite', 1);
+      this.toast.success(`⭐ ${q} favorilerine eklendi!`);
+      this.searchQuery = '';
+      this.searchResults.set([]);
+      this.hasSearched.set(false);
+      await this.loadFavorites();
+    } catch {
+      this.toast.error('Mekan eklenemedi.');
     }
   }
 

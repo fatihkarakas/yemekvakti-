@@ -15,8 +15,9 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         if (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false))
         {
             var totalCount = await db.Restaurants.CountAsync(ct);
-            var needsSeed = await db.Restaurants.AnyAsync(r => r.MealCards == null, ct);
-            if (needsSeed || totalCount < 50 || nearby.Count < 6)
+            var needsSeed = await db.Restaurants.AnyAsync(r => r.MealCards == null, ct)
+                || !await db.Restaurants.AnyAsync(r => r.Name.Contains("Street Burger"), ct);
+            if (needsSeed || totalCount < 55 || nearby.Count < 6)
             {
                 await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
                 nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
