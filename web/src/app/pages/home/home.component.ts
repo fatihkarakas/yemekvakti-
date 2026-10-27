@@ -141,6 +141,10 @@ import { burstConfetti } from '../../shared/confetti';
                 <button id="accept-wheel-btn" type="button" class="btn btn-success btn-block" (click)="acceptLunch(winner, 'wheel')">
                   ✅ Karar Verildi, Gidelim!
                 </button>
+                <a [href]="'https://www.google.com/maps/dir/?api=1&destination=' + winner.lat + ',' + winner.lng"
+                   target="_blank" rel="noopener" class="btn btn-sm btn-ghost">
+                  🧭 Haritada Yol Tarifi Al ↗
+                </a>
               </div>
             </div>
           }
@@ -342,12 +346,13 @@ export class HomeComponent implements OnInit {
   }
 
   hasActiveFilters() {
-    return this.fs.filters().cuisines.length > 0 || this.fs.filters().maxPrice !== null;
+    const f = this.fs.filters();
+    return f.cuisines.length > 0 || f.minPriceTl !== null || f.maxPriceTl !== null || f.maxPrice !== null;
   }
 
   filterCount() {
     let c = this.fs.filters().cuisines.length;
-    if (this.fs.filters().maxPrice) c++;
+    if (this.fs.filters().minPriceTl !== null || this.fs.filters().maxPriceTl !== null || this.fs.filters().maxPrice !== null) c++;
     return c;
   }
 
@@ -363,6 +368,8 @@ export class HomeComponent implements OnInit {
         lng: coords.lng,
         radius: currentFilters.radius,
         cuisines: currentFilters.cuisines,
+        minPriceTl: currentFilters.minPriceTl,
+        maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,
         avoidDays: currentFilters.avoidDays,
         excludeIds
@@ -388,6 +395,8 @@ export class HomeComponent implements OnInit {
         lng: coords.lng,
         radius: currentFilters.radius,
         cuisines: currentFilters.cuisines,
+        minPriceTl: currentFilters.minPriceTl,
+        maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,
         avoidDays: currentFilters.avoidDays,
         limit: 10

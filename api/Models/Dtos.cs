@@ -14,6 +14,8 @@ public class CandidateQuery
     public double Lng { get; set; }
     public int Radius { get; set; } = 1500;
     public string[]? Cuisines { get; set; }
+    public int? MinPriceTl { get; set; }
+    public int? MaxPriceTl { get; set; }
     public int? MaxPrice { get; set; }
     public int[]? ExcludeIds { get; set; }
     /// <summary>Son kaç gün içinde gidilen yerler önerilmesin.</summary>
@@ -31,6 +33,7 @@ public record CandidateDto(
     string[] Cuisines,
     string CuisineLabels,
     int? PriceLevel,
+    int? PriceTl,
     double? GoogleRating,
     int? GoogleRatingCount,
     double? MyRating,

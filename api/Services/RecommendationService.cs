@@ -9,7 +9,7 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
 {
     public async Task<List<CandidateDto>> GetCandidatesAsync(int userId, CandidateQuery q, CancellationToken ct)
     {
-        q.Radius = Math.Clamp(q.Radius, 200, 5000);
+        q.Radius = Math.Clamp(q.Radius, 200, 20000);
         var nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
 
         if (nearby.Count == 0 && (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false)))
@@ -34,7 +34,14 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
             .Where(r => !exclude.Contains(r.Id))
             .Where(r => !prefs.TryGetValue(r.Id, out var t) || t != PreferenceType.Blacklist)
             .Where(r => wanted.Count == 0 || CuisineCatalog.Split(r.Cuisines).Any(wanted.Contains))
-            .Where(r => q.MaxPrice is null || r.PriceLevel is null || r.PriceLevel <= q.MaxPrice)
+            .Where(r =>
+            {
+                var est = EstimatePriceTl(r);
+                if (q.MinPriceTl.HasValue && est < q.MinPriceTl.Value) return false;
+                if (q.MaxPriceTl.HasValue && est > q.MaxPriceTl.Value) return false;
+                if (q.MaxPrice.HasValue && r.PriceLevel.HasValue && r.PriceLevel > q.MaxPrice.Value) return false;
+                return true;
+            })
             .Select(r =>
             {
                 var rv = visits.Where(v => v.RestaurantId == r.Id).OrderByDescending(v => v.VisitedAt).ToList();
@@ -53,8 +60,10 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                             - (recent ? 2.5 : 0)
                             + rnd.NextDouble() * 0.5;
 
+                var priceTl = EstimatePriceTl(r);
+
                 return new CandidateDto(r.Id, r.Name, r.Address, r.Lat, r.Lng, (int)dist,
-                    CuisineCatalog.Split(r.Cuisines), CuisineCatalog.Labels(r.Cuisines), r.PriceLevel,
+                    CuisineCatalog.Split(r.Cuisines), CuisineCatalog.Labels(r.Cuisines), r.PriceLevel, priceTl,
                     r.GoogleRating, r.GoogleRatingCount, my, rv.Count, last?.VisitedAt,
                     rv.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.Note))?.Note,
                     fav, r.MapsUrl ?? $"https://www.google.com/maps/search/?api=1&query={r.Lat},{r.Lng}",
@@ -122,5 +131,21 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         if (c.DistanceM < 400) return $"Sadece {c.DistanceM} m uzakta, yürüyerek 5 dakika 🚶";
         if (c.MyVisitCount == 0) return "Daha önce hiç gitmedin, bugün yeni bir şey dene 🎲";
         return $"{c.CuisineLabels} için iyi bir seçenek, {c.DistanceM} m mesafede 👍";
+    }
+
+    public static int EstimatePriceTl(Restaurant r)
+    {
+        if (r.AvgPriceTl.HasValue && r.AvgPriceTl > 0) return r.AvgPriceTl.Value;
+        if (r.PriceLevel == 1) return 200;
+        if (r.PriceLevel == 2) return 400;
+        if (r.PriceLevel == 3) return 800;
+        if (r.PriceLevel == 4) return 1500;
+
+        var c = (r.Cuisines ?? "").ToLowerInvariant();
+        if (c.Contains("kahvalti") || c.Contains("esnaf") || c.Contains("tost")) return 180;
+        if (c.Contains("pide") || c.Contains("corba")) return 230;
+        if (c.Contains("kebap") || c.Contains("burger") || c.Contains("pizza") || c.Contains("tavuk")) return 350;
+        if (c.Contains("uzakdogu") || c.Contains("balik")) return 750;
+        return 300;
     }
 }

@@ -302,3 +302,28 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261027062131_AddAvgPriceTl'
+)
+BEGIN
+    ALTER TABLE [yv_Restaurants] ADD [AvgPriceTl] int NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261027062131_AddAvgPriceTl'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261027062131_AddAvgPriceTl', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+

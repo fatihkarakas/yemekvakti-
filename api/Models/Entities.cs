@@ -24,6 +24,8 @@ public class Restaurant
     public string Cuisines { get; set; } = "";
     /// <summary>1-4 arası (₺ .. ₺₺₺₺), bilinmiyorsa null.</summary>
     public int? PriceLevel { get; set; }
+    /// <summary>Tahmini veya bilinen ortalama kişi başı TL tutarı.</summary>
+    public int? AvgPriceTl { get; set; }
     public double? GoogleRating { get; set; }
     public int? GoogleRatingCount { get; set; }
     public string? MapsUrl { get; set; }

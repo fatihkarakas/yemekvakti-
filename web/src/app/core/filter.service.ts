@@ -7,6 +7,8 @@ const FILTER_KEY = 'yv.filters';
 export interface Filters {
   cuisines: string[];
   radius: number;
+  minPriceTl: number | null;
+  maxPriceTl: number | null;
   maxPrice: number | null;
   avoidDays: number;
 }
@@ -19,6 +21,8 @@ export class FilterService {
   readonly filters = signal<Filters>({
     cuisines: [],
     radius: 1500,
+    minPriceTl: null,
+    maxPriceTl: null,
     maxPrice: null,
     avoidDays: 5,
     ...JSON.parse(localStorage.getItem(FILTER_KEY) ?? '{}'),

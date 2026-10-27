@@ -19,6 +19,18 @@ import { StarsComponent } from './stars.component';
         @if (r().isFavorite) { <span class="fav" title="Favori">💛</span> }
       </div>
 
+      <!-- Açık Adres ve Yol Tarifi Butonu -->
+      <div class="location-banner">
+        <div class="address-text">
+          <span class="addr-label muted">Adres:</span>
+          <p class="addr-val">{{ r().address || r().name + ' (Yakın çevre)' }}</p>
+        </div>
+        <a [href]="directionsUrl()" target="_blank" rel="noopener" class="direction-btn" title="Haritada Aç ve Yol Tarifi Başlat">
+          🧭 <span>Yol Tarifi</span>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+
       @if (reason()) {
         <p class="reason">
           @if (ai()) { <span class="ai">✨ Gemini</span> }
@@ -28,8 +40,9 @@ import { StarsComponent } from './stars.component';
 
       <div class="meta">
         <span class="tag">📍 {{ distance() }}</span>
+        @if (r().priceTl) { <span class="tag price-tag">💳 ~{{ r().priceTl }} ₺/kişi</span> }
+        @else if (r().priceLevel) { <span class="tag">{{ '₺'.repeat(r().priceLevel!) }}</span> }
         @if (r().googleRating) { <span class="tag">⭐ {{ r().googleRating?.toFixed(1) }} Google</span> }
-        @if (r().priceLevel) { <span class="tag">{{ '₺'.repeat(r().priceLevel!) }}</span> }
         @if (r().myVisitCount > 0) { <span class="tag">🔁 {{ r().myVisitCount }} kez gittin</span> }
         @else { <span class="tag new">🆕 Hiç gitmedin</span> }
       </div>
@@ -65,8 +78,49 @@ import { StarsComponent } from './stars.component';
     h2 { font-size: 23px; overflow-wrap: anywhere; }
     .titles p { font-size: 14px; margin-top: 3px; }
     .fav { font-size: 22px; }
+
+    /* Adres & Yol Tarifi Çubuğu */
+    .location-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+    }
+    .address-text {
+      flex: 1;
+      min-width: 0;
+      .addr-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+      .addr-val { font-size: 13.5px; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    }
+    .direction-btn {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, hsla(210, 100%, 56%, 0.25), hsla(260, 90%, 60%, 0.25));
+      border: 1px solid hsla(210, 100%, 60%, 0.5);
+      color: #70b4ff;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .2s;
+      &:hover {
+        background: hsla(210, 100%, 56%, 0.4);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+      .arrow { font-size: 14px; }
+    }
+
     .reason {
-      margin-top: 16px; padding: 12px 14px; border-radius: 14px;
+      margin-top: 14px; padding: 12px 14px; border-radius: 14px;
       background: rgba(255,255,255,0.05); font-size: 15.5px; line-height: 1.45;
     }
     .ai {
@@ -75,6 +129,7 @@ import { StarsComponent } from './stars.component';
       background: linear-gradient(135deg, #4f8bff, #a855f7); color: #fff; vertical-align: 1px;
     }
     .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .price-tag { color: var(--warn); background: hsla(44, 100%, 60%, 0.12); border-color: hsla(44, 100%, 60%, 0.3); font-weight: 600; }
     .tag.new { color: var(--success); }
     .mine { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; }
     .note { margin-top: 8px; font-size: 14px; color: var(--muted); font-style: italic; }
@@ -89,7 +144,18 @@ export class RestaurantCardComponent {
   readonly emoji = computed(() => (this.r().cuisines[0] ? this.fs.emoji(this.r().cuisines[0]) : '🍽️'));
   readonly distance = computed(() => {
     const m = this.r().distanceM;
+    if (m >= 1000) {
+      const km = (m / 1000).toFixed(1);
+      const car = Math.max(2, Math.round(m / 500));
+      return `${km} km · ~${car} dk araç`;
+    }
     const walk = Math.max(1, Math.round(m / 80));
-    return m >= 1000 ? `${(m / 1000).toFixed(1)} km · ${walk} dk` : `${m} m · ${walk} dk`;
+    return `${m} m · ~${walk} dk yürüme`;
+  });
+
+  readonly directionsUrl = computed(() => {
+    const c = this.r();
+    // Google Maps Navigation & Directions URL
+    return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
   });
 }

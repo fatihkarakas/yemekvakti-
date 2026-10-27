@@ -28,6 +28,8 @@ export interface CandidateQuery {
   lng: number;
   radius: number;
   cuisines?: string[];
+  minPriceTl?: number | null;
+  maxPriceTl?: number | null;
   maxPrice?: number | null;
   excludeIds?: number[];
   avoidDays?: number;
@@ -44,6 +46,7 @@ export interface Candidate {
   cuisines: string[];
   cuisineLabels: string;
   priceLevel: number | null;
+  priceTl: number | null;
   googleRating: number | null;
   googleRatingCount: number | null;
   myRating: number | null;
