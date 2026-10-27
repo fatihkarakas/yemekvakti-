@@ -42,8 +42,11 @@ export class ApiService {
 
   // Tercihler
   preferences() { return this.get<Preference[]>('/api/preferences'); }
-  setPreference(restaurantId: number, type: PreferenceType) {
-    return this.post<void>('/api/preferences', { restaurantId, type });
+  setPreference(restaurantId: number, type: PreferenceType, weight?: number) {
+    return this.post<void>('/api/preferences', { restaurantId, type, weight });
+  }
+  updatePreferenceWeight(restaurantId: number, weight: number) {
+    return this.put<void>(`/api/preferences/${restaurantId}/weight`, { weight });
   }
   removePreference(restaurantId: number) { return this.del(`/api/preferences/${restaurantId}`); }
 

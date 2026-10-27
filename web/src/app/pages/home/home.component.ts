@@ -4,13 +4,14 @@ import { AuthService } from '../../core/auth.service';
 import { FilterService } from '../../core/filter.service';
 import { LocationService } from '../../core/location.service';
 import { ToastService } from '../../core/toast.service';
-import { Candidate, SuggestionResponse, Visit } from '../../core/models';
+import { Candidate, Preference, SuggestionResponse, Visit } from '../../core/models';
 import { RestaurantCardComponent } from '../../shared/restaurant-card.component';
 import { WheelComponent, WheelItem } from '../../shared/wheel.component';
 import { CuisineSheetComponent } from '../../shared/cuisine-sheet.component';
 import { RateSheetComponent } from '../../shared/rate-sheet.component';
 import { LocationSheetComponent } from '../../shared/location-sheet.component';
 import { AddRestaurantSheetComponent } from '../../shared/add-restaurant-sheet.component';
+import { FavoritesSheetComponent } from '../../shared/favorites-sheet.component';
 import { burstConfetti } from '../../shared/confetti';
 
 @Component({
@@ -22,6 +23,7 @@ import { burstConfetti } from '../../shared/confetti';
     RateSheetComponent,
     LocationSheetComponent,
     AddRestaurantSheetComponent,
+    FavoritesSheetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -33,6 +35,9 @@ import { burstConfetti } from '../../shared/confetti';
           <h1>Yemek<span class="gradient-text">Vakti</span></h1>
         </div>
         <div class="header-actions">
+          <button id="favs-btn" type="button" class="btn btn-sm btn-ghost fav-head-btn" (click)="showFavoritesSheet.set(true)" title="Favori Mekanlarım & Çark Oranları">
+            ⭐ Favorilerim @if (favorites().length > 0) { ({{ favorites().length }}) }
+          </button>
           <button id="add-restaurant-btn" type="button" class="btn btn-sm btn-ghost add-btn" (click)="showAddSheet.set(true)" title="Yeni Restoran / Mekan Ekle">
             ➕ Mekan Ekle
           </button>
@@ -130,14 +135,56 @@ import { burstConfetti } from '../../shared/confetti';
       <!-- ================= MOD 2: DÖNEN KARAR ÇARKI ================= -->
       @if (mode() === 'wheel') {
         <div class="wheel-area">
-          <p class="wheel-desc muted">Kararsız mısınız? Çarkı çevir, şansına nereye çıkarsa oraya git!</p>
+          
+          <!-- Çark Kaynak Seçimi (Yakındakiler vs Favorilerim) -->
+          <div class="wheel-source-toggle">
+            <button
+              id="wheel-source-candidates-btn"
+              type="button"
+              class="source-tab"
+              [class.active]="wheelSource() === 'candidates'"
+              (click)="setWheelSource('candidates')"
+            >
+              📍 Yakındakiler ({{ candidates().length }})
+            </button>
+            <button
+              id="wheel-source-favs-btn"
+              type="button"
+              class="source-tab fav-tab"
+              [class.active]="wheelSource() === 'favorites'"
+              (click)="setWheelSource('favorites')"
+            >
+              ⭐ Sadece Favorilerim ({{ favorites().length }})
+            </button>
+          </div>
+
+          @if (wheelSource() === 'favorites') {
+            <div class="fav-wheel-bar glass pop-in">
+              <span class="fav-bar-text">
+                🎯 Çark, favorilerine belirlediğin <strong>özel oranlara</strong> göre döner!
+              </span>
+              <button type="button" class="btn btn-sm btn-ghost edit-fav-link" (click)="showFavoritesSheet.set(true)">
+                ⚙️ Oranları Düzenle
+              </button>
+            </div>
+          } @else {
+            <p class="wheel-desc muted">Kararsız mısınız? Çarkı çevir, şansına nereye çıkarsa oraya git!</p>
+          }
 
           @if (wheelItems().length >= 2) {
             <app-wheel [items]="wheelItems()" (result)="onWheelWon($event)" (spinStart)="onSpinStart()" />
           } @else {
             <div class="empty-box glass">
-              <p>Çark için yeterli restoran bulunamadı. Mesafeyi artırmayı dene!</p>
-              <button type="button" class="btn btn-primary" (click)="loadCandidates()">Yeniden Ara</button>
+              @if (wheelSource() === 'favorites') {
+                <span class="empty-fav-icon">⭐</span>
+                <p>Çarkı çevirmek için en az 2 favori mekana ihtiyacın var.</p>
+                <button type="button" class="btn btn-primary" (click)="showFavoritesSheet.set(true)">
+                  ⭐ Favori Mekan Ekle & Oran Belirle
+                </button>
+              } @else {
+                <p>Çark için yeterli restoran bulunamadı. Mesafeyi artırmayı dene!</p>
+                <button type="button" class="btn btn-primary" (click)="loadCandidates()">Yeniden Ara</button>
+              }
             </div>
           }
 
@@ -145,7 +192,7 @@ import { burstConfetti } from '../../shared/confetti';
             <div class="winner-reveal glass pop-in">
               <span class="winner-badge">🎉 Çarkın Kararı!</span>
               <h3>{{ winner.name }}</h3>
-              <p class="muted">{{ winner.cuisineLabels }} · {{ winner.distanceM }}m</p>
+              <p class="muted">{{ winner.cuisineLabels }} · {{ winner.distanceM > 0 ? winner.distanceM + 'm' : (winner.address || 'Favori Mekanın') }}</p>
 
               <div class="card-actions" style="margin-top: 14px;">
                 <button id="accept-wheel-btn" type="button" class="btn btn-success btn-block" (click)="acceptLunch(winner, 'wheel')">
@@ -179,6 +226,15 @@ import { burstConfetti } from '../../shared/confetti';
       <!-- Bottom Sheet: Yeni Mekan Ekle -->
       @if (showAddSheet()) {
         <app-add-restaurant-sheet (closed)="showAddSheet.set(false)" (saved)="onRestaurantAdded()" />
+      }
+
+      <!-- Bottom Sheet: Favoriler & Çark Oranları -->
+      @if (showFavoritesSheet()) {
+        <app-favorites-sheet
+          (closed)="showFavoritesSheet.set(false)"
+          (favoritesUpdated)="onFavoritesUpdated($event)"
+          (spinWithFavorites)="spinWithFavorites()"
+        />
       }
     </main>
   `,
@@ -314,6 +370,63 @@ import { burstConfetti } from '../../shared/confetti';
       padding: 3px 10px;
       border-radius: 999px;
     }
+    .fav-head-btn {
+      border-color: rgba(234, 179, 8, 0.45);
+      color: #fde047;
+      &:hover { background: rgba(234, 179, 8, 0.15); }
+    }
+    .wheel-source-toggle {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+    .source-tab {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      &.active {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 4px 14px -3px rgba(241, 65, 124, 0.6);
+      }
+      &.fav-tab.active {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        box-shadow: 0 4px 14px -3px rgba(245, 158, 11, 0.6);
+      }
+    }
+    .fav-wheel-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      background: rgba(234, 179, 8, 0.1);
+    }
+    .fav-bar-text { color: #fde047; font-size: 12.5px; }
+    .edit-fav-link {
+      font-size: 12px;
+      padding: 4px 10px;
+      color: #fde047;
+      text-decoration: underline;
+    }
+    .empty-fav-icon {
+      font-size: 38px;
+      display: block;
+      margin-bottom: 8px;
+    }
     .empty-box {
       padding: 36px 20px;
       text-align: center;
@@ -332,17 +445,71 @@ export class HomeComponent implements OnInit {
   readonly loading = signal(false);
   readonly suggestion = signal<SuggestionResponse | null>(null);
   readonly candidates = signal<Candidate[]>([]);
+  readonly favorites = signal<Preference[]>([]);
   readonly wheelItems = signal<WheelItem[]>([]);
   readonly wheelWinner = signal<Candidate | null>(null);
+  readonly wheelSource = signal<'candidates' | 'favorites'>('candidates');
 
   readonly showCuisineSheet = signal(false);
   readonly showLocationSheet = signal(false);
   readonly showAddSheet = signal(false);
+  readonly showFavoritesSheet = signal(false);
   readonly activeRateVisit = signal<Visit | null>(null);
 
   async ngOnInit() {
     await this.fs.load();
-    await this.loadSuggestion();
+    await Promise.all([this.loadSuggestion(), this.loadFavorites()]);
+  }
+
+  async loadFavorites() {
+    try {
+      const prefs = await this.api.preferences();
+      const favs = prefs.filter(p => p.type === 'Favorite');
+      this.favorites.set(favs);
+      if (this.wheelSource() === 'favorites') {
+        this.updateWheelItemsFromFavorites();
+      }
+    } catch {}
+  }
+
+  setWheelSource(source: 'candidates' | 'favorites') {
+    this.wheelSource.set(source);
+    this.wheelWinner.set(null);
+    if (source === 'candidates') {
+      if (this.candidates().length === 0) {
+        this.loadCandidates();
+      } else {
+        this.wheelItems.set(this.candidates().map(c => ({
+          id: c.id,
+          label: c.name,
+          emoji: c.cuisines?.[0] ? this.fs.emoji(c.cuisines[0]) : '🍽️'
+        })));
+      }
+    } else {
+      this.updateWheelItemsFromFavorites();
+    }
+  }
+
+  updateWheelItemsFromFavorites() {
+    const favs = this.favorites();
+    this.wheelItems.set(favs.map(f => ({
+      id: f.restaurantId,
+      label: f.restaurantName,
+      emoji: f.cuisines?.[0] ? this.fs.emoji(f.cuisines[0]) : '🍽️',
+      weight: Math.max(f.weight || 1, 1)
+    })));
+  }
+
+  onFavoritesUpdated(favs: Preference[]) {
+    this.favorites.set(favs);
+    if (this.wheelSource() === 'favorites') {
+      this.updateWheelItemsFromFavorites();
+    }
+  }
+
+  spinWithFavorites() {
+    this.setMode('wheel');
+    this.setWheelSource('favorites');
   }
 
   onLocationChanged() {
@@ -350,7 +517,9 @@ export class HomeComponent implements OnInit {
     if (this.mode() === 'suggest') {
       this.loadSuggestion();
     } else {
-      this.loadCandidates();
+      if (this.wheelSource() === 'candidates') {
+        this.loadCandidates();
+      }
     }
   }
 
@@ -359,14 +528,20 @@ export class HomeComponent implements OnInit {
     if (this.mode() === 'suggest') {
       this.loadSuggestion();
     } else {
-      this.loadCandidates();
+      if (this.wheelSource() === 'candidates') {
+        this.loadCandidates();
+      }
     }
   }
 
   setMode(m: 'suggest' | 'wheel') {
     this.mode.set(m);
-    if (m === 'wheel' && this.wheelItems().length === 0) {
-      this.loadCandidates();
+    if (m === 'wheel') {
+      if (this.wheelSource() === 'favorites') {
+        this.updateWheelItemsFromFavorites();
+      } else if (this.wheelItems().length === 0) {
+        this.loadCandidates();
+      }
     }
   }
 
@@ -430,11 +605,13 @@ export class HomeComponent implements OnInit {
         limit: 10
       });
       this.candidates.set(list);
-      this.wheelItems.set(list.map(c => ({
-        id: c.id,
-        label: c.name,
-        emoji: c.cuisines?.[0] ? this.fs.emoji(c.cuisines[0]) : '🍽️'
-      })));
+      if (this.wheelSource() === 'candidates') {
+        this.wheelItems.set(list.map(c => ({
+          id: c.id,
+          label: c.name,
+          emoji: c.cuisines?.[0] ? this.fs.emoji(c.cuisines[0]) : '🍽️'
+        })));
+      }
     } catch {
       this.toast.error('Restoranlar listelenemedi.');
     }
@@ -445,7 +622,38 @@ export class HomeComponent implements OnInit {
   }
 
   onWheelWon(item: WheelItem) {
-    const winner = this.candidates().find(c => c.id === item.id) ?? null;
+    let winner: Candidate | null = null;
+    if (this.wheelSource() === 'favorites') {
+      const fav = this.favorites().find(f => f.restaurantId === item.id);
+      if (fav) {
+        winner = {
+          id: fav.restaurantId,
+          name: fav.restaurantName,
+          address: fav.address ?? '',
+          cuisines: fav.cuisines ?? [],
+          cuisineLabels: fav.cuisineLabels ?? 'Restoran',
+          mealCards: fav.mealCards ?? [],
+          mealCardLabels: fav.mealCardLabels ?? [],
+          priceTl: fav.priceTl ?? null,
+          priceLevel: null,
+          googleRating: fav.googleRating ?? null,
+          googleRatingCount: null,
+          distanceM: 0,
+          lat: fav.lat ?? 0,
+          lng: fav.lng ?? 0,
+          mapsUrl: `https://www.google.com/maps/search/?api=1&query=${fav.lat},${fav.lng}`,
+          myRating: null,
+          myVisitCount: 0,
+          lastVisitAt: null,
+          lastNote: null,
+          isFavorite: true,
+          score: 5
+        };
+      }
+    } else {
+      winner = this.candidates().find(c => c.id === item.id) ?? null;
+    }
+
     this.wheelWinner.set(winner);
     burstConfetti(80);
     this.toast.success(`Çark kararını verdi: ${item.label}! 🎡🎉`);
@@ -476,7 +684,9 @@ export class HomeComponent implements OnInit {
     if (this.mode() === 'suggest') {
       this.loadSuggestion();
     } else {
-      this.loadCandidates();
+      if (this.wheelSource() === 'candidates') {
+        this.loadCandidates();
+      }
     }
   }
 

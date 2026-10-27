@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 
-export interface WheelItem { id: number; label: string; emoji: string; }
+export interface WheelItem {
+  id: number;
+  label: string;
+  emoji: string;
+  weight?: number;
+}
 
 const COLORS = ['#ff7a45', '#f0437a', '#a855f7', '#6366f1', '#14b8a6', '#f59e0b', '#ec4899', '#22c55e', '#0ea5e9', '#ef4444'];
 const SPIN_MS = 5200;
@@ -24,8 +29,11 @@ const SPIN_MS = 5200;
         @for (s of slices(); track s.id) {
           <path [attr.d]="s.path" [attr.fill]="s.color" stroke="#120f1a" stroke-width="2" />
           <g [attr.transform]="'rotate(' + (s.mid - 90) + ' 150 150)'">
-            <text x="182" y="150" class="label" dominant-baseline="middle" text-anchor="start">
+            <text x="180" y="150" class="label" dominant-baseline="middle" text-anchor="start">
               <tspan class="emoji">{{ s.emoji }}</tspan> {{ s.short }}
+              @if (hasWeights() && s.pct > 0) {
+                <tspan class="pct"> (%{{ s.pct }})</tspan>
+              }
             </text>
           </g>
         }
@@ -64,8 +72,9 @@ const SPIN_MS = 5200;
       box-shadow: 0 0 0 8px rgba(255,255,255,0.06), 0 30px 60px -20px rgba(0,0,0,0.8);
       will-change: transform;
     }
-    .label { fill: #fff; font-size: 12.5px; font-weight: 700; letter-spacing: 0.01em; paint-order: stroke; stroke: rgba(0,0,0,0.18); stroke-width: 2px; }
-    .emoji { font-size: 14px; }
+    .label { fill: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.01em; paint-order: stroke; stroke: rgba(0,0,0,0.22); stroke-width: 2px; }
+    .emoji { font-size: 13.5px; }
+    .pct { font-size: 10.5px; font-weight: 600; opacity: 0.9; }
     .pointer {
       position: absolute; top: -10px; left: 50%;
       width: 34px; height: 44px;
@@ -108,17 +117,35 @@ export class WheelComponent {
   readonly spinning = signal(false);
   readonly spinMs = SPIN_MS;
 
+  readonly hasWeights = computed(() => {
+    return this.items().some(it => (it.weight ?? 1) > 1);
+  });
+
   readonly slices = computed(() => {
     const items = this.items();
     const n = Math.max(items.length, 1);
-    const seg = 360 / n;
+    const totalWeight = items.reduce((sum, it) => sum + Math.max(it.weight ?? 1, 1), 0);
+
+    let accumAngle = 0;
     return items.map((it, i) => {
-      const a0 = i * seg, a1 = (i + 1) * seg;
+      const w = Math.max(it.weight ?? 1, 1);
+      const angle = (w / totalWeight) * 360;
+      const a0 = accumAngle;
+      const a1 = accumAngle + angle;
+      accumAngle = a1;
+
+      const pct = Math.round((w / totalWeight) * 100);
+      const maxLen = angle < 30 ? 9 : angle < 50 ? 12 : 15;
+
       return {
         id: it.id,
         emoji: it.emoji,
-        short: it.label.length > 15 ? it.label.slice(0, 14) + '…' : it.label,
-        mid: a0 + seg / 2,
+        short: it.label.length > maxLen ? it.label.slice(0, maxLen - 1) + '…' : it.label,
+        mid: a0 + angle / 2,
+        angle,
+        a0,
+        a1,
+        pct,
         color: COLORS[i % COLORS.length] === COLORS[0] && i === n - 1 && n > 1 ? COLORS[2] : COLORS[i % COLORS.length],
         path: n === 1 ? 'M150,4 A146,146 0 1,1 149.99,4 Z' : this.arc(a0, a1),
       };
@@ -126,9 +153,8 @@ export class WheelComponent {
   });
 
   readonly dots = computed(() => {
-    const n = Math.max(this.items().length, 1);
-    return Array.from({ length: n }, (_, i) => {
-      const a = ((i * 360) / n - 90) * (Math.PI / 180);
+    return this.slices().map(s => {
+      const a = (s.a0 - 90) * (Math.PI / 180);
       return { x: 150 + 138 * Math.cos(a), y: 150 + 138 * Math.sin(a) };
     });
   });
@@ -137,25 +163,35 @@ export class WheelComponent {
     const items = this.items();
     if (this.spinning() || items.length < 2) return;
 
-    const n = items.length;
-    const seg = 360 / n;
-    const winner = Math.floor(Math.random() * n);
+    const totalWeight = items.reduce((sum, it) => sum + Math.max(it.weight ?? 1, 1), 0);
+    let rnd = Math.random() * totalWeight;
+    let winnerIndex = 0;
+    for (let i = 0; i < items.length; i++) {
+      const w = Math.max(items[i].weight ?? 1, 1);
+      if (rnd < w) {
+        winnerIndex = i;
+        break;
+      }
+      rnd -= w;
+    }
+
+    const slice = this.slices()[winnerIndex];
+    const seg = slice.angle;
     const jitter = (Math.random() - 0.5) * seg * 0.7;
-    // Çark saat yönünde R derece dönünce, üstteki ibre çarkın (360 - R) açısını gösterir.
-    const target = 360 - ((winner + 0.5) * seg + jitter);
+    // Çark saat yönünde R derece dönünce, üstteki ibre (0 derece) çarkın (360 - R) açısını gösterir.
+    const target = 360 - (slice.mid + jitter);
     const current = this.rotation();
     const delta = ((target - current) % 360 + 360) % 360;
     const turns = 5 + Math.floor(Math.random() * 3);
 
     this.spinStart.emit();
     this.spinning.set(true);
-    // Reflow sonrası transition'ın uygulanması için bir frame bekle
     requestAnimationFrame(() => this.rotation.set(current + turns * 360 + delta));
 
     setTimeout(() => {
       this.spinning.set(false);
       navigator.vibrate?.([30, 40, 60]);
-      this.result.emit(items[winner]);
+      this.result.emit(items[winnerIndex]);
     }, SPIN_MS + 80);
   }
 

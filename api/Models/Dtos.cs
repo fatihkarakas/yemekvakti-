@@ -56,8 +56,24 @@ public record VisitDto(int Id, DateTime VisitedAt, string Source, int? Stars, st
 public record HistoryStatsDto(int TotalVisits, int Unrated, double? AverageStars, string? TopRestaurant, int TopRestaurantCount);
 
 public record CreateRestaurantRequest(string Name, double Lat, double Lng, string[]? Cuisines, string[]? MealCards, int? PriceLevel, int? PriceTl, string? Address);
-public record SetPreferenceRequest(int RestaurantId, PreferenceType Type);
-public record PreferenceDto(int RestaurantId, string RestaurantName, PreferenceType Type, DateTime CreatedAt);
+public record SetPreferenceRequest(int RestaurantId, PreferenceType Type, int? Weight = null);
+public record UpdatePreferenceWeightRequest(int Weight);
+public record PreferenceDto(
+    int RestaurantId,
+    string RestaurantName,
+    PreferenceType Type,
+    int Weight,
+    string? Address,
+    string CuisineLabels,
+    string[] Cuisines,
+    string[] MealCards,
+    string[] MealCardLabels,
+    double? GoogleRating,
+    int? PriceTl,
+    double Lat,
+    double Lng,
+    DateTime CreatedAt
+);
 
 // Room & Ekip Oylama DTOs
 public record CreateRoomRequest(string? Title, int[] RestaurantIds);

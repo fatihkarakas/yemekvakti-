@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { Candidate } from '../core/models';
 import { FilterService } from '../core/filter.service';
+import { ApiService } from '../core/api.service';
+import { ToastService } from '../core/toast.service';
 import { StarsComponent } from './stars.component';
 
 /** Öneri / çark sonucu restoran kartı. */
@@ -16,7 +18,9 @@ import { StarsComponent } from './stars.component';
           <h2>{{ r().name }}</h2>
           <p class="muted">{{ r().cuisineLabels || 'Restoran' }}</p>
         </div>
-        @if (r().isFavorite) { <span class="fav" title="Favori">💛</span> }
+        <button type="button" class="fav-btn" [class.is-fav]="r().isFavorite" (click)="toggleFav($event)" [title]="r().isFavorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle'">
+          {{ r().isFavorite ? '💛' : '🤍' }}
+        </button>
       </div>
 
       <!-- Açık Adres ve Yol Tarifi Butonu -->
@@ -160,13 +164,39 @@ import { StarsComponent } from './stars.component';
       &.card-ticket { background: rgba(239, 68, 68, 0.18); border-color: rgba(239, 68, 68, 0.45); color: #fca5a5; }
       &.card-metropol { background: rgba(34, 197, 94, 0.18); border-color: rgba(34, 197, 94, 0.45); color: #86efac; }
     }
+
+    .fav-btn {
+      flex: none;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      &:hover {
+        background: rgba(255, 255, 255, 0.18);
+        transform: scale(1.14);
+      }
+      &:active { transform: scale(0.9); }
+      &.is-fav {
+        border-color: rgba(234, 179, 8, 0.6);
+        background: rgba(234, 179, 8, 0.15);
+      }
+    }
   `,
 })
 export class RestaurantCardComponent {
   protected fs = inject(FilterService);
+  private api = inject(ApiService);
+  private toast = inject(ToastService);
+
   readonly r = input.required<Candidate>();
   readonly reason = input<string | null>(null);
   readonly ai = input(false);
+  readonly favToggled = output<boolean>();
 
   readonly emoji = computed(() => (this.r().cuisines[0] ? this.fs.emoji(this.r().cuisines[0]) : '🍽️'));
   readonly distance = computed(() => {
@@ -182,7 +212,25 @@ export class RestaurantCardComponent {
 
   readonly directionsUrl = computed(() => {
     const c = this.r();
-    // Google Maps Navigation & Directions URL
     return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
   });
+
+  async toggleFav(e: MouseEvent) {
+    e.stopPropagation();
+    const rest = this.r();
+    const next = !rest.isFavorite;
+    try {
+      if (next) {
+        await this.api.setPreference(rest.id, 'Favorite', 1);
+        this.toast.success(`💛 ${rest.name} favorilerine eklendi!`);
+      } else {
+        await this.api.removePreference(rest.id);
+        this.toast.show(`${rest.name} favorilerden çıkarıldı.`);
+      }
+      rest.isFavorite = next;
+      this.favToggled.emit(next);
+    } catch {
+      this.toast.error('Favori güncellenemedi.');
+    }
+  }
 }

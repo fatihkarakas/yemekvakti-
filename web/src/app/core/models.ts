@@ -104,6 +104,16 @@ export interface Preference {
   restaurantId: number;
   restaurantName: string;
   type: PreferenceType;
+  weight: number;
+  address?: string | null;
+  cuisineLabels?: string;
+  cuisines?: string[];
+  mealCards?: string[];
+  mealCardLabels?: string[];
+  googleRating?: number | null;
+  priceTl?: number | null;
+  lat?: number;
+  lng?: number;
   createdAt: string;
 }
 

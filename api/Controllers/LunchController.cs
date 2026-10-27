@@ -144,10 +144,27 @@ public class LunchController(AppDbContext db, RecommendationService rec) : Contr
     public async Task<List<PreferenceDto>> GetPreferences()
     {
         var userId = User.UserId();
-        return await db.Preferences.Include(p => p.Restaurant).Where(p => p.UserId == userId)
+        var list = await db.Preferences.Include(p => p.Restaurant)
+            .Where(p => p.UserId == userId && p.Restaurant != null)
             .OrderByDescending(p => p.CreatedAt)
-            .Select(p => new PreferenceDto(p.RestaurantId, p.Restaurant!.Name, p.Type, p.CreatedAt))
             .ToListAsync();
+
+        return list.Select(p => new PreferenceDto(
+            p.RestaurantId,
+            p.Restaurant!.Name,
+            p.Type,
+            p.Weight <= 0 ? 1 : p.Weight,
+            p.Restaurant.Address,
+            CuisineCatalog.Labels(p.Restaurant.Cuisines),
+            CuisineCatalog.Split(p.Restaurant.Cuisines),
+            MealCardCatalog.Split(p.Restaurant.MealCards),
+            MealCardCatalog.Labels(p.Restaurant.MealCards),
+            p.Restaurant.GoogleRating,
+            p.Restaurant.AvgPriceTl,
+            p.Restaurant.Lat,
+            p.Restaurant.Lng,
+            p.CreatedAt
+        )).ToList();
     }
 
     [HttpPost("preferences")]
@@ -155,8 +172,33 @@ public class LunchController(AppDbContext db, RecommendationService rec) : Contr
     {
         var userId = User.UserId();
         var p = await db.Preferences.FirstOrDefaultAsync(x => x.UserId == userId && x.RestaurantId == req.RestaurantId);
-        if (p is null) db.Preferences.Add(new Preference { UserId = userId, RestaurantId = req.RestaurantId, Type = req.Type });
-        else p.Type = req.Type;
+        var weight = req.Weight.HasValue && req.Weight.Value > 0 ? req.Weight.Value : 1;
+        if (p is null)
+        {
+            db.Preferences.Add(new Preference
+            {
+                UserId = userId,
+                RestaurantId = req.RestaurantId,
+                Type = req.Type,
+                Weight = weight
+            });
+        }
+        else
+        {
+            p.Type = req.Type;
+            if (req.Weight.HasValue) p.Weight = weight;
+        }
+        await db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpPut("preferences/{restaurantId:int}/weight")]
+    public async Task<IActionResult> UpdatePreferenceWeight(int restaurantId, [FromBody] UpdatePreferenceWeightRequest req)
+    {
+        var userId = User.UserId();
+        var p = await db.Preferences.FirstOrDefaultAsync(x => x.UserId == userId && x.RestaurantId == restaurantId);
+        if (p is null) return NotFound("Tercih bulunamadı.");
+        p.Weight = Math.Clamp(req.Weight, 1, 100);
         await db.SaveChangesAsync();
         return NoContent();
     }

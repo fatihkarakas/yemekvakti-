@@ -61,6 +61,7 @@ public class Preference
     public int RestaurantId { get; set; }
     public Restaurant? Restaurant { get; set; }
     public PreferenceType Type { get; set; }
+    public int Weight { get; set; } = 1;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
