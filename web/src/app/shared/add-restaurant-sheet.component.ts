@@ -23,22 +23,22 @@ import { LocationService } from '../core/location.service';
             <div class="field-header">
               <label for="rest-name">Mekan Adı <span class="req">*</span></label>
               @if (isSearching()) {
-                <span class="searching-badge">🔍 Yakınlarda aranıyor...</span>
+                <span class="searching-badge">🔍 Restoran aranıyor...</span>
               }
             </div>
             <input id="rest-name" type="text" [ngModel]="name()" (ngModelChange)="onNameChange($event)" name="name"
                    placeholder="Örn: Ciğerci Bahattin, Koç Cağ Kebabı" required autocomplete="off" />
 
-            <!-- Canlı Arama Açılır Menüsü -->
+            <!-- Canlı Arama Açılır Menüsü (Sadece Restoran Adı ve Adresi) -->
             @if (searchResults().length > 0) {
               <div class="search-dropdown">
-                <div class="dropdown-header">📍 Yakındaki Restoranlar (Tıkla ve Bilgileri Doldur)</div>
+                <div class="dropdown-header">🍽️ Restoran Önerileri (Ad ve Adres)</div>
                 @for (item of searchResults(); track $index) {
                   <button type="button" class="search-item" (click)="selectSuggestion(item)">
                     <div class="item-main">
-                      <span class="item-name">🏪 {{ item.name }}</span>
+                      <span class="item-name">🍽️ {{ item.name }}</span>
                       @if (item.address) {
-                        <span class="item-addr">{{ item.address }}</span>
+                        <span class="item-addr">📍 {{ item.address }}</span>
                       }
                     </div>
                     @if (item.distanceM) {
@@ -133,13 +133,19 @@ import { LocationService } from '../core/location.service';
   `,
   styles: `
     .sheet-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
-      display: flex; align-items: flex-end; justify-content: center; z-index: 50; animation: fadeIn .2s;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+      display: flex; align-items: flex-end; justify-content: center; z-index: 1000; animation: fadeIn .2s;
+      @media (min-width: 640px) { align-items: center; padding: 20px; }
     }
     .sheet {
-      width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp .3s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%; max-width: 540px; max-height: 88vh; overflow-y: auto;
+      background: linear-gradient(180deg, #221c2e, #17131f); border: 1px solid var(--border);
+      border-radius: 28px 28px 0 0; padding: 20px 20px calc(12px + var(--safe-bottom, 0px));
+      animation: slideUp .3s cubic-bezier(0.16, 1, 0.3, 1);
+      @media (min-width: 640px) {
+        border-radius: 28px; max-height: min(85vh, 740px);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+      }
     }
     .sheet-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -150,12 +156,12 @@ import { LocationService } from '../core/location.service';
       &:hover { background: rgba(255,255,255,0.18); }
     }
     h2 { font-size: 20px; font-weight: 700; margin: 0; }
-    .sub { font-size: 13.5px; margin: 6px 0 16px; line-height: 1.4; }
+    .sub { font-size: 13px; margin: 4px 0 12px; line-height: 1.4; }
 
-    .form-body { display: flex; flex-direction: column; gap: 16px; }
+    .form-body { display: flex; flex-direction: column; gap: 12px; }
     .field {
-      display: flex; flex-direction: column; gap: 6px; position: relative;
-      label { font-size: 13px; font-weight: 600; color: #ddd; }
+      display: flex; flex-direction: column; gap: 5px; position: relative;
+      label { font-size: 12.5px; font-weight: 600; color: #ddd; }
       .req { color: var(--danger, #ff4d4f); }
       input[type="text"], input[type="number"] {
         padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
@@ -201,7 +207,8 @@ import { LocationService } from '../core/location.service';
       font-size: 13.5px; font-weight: 600; color: #fff;
     }
     .item-addr {
-      font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px;
+      font-size: 12px; color: #bbb; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
     .item-dist {
       font-size: 11.5px; font-weight: 700; color: #22c55e; white-space: nowrap;
@@ -213,7 +220,7 @@ import { LocationService } from '../core/location.service';
     }
 
     .cuisine-chips {
-      display: flex; flex-wrap: wrap; gap: 6px; max-height: 140px; overflow-y: auto; padding: 2px;
+      display: flex; flex-wrap: wrap; gap: 6px; max-height: 85px; overflow-y: auto; padding: 2px;
       .chip {
         display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 99px;
         background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ccc;
@@ -261,10 +268,12 @@ import { LocationService } from '../core/location.service';
     .err-msg { color: #ff6b6b; font-size: 13px; margin: 0; }
 
     .actions {
-      display: flex; gap: 10px; margin-top: 6px;
-      .btn { flex: 1; padding: 13px; border-radius: 14px; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+      position: sticky; bottom: -2px; background: #17131ff2; backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px); padding-top: 10px; margin-top: 6px; z-index: 10;
+      border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px;
+      .btn { flex: 1; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
       .btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #ccc; }
-      .btn-primary { background: linear-gradient(135deg, #ff7a18, #af002d); border: none; color: #fff; }
+      .btn-primary { background: linear-gradient(135deg, #ff7a18, #af002d); border: none; color: #fff; box-shadow: 0 4px 16px rgba(255,122,24,0.3); }
     }
 
     @keyframes pulse {
@@ -316,15 +325,15 @@ export class AddRestaurantSheetComponent {
       const c = this.loc.coords();
       const [backendResults, geoResults] = await Promise.all([
         this.api.searchRestaurants(query, c?.lat, c?.lng).catch(() => []),
-        this.loc.searchAddress(query).catch(() => [])
+        this.loc.searchRestaurantsOnly(query, c?.lat, c?.lng).catch(() => [])
       ]);
 
       const combined: any[] = [];
       const seen = new Set<string>();
 
-      // Backend (Google / DB)
+      // 1. Backend DB / Google Places (sadece restoran adına göre)
       for (const r of (backendResults || [])) {
-        const key = r.name.toLowerCase();
+        const key = r.name.toLowerCase().trim();
         if (!seen.has(key)) {
           seen.add(key);
           combined.push({
@@ -333,21 +342,20 @@ export class AddRestaurantSheetComponent {
             lat: r.lat,
             lng: r.lng,
             cuisines: r.cuisines || [],
-            source: 'Google / Veritabanı',
+            source: 'Veritabanı',
             distanceM: r.distanceM
           });
         }
       }
 
-      // Geocoder / Nominatim POI
+      // 2. OpenStreetMap SADECE Restoranlar (adı ve adresi)
       for (const g of (geoResults || [])) {
-        const cleanName = g.label.split(',')[0].trim();
-        const key = cleanName.toLowerCase();
+        const key = g.name.toLowerCase().trim();
         if (!seen.has(key)) {
           seen.add(key);
           combined.push({
-            name: cleanName,
-            address: g.label,
+            name: g.name,
+            address: g.address || '',
             lat: g.lat,
             lng: g.lng,
             cuisines: [],
@@ -357,7 +365,7 @@ export class AddRestaurantSheetComponent {
         }
       }
 
-      this.searchResults.set(combined.slice(0, 6));
+      this.searchResults.set(combined.slice(0, 8));
     } finally {
       this.isSearching.set(false);
     }

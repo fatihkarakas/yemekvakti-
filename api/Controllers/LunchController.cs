@@ -229,28 +229,7 @@ public class LunchController(AppDbContext db, RecommendationService rec, PlacesS
         var userLat = lat ?? 39.869;
         var userLng = lng ?? 32.748;
 
-        // 1. Veritabanında doğrudan isim, mutfak ve adres ile ara
-        var dbList = await db.Restaurants
-            .Where(r => EF.Functions.Like(r.Name, $"%{query}%") ||
-                        EF.Functions.Like(r.Address ?? "", $"%{query}%") ||
-                        EF.Functions.Like(r.Cuisines, $"%{query}%"))
-            .ToListAsync(ct);
-
-        // Kelime kelime ara (örn: "street burger" -> "street" veya "burger")
-        var words = query.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (dbList.Count < 3 && words.Length > 1)
-        {
-            var extra = await db.Restaurants
-                .Where(r => words.Any(w => EF.Functions.Like(r.Name, $"%{w}%") || EF.Functions.Like(r.Cuisines, $"%{w}%")))
-                .ToListAsync(ct);
-
-            foreach (var ex in extra)
-            {
-                if (dbList.All(x => x.Id != ex.Id)) dbList.Add(ex);
-            }
-        }
-
-        // 1. Google Places Text Search (API etkinse yeni yerleri çeker)
+        // 1. Google Places Text Search (API etkinse yeni restoranları çeker)
         if (places.Enabled)
         {
             try
@@ -258,6 +237,25 @@ public class LunchController(AppDbContext db, RecommendationService rec, PlacesS
                 await places.SearchTextAndCacheAsync(query, userLat, userLng, ct);
             }
             catch {}
+        }
+
+        // 2. Veritabanında SADECE restoran adına göre ara
+        var dbList = await db.Restaurants
+            .Where(r => EF.Functions.Like(r.Name, $"%{query}%"))
+            .ToListAsync(ct);
+
+        // Kelime kelime ara (örn: "kebapçı salih" -> "salih")
+        var words = query.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (dbList.Count < 3 && words.Length > 1)
+        {
+            var extra = await db.Restaurants
+                .Where(r => words.Any(w => EF.Functions.Like(r.Name, $"%{w}%")))
+                .ToListAsync(ct);
+
+            foreach (var ex in extra)
+            {
+                if (dbList.All(x => x.Id != ex.Id)) dbList.Add(ex);
+            }
         }
 
         var userId = User.UserId();

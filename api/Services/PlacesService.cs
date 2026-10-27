@@ -101,6 +101,7 @@ public class PlacesService(HttpClient http, IConfiguration config, AppDbContext 
             {
                 textQuery = query,
                 languageCode = "tr",
+                includedType = "restaurant",
                 locationBias = new
                 {
                     circle = new

@@ -153,6 +153,74 @@ export class LocationService {
     return null;
   }
 
+  /** Yalnızca Restoran / Yemek Mekanı İsmine Göre Arama (Ad ve Adres Döndürür) */
+  async searchRestaurantsOnly(query: string, userLat?: number, userLng?: number): Promise<Array<{ name: string; address: string; lat: number; lng: number }>> {
+    if (!query.trim() || query.trim().length < 2) return [];
+    const q = query.trim();
+    const results: Array<{ name: string; address: string; lat: number; lng: number }> = [];
+    const seen = new Set<string>();
+
+    const FOOD_AMENITIES = new Set([
+      'restaurant', 'fast_food', 'cafe', 'food_court', 'bakery', 'bistro', 'bar', 'pub', 'canteen', 'ice_cream', 'bbq'
+    ]);
+
+    const buildUrl = (searchTerm: string) => {
+      let u = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=tr&addressdetails=1&limit=10&q=${encodeURIComponent(searchTerm)}`;
+      if (userLat !== undefined && userLng !== undefined) {
+        const d = 0.40;
+        u += `&viewbox=${userLng - d},${userLat + d},${userLng + d},${userLat - d}`;
+      }
+      return u;
+    };
+
+    try {
+      const urls = [buildUrl(q)];
+      const lower = q.toLowerCase();
+      if (!lower.includes('restoran') && !lower.includes('cafe') && !lower.includes('kebap') && !lower.includes('lokanta')) {
+        urls.push(buildUrl(q + ' restoran'));
+      }
+
+      const responses = await Promise.all(
+        urls.map(u => firstValueFrom(this.http.get<any[]>(u, { headers: { 'Accept-Language': 'tr' } })).catch(() => []))
+      );
+
+      for (const rawList of responses) {
+        for (const item of (rawList || [])) {
+          const isFood = (item.class === 'amenity' && FOOD_AMENITIES.has(item.type)) || FOOD_AMENITIES.has(item.type);
+          if (!isFood) continue;
+
+          const a = item.address || {};
+          const name = item.name || a.amenity || a.restaurant || a.fast_food || a.cafe || item.display_name.split(',')[0].trim();
+          const cleanNameKey = name.toLowerCase().trim();
+
+          if (seen.has(cleanNameKey)) continue;
+          seen.add(cleanNameKey);
+
+          const street = a.road || a.pedestrian || a.street;
+          const houseNo = a.house_number ? `No: ${a.house_number}` : null;
+          const roadPart = [street, houseNo].filter(Boolean).join(' ');
+          const neighborhood = a.suburb || a.neighbourhood || a.quarter;
+          const district = a.town || a.district || a.city_district || a.county;
+          const city = a.province || a.city;
+
+          const addressParts = [roadPart, neighborhood, district, city].filter(Boolean);
+          const cleanAddress = addressParts.length > 0
+            ? addressParts.join(', ')
+            : (item.display_name?.split(',').slice(1).join(',').trim() || item.display_name);
+
+          results.push({
+            name,
+            address: cleanAddress,
+            lat: parseFloat(item.lat),
+            lng: parseFloat(item.lon)
+          });
+        }
+      }
+    } catch {}
+
+    return results;
+  }
+
   private async reverseGeocode(c: Coords) {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${c.lat}&lon=${c.lng}&zoom=16&addressdetails=1`;
