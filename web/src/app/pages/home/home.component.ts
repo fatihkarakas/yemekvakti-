@@ -9,8 +9,8 @@ import { RestaurantCardComponent } from '../../shared/restaurant-card.component'
 import { WheelComponent, WheelItem } from '../../shared/wheel.component';
 import { CuisineSheetComponent } from '../../shared/cuisine-sheet.component';
 import { RateSheetComponent } from '../../shared/rate-sheet.component';
+import { LocationSheetComponent } from '../../shared/location-sheet.component';
 import { burstConfetti } from '../../shared/confetti';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +19,7 @@ import { RouterLink } from '@angular/router';
     WheelComponent,
     CuisineSheetComponent,
     RateSheetComponent,
+    LocationSheetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -50,11 +51,10 @@ import { RouterLink } from '@angular/router';
 
       <!-- Konum & Filtre Özeti -->
       <div class="status-bar">
-        <span class="status-pill">
-          @if (loc.status() === 'locating') { 🔄 Konum alınıyor... }
-          @else if (loc.status() === 'ok') { 📍 Mevcut konumun }
-          @else { 📍 Yakın çevre }
-        </span>
+        <button id="change-location-btn" type="button" class="status-pill loc-pill" (click)="showLocationSheet.set(true)">
+          <span class="loc-text">📍 {{ loc.addressLabel() }}</span>
+          <span class="edit-hint">✏️</span>
+        </button>
         <span class="status-pill">
           📏 {{ fs.filters().radius >= 1000 ? (fs.filters().radius / 1000).toFixed(1) + ' km' : fs.filters().radius + ' m' }}
         </span>
@@ -152,6 +152,11 @@ import { RouterLink } from '@angular/router';
         <app-cuisine-sheet (closed)="showCuisineSheet.set(false)" (applied)="onFiltersApplied()" />
       }
 
+      <!-- Bottom Sheet: Konum / Adres Seçimi -->
+      @if (showLocationSheet()) {
+        <app-location-sheet (closed)="showLocationSheet.set(false)" (selected)="onLocationChanged()" />
+      }
+
       <!-- Bottom Sheet: Ziyareti Puanla & Not Al -->
       @if (activeRateVisit(); as v) {
         <app-rate-sheet [visit]="v" (closed)="activeRateVisit.set(null)" (saved)="onVisitRated($event)" />
@@ -211,6 +216,20 @@ import { RouterLink } from '@angular/router';
       border: 1px solid var(--border);
       color: var(--muted);
       white-space: nowrap;
+    }
+    .loc-pill {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+      color: var(--text);
+      border-color: hsla(22, 100%, 62%, 0.4);
+      background: hsla(22, 100%, 62%, 0.1);
+      &:hover { background: hsla(22, 100%, 62%, 0.18); }
+      &:active { transform: scale(0.96); }
+      .loc-text { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+      .edit-hint { font-size: 11px; }
     }
     .active-tag {
       background: hsla(22, 100%, 62%, 0.15);
@@ -298,11 +317,21 @@ export class HomeComponent implements OnInit {
   readonly wheelWinner = signal<Candidate | null>(null);
 
   readonly showCuisineSheet = signal(false);
+  readonly showLocationSheet = signal(false);
   readonly activeRateVisit = signal<Visit | null>(null);
 
   async ngOnInit() {
     await this.fs.load();
     await this.loadSuggestion();
+  }
+
+  onLocationChanged() {
+    this.showLocationSheet.set(false);
+    if (this.mode() === 'suggest') {
+      this.loadSuggestion();
+    } else {
+      this.loadCandidates();
+    }
   }
 
   setMode(m: 'suggest' | 'wheel') {

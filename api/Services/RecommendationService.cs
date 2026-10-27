@@ -12,7 +12,7 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         q.Radius = Math.Clamp(q.Radius, 200, 5000);
         var nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
 
-        if (nearby.Count == 0 && !places.Enabled && env.IsDevelopment() && config.GetValue<bool>("SeedDemoRestaurants"))
+        if (nearby.Count == 0 && (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false)))
         {
             await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
             nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
