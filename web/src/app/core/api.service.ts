@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
   AuthConfig, Candidate, CandidateQuery, Cuisine, HistoryStats, LoginResponse,
-  Preference, PreferenceType, Room, SuggestionResponse, Visit,
+  MealCard, Preference, PreferenceType, Room, SuggestionResponse, Visit,
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -22,9 +22,10 @@ export class ApiService {
 
   // Öneri
   cuisines() { return this.get<Cuisine[]>('/api/cuisines'); }
+  mealCards() { return this.get<MealCard[]>('/api/meal-cards'); }
   candidates(q: CandidateQuery) { return this.post<Candidate[]>('/api/candidates', q); }
   suggest(q: CandidateQuery) { return this.post<SuggestionResponse>('/api/suggest', q); }
-  addRestaurant(r: { name: string; lat: number; lng: number; cuisines: string[]; priceLevel: number | null; address?: string }) {
+  addRestaurant(r: { name: string; lat: number; lng: number; cuisines?: string[]; mealCards?: string[]; priceLevel?: number | null; priceTl?: number; address?: string }) {
     return this.post<number>('/api/restaurants', r);
   }
 

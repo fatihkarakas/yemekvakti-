@@ -327,3 +327,28 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261027070636_AddMealCards'
+)
+BEGIN
+    ALTER TABLE [yv_Restaurants] ADD [MealCards] nvarchar(max) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261027070636_AddMealCards'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261027070636_AddMealCards', N'8.0.11');
+END;
+GO
+
+COMMIT;
+GO
+

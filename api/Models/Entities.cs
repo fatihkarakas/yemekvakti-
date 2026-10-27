@@ -26,6 +26,8 @@ public class Restaurant
     public int? PriceLevel { get; set; }
     /// <summary>Tahmini veya bilinen ortalama kişi başı TL tutarı.</summary>
     public int? AvgPriceTl { get; set; }
+    /// <summary>Geçerli yemek kartları (virgülle ayrılmış: multinet,setcard,sodexo,ticket,metropol)</summary>
+    public string? MealCards { get; set; }
     public double? GoogleRating { get; set; }
     public int? GoogleRatingCount { get; set; }
     public string? MapsUrl { get; set; }

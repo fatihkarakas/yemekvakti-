@@ -17,7 +17,7 @@ const PRESETS: PricePreset[] = [
   { label: '1000+ ₺', min: 1000, max: null },
 ];
 
-/** "Ne tarz bir şey olsun?" çoktan seçmeli filtre sheet'i. */
+/** "Ne tarz bir şey olsun?" çoktan seçmeli filtre sheet'i + Yemek Kartı + Bütçe + Mesafe. */
 @Component({
   selector: 'app-cuisine-sheet',
   imports: [FormsModule],
@@ -26,7 +26,7 @@ const PRESETS: PricePreset[] = [
     <div class="sheet-backdrop" (click)="closed.emit()">
       <div class="sheet" (click)="$event.stopPropagation()" role="dialog" aria-labelledby="cuisine-title">
         <h2 id="cuisine-title">{{ title() }}</h2>
-        <p class="muted sub">Birden fazla seçebilirsin. Hiç seçmezsen hepsi gelir.</p>
+        <p class="muted sub">Birden fazla filtre seçebilirsin. Seçmediklerin için tümü gösterilir.</p>
 
         <!-- Yemek Tarzı Çipleri -->
         <div class="grid">
@@ -34,6 +34,27 @@ const PRESETS: PricePreset[] = [
             <button type="button" class="opt" [id]="'cuisine-' + c.code" [class.active]="draft().cuisines.includes(c.code)" (click)="toggle(c.code)">
               <span class="emo">{{ c.emoji }}</span>
               <span>{{ c.label }}</span>
+            </button>
+          }
+        </div>
+
+        <!-- Yemek Kartı ile Ödeme Bölümü -->
+        <div class="row-head">
+          <span>💳 Geçerli Yemek Kartı</span>
+          <strong class="highlight-val">
+            @if (draft().mealCards.length === 0) {
+              Farketmez (Tümü)
+            } @else {
+              {{ draft().mealCards.length }} kart seçildi
+            }
+          </strong>
+        </div>
+        <p class="sub-hint muted">Sadece bu yemek kartını kabul eden restoranları listele:</p>
+        <div class="meal-card-grid">
+          @for (m of fs.allMealCards(); track m.code) {
+            <button type="button" class="meal-btn" [class.active]="draft().mealCards.includes(m.code)" (click)="toggleMealCard(m.code)">
+              <span class="meal-emo">{{ m.emoji }}</span>
+              <span>{{ m.label }}</span>
             </button>
           }
         </div>
@@ -122,6 +143,7 @@ const PRESETS: PricePreset[] = [
   styles: `
     h2 { font-size: 24px; }
     .sub { margin: 6px 0 18px; font-size: 14px; }
+    .sub-hint { font-size: 12.5px; margin: 0 0 10px; }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .opt {
       display: flex; align-items: center; gap: 10px;
@@ -137,6 +159,24 @@ const PRESETS: PricePreset[] = [
       }
     }
     .emo { font-size: 24px; }
+
+    .meal-card-grid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;
+    }
+    .meal-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 14px; border-radius: 99px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: #ccc; font: 500 13px 'Outfit', sans-serif; cursor: pointer; transition: all .2s;
+      &:hover { background: rgba(255,255,255,0.12); color: #fff; }
+      &.active {
+        background: linear-gradient(135deg, hsla(270, 70%, 55%, 0.3), hsla(220, 80%, 55%, 0.3));
+        border-color: #a855f7; color: #fff; font-weight: 600;
+        box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25);
+      }
+    }
+    .meal-emo { font-size: 16px; }
+
     .row-head { display: flex; justify-content: space-between; margin: 22px 4px 8px; font-size: 14px; color: var(--muted); strong { color: var(--text); } }
     .highlight-val { color: var(--accent-1) !important; font-weight: 700; }
     .range-labels { display: flex; justify-content: space-between; font-size: 11px; margin-top: 4px; padding: 0 2px; }
@@ -170,6 +210,11 @@ export class CuisineSheetComponent {
     this.patch({ cuisines: cur.includes(code) ? cur.filter((c) => c !== code) : [...cur, code] });
   }
 
+  toggleMealCard(code: string) {
+    const cur = this.draft().mealCards ?? [];
+    this.patch({ mealCards: cur.includes(code) ? cur.filter((c) => c !== code) : [...cur, code] });
+  }
+
   patch(p: Partial<Filters>) {
     this.draft.update((d) => ({ ...d, ...p }));
   }
@@ -184,7 +229,7 @@ export class CuisineSheetComponent {
   }
 
   clearFilters() {
-    this.patch({ cuisines: [], minPriceTl: null, maxPriceTl: null, maxPrice: null, radius: 2500 });
+    this.patch({ cuisines: [], mealCards: [], minPriceTl: null, maxPriceTl: null, maxPrice: null, radius: 2500 });
   }
 
   apply() {

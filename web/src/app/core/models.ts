@@ -23,11 +23,19 @@ export interface Cuisine {
   emoji: string;
 }
 
+export interface MealCard {
+  code: string;
+  label: string;
+  color: string;
+  emoji: string;
+}
+
 export interface CandidateQuery {
   lat: number;
   lng: number;
   radius: number;
   cuisines?: string[];
+  mealCards?: string[];
   minPriceTl?: number | null;
   maxPriceTl?: number | null;
   maxPrice?: number | null;
@@ -45,6 +53,8 @@ export interface Candidate {
   distanceM: number;
   cuisines: string[];
   cuisineLabels: string;
+  mealCards: string[];
+  mealCardLabels: string[];
   priceLevel: number | null;
   priceTl: number | null;
   googleRating: number | null;

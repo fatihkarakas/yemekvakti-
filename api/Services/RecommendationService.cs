@@ -12,10 +12,15 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         q.Radius = Math.Clamp(q.Radius, 200, 20000);
         var nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
 
-        if (nearby.Count == 0 && (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false)))
+        if (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false))
         {
-            await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
-            nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
+            var totalCount = await db.Restaurants.CountAsync(ct);
+            var needsSeed = await db.Restaurants.AnyAsync(r => r.MealCards == null, ct);
+            if (needsSeed || totalCount < 50 || nearby.Count < 6)
+            {
+                await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
+                nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
+            }
         }
 
         var ids = nearby.Select(r => r.Id).ToList();
@@ -26,14 +31,18 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
             .ToDictionaryAsync(p => p.RestaurantId, p => p.Type, ct);
 
         var wanted = (q.Cuisines ?? []).Where(CuisineCatalog.Codes.Contains).ToHashSet();
+        var wantedCards = (q.MealCards ?? []).Where(MealCardCatalog.Codes.Contains).ToHashSet();
         var exclude = (q.ExcludeIds ?? []).ToHashSet();
         var avoidSince = DateTime.UtcNow.Date.AddDays(-q.AvoidDays);
         var rnd = Random.Shared;
 
         var all = nearby
+            .GroupBy(r => r.Name.Trim().ToLowerInvariant())
+            .Select(g => g.First())
             .Where(r => !exclude.Contains(r.Id))
             .Where(r => !prefs.TryGetValue(r.Id, out var t) || t != PreferenceType.Blacklist)
             .Where(r => wanted.Count == 0 || CuisineCatalog.Split(r.Cuisines).Any(wanted.Contains))
+            .Where(r => wantedCards.Count == 0 || MealCardCatalog.Split(r.MealCards).Any(wantedCards.Contains))
             .Where(r =>
             {
                 var est = EstimatePriceTl(r);
@@ -52,18 +61,21 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                 var last = rv.FirstOrDefault();
                 var recent = last is not null && last.VisitedAt >= avoidSince;
 
+                // Çeşitlilik ve canlılık için rastgelelik katsayısı
                 var score = (r.GoogleRating ?? 3.8) / 5.0 * 2.0
                             + (my.HasValue ? (my.Value - 3) * 0.6 : 0)
                             + (fav ? 0.8 : 0)
-                            + (rv.Count == 0 ? 0.25 : 0)
-                            - dist / q.Radius
-                            - (recent ? 2.5 : 0)
-                            + rnd.NextDouble() * 0.5;
+                            + (rv.Count == 0 ? 0.4 : 0)
+                            - dist / (q.Radius * 1.5)
+                            - (recent ? 3.0 : 0)
+                            + rnd.NextDouble() * 1.8;
 
                 var priceTl = EstimatePriceTl(r);
 
                 return new CandidateDto(r.Id, r.Name, r.Address, r.Lat, r.Lng, (int)dist,
-                    CuisineCatalog.Split(r.Cuisines), CuisineCatalog.Labels(r.Cuisines), r.PriceLevel, priceTl,
+                    CuisineCatalog.Split(r.Cuisines), CuisineCatalog.Labels(r.Cuisines),
+                    MealCardCatalog.Split(r.MealCards), MealCardCatalog.Labels(r.MealCards),
+                    r.PriceLevel, priceTl,
                     r.GoogleRating, r.GoogleRatingCount, my, rv.Count, last?.VisitedAt,
                     rv.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.Note))?.Note,
                     fav, r.MapsUrl ?? $"https://www.google.com/maps/search/?api=1&query={r.Lat},{r.Lng}",

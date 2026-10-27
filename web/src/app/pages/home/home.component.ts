@@ -10,6 +10,7 @@ import { WheelComponent, WheelItem } from '../../shared/wheel.component';
 import { CuisineSheetComponent } from '../../shared/cuisine-sheet.component';
 import { RateSheetComponent } from '../../shared/rate-sheet.component';
 import { LocationSheetComponent } from '../../shared/location-sheet.component';
+import { AddRestaurantSheetComponent } from '../../shared/add-restaurant-sheet.component';
 import { burstConfetti } from '../../shared/confetti';
 
 @Component({
@@ -20,6 +21,7 @@ import { burstConfetti } from '../../shared/confetti';
     CuisineSheetComponent,
     RateSheetComponent,
     LocationSheetComponent,
+    AddRestaurantSheetComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -31,6 +33,9 @@ import { burstConfetti } from '../../shared/confetti';
           <h1>Yemek<span class="gradient-text">Vakti</span></h1>
         </div>
         <div class="header-actions">
+          <button id="add-restaurant-btn" type="button" class="btn btn-sm btn-ghost add-btn" (click)="showAddSheet.set(true)" title="Yeni Restoran / Mekan Ekle">
+            ➕ Mekan Ekle
+          </button>
           <button id="filter-btn" type="button" class="btn btn-sm" [class.btn-primary]="hasActiveFilters()" (click)="showCuisineSheet.set(true)">
             🎯 Filtrele @if (hasActiveFilters()) { ({{ filterCount() }}) }
           </button>
@@ -61,6 +66,11 @@ import { burstConfetti } from '../../shared/confetti';
         @if (fs.filters().cuisines.length > 0) {
           <span class="status-pill active-tag">
             {{ fs.filters().cuisines.length }} tarz seçili
+          </span>
+        }
+        @if (fs.filters().mealCards.length > 0) {
+          <span class="status-pill active-tag">
+            💳 {{ fs.filters().mealCards.length }} kart filtreli
           </span>
         }
       </div>
@@ -164,6 +174,11 @@ import { burstConfetti } from '../../shared/confetti';
       <!-- Bottom Sheet: Ziyareti Puanla & Not Al -->
       @if (activeRateVisit(); as v) {
         <app-rate-sheet [visit]="v" (closed)="activeRateVisit.set(null)" (saved)="onVisitRated($event)" />
+      }
+
+      <!-- Bottom Sheet: Yeni Mekan Ekle -->
+      @if (showAddSheet()) {
+        <app-add-restaurant-sheet (closed)="showAddSheet.set(false)" (saved)="onRestaurantAdded()" />
       }
     </main>
   `,
@@ -322,6 +337,7 @@ export class HomeComponent implements OnInit {
 
   readonly showCuisineSheet = signal(false);
   readonly showLocationSheet = signal(false);
+  readonly showAddSheet = signal(false);
   readonly activeRateVisit = signal<Visit | null>(null);
 
   async ngOnInit() {
@@ -338,6 +354,15 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  onRestaurantAdded() {
+    this.toast.show('Mekan başarıyla eklendi! Listeye dahil edildi.', 'success');
+    if (this.mode() === 'suggest') {
+      this.loadSuggestion();
+    } else {
+      this.loadCandidates();
+    }
+  }
+
   setMode(m: 'suggest' | 'wheel') {
     this.mode.set(m);
     if (m === 'wheel' && this.wheelItems().length === 0) {
@@ -347,12 +372,13 @@ export class HomeComponent implements OnInit {
 
   hasActiveFilters() {
     const f = this.fs.filters();
-    return f.cuisines.length > 0 || f.minPriceTl !== null || f.maxPriceTl !== null || f.maxPrice !== null;
+    return (f.cuisines?.length ?? 0) > 0 || (f.mealCards?.length ?? 0) > 0 || f.minPriceTl !== null || f.maxPriceTl !== null || f.maxPrice !== null;
   }
 
   filterCount() {
-    let c = this.fs.filters().cuisines.length;
-    if (this.fs.filters().minPriceTl !== null || this.fs.filters().maxPriceTl !== null || this.fs.filters().maxPrice !== null) c++;
+    const f = this.fs.filters();
+    let c = (f.cuisines?.length ?? 0) + (f.mealCards?.length ?? 0);
+    if (f.minPriceTl !== null || f.maxPriceTl !== null || f.maxPrice !== null) c++;
     return c;
   }
 
@@ -368,6 +394,7 @@ export class HomeComponent implements OnInit {
         lng: coords.lng,
         radius: currentFilters.radius,
         cuisines: currentFilters.cuisines,
+        mealCards: currentFilters.mealCards,
         minPriceTl: currentFilters.minPriceTl,
         maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,
@@ -395,6 +422,7 @@ export class HomeComponent implements OnInit {
         lng: coords.lng,
         radius: currentFilters.radius,
         cuisines: currentFilters.cuisines,
+        mealCards: currentFilters.mealCards,
         minPriceTl: currentFilters.minPriceTl,
         maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,

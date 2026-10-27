@@ -47,6 +47,18 @@ import { StarsComponent } from './stars.component';
         @else { <span class="tag new">🆕 Hiç gitmedin</span> }
       </div>
 
+      <!-- Yemek Kartı Rozetleri -->
+      @if (r().mealCards && r().mealCards.length > 0) {
+        <div class="meal-cards-row">
+          <span class="meal-cards-title muted">Yemek Kartı:</span>
+          @for (card of r().mealCards; track card) {
+            <span class="meal-badge" [class]="'card-' + card">
+              {{ fs.mealCardEmoji(card) }} {{ fs.mealCardLabel(card) }}
+            </span>
+          }
+        </div>
+      }
+
       @if (r().myRating) {
         <div class="mine">
           <span class="muted">Senin puanın</span>
@@ -133,10 +145,25 @@ import { StarsComponent } from './stars.component';
     .tag.new { color: var(--success); }
     .mine { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; }
     .note { margin-top: 8px; font-size: 14px; color: var(--muted); font-style: italic; }
+
+    .meal-cards-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px;
+    }
+    .meal-cards-title { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; margin-right: 2px; }
+    .meal-badge {
+      display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px;
+      font-size: 11.5px; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: #e2e8f0;
+      &.card-multinet { background: rgba(139, 92, 246, 0.18); border-color: rgba(139, 92, 246, 0.45); color: #c4b5fd; }
+      &.card-setcard { background: rgba(234, 179, 8, 0.18); border-color: rgba(234, 179, 8, 0.45); color: #fde047; }
+      &.card-sodexo { background: rgba(59, 130, 246, 0.18); border-color: rgba(59, 130, 246, 0.45); color: #93c5fd; }
+      &.card-ticket { background: rgba(239, 68, 68, 0.18); border-color: rgba(239, 68, 68, 0.45); color: #fca5a5; }
+      &.card-metropol { background: rgba(34, 197, 94, 0.18); border-color: rgba(34, 197, 94, 0.45); color: #86efac; }
+    }
   `,
 })
 export class RestaurantCardComponent {
-  private fs = inject(FilterService);
+  protected fs = inject(FilterService);
   readonly r = input.required<Candidate>();
   readonly reason = input<string | null>(null);
   readonly ai = input(false);

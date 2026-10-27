@@ -7,6 +7,7 @@ public record UserDto(int Id, string Name, string Email, string? PhotoUrl);
 public record LoginResponse(string Token, UserDto User);
 
 public record CuisineDto(string Code, string Label, string Emoji);
+public record MealCardDto(string Code, string Label, string Color, string Emoji);
 
 public class CandidateQuery
 {
@@ -14,6 +15,7 @@ public class CandidateQuery
     public double Lng { get; set; }
     public int Radius { get; set; } = 1500;
     public string[]? Cuisines { get; set; }
+    public string[]? MealCards { get; set; }
     public int? MinPriceTl { get; set; }
     public int? MaxPriceTl { get; set; }
     public int? MaxPrice { get; set; }
@@ -32,6 +34,8 @@ public record CandidateDto(
     int DistanceM,
     string[] Cuisines,
     string CuisineLabels,
+    string[] MealCards,
+    string[] MealCardLabels,
     int? PriceLevel,
     int? PriceTl,
     double? GoogleRating,
@@ -51,7 +55,7 @@ public record RateVisitRequest(int? Stars, string? Note);
 public record VisitDto(int Id, DateTime VisitedAt, string Source, int? Stars, string? Note, DateTime? RatedAt, int RestaurantId, string RestaurantName, string? Address, string CuisineLabels, string? MapsUrl);
 public record HistoryStatsDto(int TotalVisits, int Unrated, double? AverageStars, string? TopRestaurant, int TopRestaurantCount);
 
-public record CreateRestaurantRequest(string Name, double Lat, double Lng, string[]? Cuisines, int? PriceLevel, string? Address);
+public record CreateRestaurantRequest(string Name, double Lat, double Lng, string[]? Cuisines, string[]? MealCards, int? PriceLevel, int? PriceTl, string? Address);
 public record SetPreferenceRequest(int RestaurantId, PreferenceType Type);
 public record PreferenceDto(int RestaurantId, string RestaurantName, PreferenceType Type, DateTime CreatedAt);
 

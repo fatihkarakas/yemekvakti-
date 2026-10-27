@@ -1,11 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
-import { Cuisine } from './models';
+import { Cuisine, MealCard } from './models';
 
 const FILTER_KEY = 'yv.filters';
 
 export interface Filters {
   cuisines: string[];
+  mealCards: string[];
   radius: number;
   minPriceTl: number | null;
   maxPriceTl: number | null;
@@ -13,13 +14,16 @@ export interface Filters {
   avoidDays: number;
 }
 
-/** Seçili yemek tarzı / mesafe / bütçe filtreleri (kalıcı). */
+/** Seçili yemek tarzı / yemek kartı / mesafe / bütçe filtreleri (kalıcı). */
 @Injectable({ providedIn: 'root' })
 export class FilterService {
   private api = inject(ApiService);
   readonly all = signal<Cuisine[]>([]);
+  readonly allMealCards = signal<MealCard[]>([]);
+
   readonly filters = signal<Filters>({
     cuisines: [],
+    mealCards: [],
     radius: 1500,
     minPriceTl: null,
     maxPriceTl: null,
@@ -29,7 +33,12 @@ export class FilterService {
   });
 
   async load() {
-    if (this.all().length === 0) this.all.set(await this.api.cuisines());
+    if (this.all().length === 0) {
+      try { this.all.set(await this.api.cuisines()); } catch {}
+    }
+    if (this.allMealCards().length === 0) {
+      try { this.allMealCards.set(await this.api.mealCards()); } catch {}
+    }
   }
 
   set(f: Partial<Filters>) {
@@ -39,4 +48,9 @@ export class FilterService {
 
   emoji(code: string) { return this.all().find((c) => c.code === code)?.emoji ?? '🍽️'; }
   label(code: string) { return this.all().find((c) => c.code === code)?.label ?? code; }
+
+  mealCard(code: string) { return this.allMealCards().find(m => m.code === code); }
+  mealCardLabel(code: string) { return this.mealCard(code)?.label ?? code; }
+  mealCardColor(code: string) { return this.mealCard(code)?.color ?? '#8b5cf6'; }
+  mealCardEmoji(code: string) { return this.mealCard(code)?.emoji ?? '💳'; }
 }

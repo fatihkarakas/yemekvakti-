@@ -16,6 +16,11 @@ public class LunchController(AppDbContext db, RecommendationService rec) : Contr
     [HttpGet("cuisines")]
     public IEnumerable<CuisineDto> Cuisines() => CuisineCatalog.All.Select(c => new CuisineDto(c.Code, c.Label, c.Emoji));
 
+    [AllowAnonymous]
+    [HttpGet("meal-cards")]
+    public IEnumerable<MealCardDto> MealCards() =>
+        MealCardCatalog.All.Select(m => new MealCardDto(m.Code, m.Label, m.Color, m.Emoji));
+
     /// <summary>Çark için aday restoranlar.</summary>
     [HttpPost("candidates")]
     public Task<List<CandidateDto>> Candidates(CandidateQuery q, CancellationToken ct) =>
@@ -38,8 +43,13 @@ public class LunchController(AppDbContext db, RecommendationService rec) : Contr
             Lng = req.Lng,
             Address = req.Address,
             PriceLevel = req.PriceLevel is >= 1 and <= 4 ? req.PriceLevel : null,
+            AvgPriceTl = req.PriceTl,
             Cuisines = string.Join(',', (req.Cuisines ?? []).Where(CuisineCatalog.Codes.Contains)),
-            CreatedByUserId = User.UserId()
+            MealCards = string.Join(',', (req.MealCards ?? []).Where(MealCardCatalog.Codes.Contains)),
+            CreatedByUserId = User.UserId(),
+            GoogleRating = 4.6,
+            GoogleRatingCount = 10,
+            MapsUrl = $"https://www.google.com/maps/search/?api=1&query={req.Lat},{req.Lng}"
         };
         db.Restaurants.Add(r);
         await db.SaveChangesAsync();

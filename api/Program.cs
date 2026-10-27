@@ -7,6 +7,7 @@ using YemekVakti.Api.Data;
 using YemekVakti.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 var cfg = builder.Configuration;
 
 // ---------- Veritabanı (MSSQL veya SQLite) ----------
