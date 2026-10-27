@@ -237,8 +237,8 @@ export class LoginComponent implements OnInit {
             this.toast.success(`Hoş geldin, ${loginRes.user.name}! 🌟`);
             const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
             this.router.navigateByUrl(returnUrl);
-          } catch {
-            this.toast.error('Google ile giriş yapılamadı.');
+          } catch (err: any) {
+            this.toast.error(err?.error || 'Google ile giriş yapılamadı.');
           } finally {
             this.loading.set(false);
           }
@@ -275,8 +275,8 @@ export class LoginComponent implements OnInit {
       this.toast.success(`Hoş geldin, ${res.user.name}! 🌟`);
       const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
       this.router.navigateByUrl(returnUrl);
-    } catch {
-      this.toast.error('Giriş başarısız oldu.');
+    } catch (err: any) {
+      this.toast.error(err?.error || 'Giriş başarısız oldu.');
     } finally {
       this.loading.set(false);
     }
