@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
@@ -49,6 +49,10 @@ import { FormsModule } from '@angular/forms';
 
             <div class="form-group">
               <label>Oylanacak Mekanları Seç (En az 2)</label>
+              <div class="search-mini-bar" style="display:flex;gap:8px;margin-bottom:8px;">
+                <input type="text" class="input" style="font-size:13px;padding:6px 12px;" [(ngModel)]="candidateSearch" placeholder="Listeye mekan ara ve ekle (Örn: Burger, Kebap)..." (keyup.enter)="searchCandidates()" />
+                <button type="button" class="btn btn-sm btn-primary" (click)="searchCandidates()">Ara</button>
+              </div>
               <div class="candidates-selection">
                 @for (c of availableCandidates(); track c.id) {
                   <button type="button" class="opt-chip" [class.selected]="selectedRestaurantIds().includes(c.id)" (click)="toggleCandidate(c.id)">
@@ -118,8 +122,16 @@ import { FormsModule } from '@angular/forms';
           }
 
           <!-- Seçenekler & Oy Listesi -->
-          <div class="section-title">Seçenekler ve Oylar</div>
-          <div class="options-list">
+          @if (r.options.length === 0) {
+            <div class="glass pop-in" style="padding: 24px; text-align: center; border-radius: 18px; margin: 16px 0;">
+              <p style="font-size: 34px; margin-bottom: 8px;">🍽️</p>
+              <h4 style="font-size: 17px; margin-bottom: 6px; color:#fff;">Bu odada oylanacak mekan bulunamadı</h4>
+              <p class="muted" style="font-size: 13px; margin-bottom: 16px;">Mekanlar güncellenmiş olabilir. Yeni bir oylama odası açıp ekibi davet edebilirsiniz.</p>
+              <button type="button" class="btn btn-primary" (click)="leaveRoom()">Yeni Oda Aç 🚀</button>
+            </div>
+          } @else {
+            <div class="section-title">Seçenekler ve Oylar</div>
+            <div class="options-list">
             @for (opt of r.options; track opt.id) {
               <div class="option-card glass" [class.voted]="r.myVotedOptionId === opt.id" [class.winner]="r.winningRestaurantId === opt.restaurantId">
                 <div class="opt-head">
@@ -152,6 +164,7 @@ import { FormsModule } from '@angular/forms';
               </div>
             }
           </div>
+        }
 
           <div class="leave-row">
             <button type="button" class="btn btn-sm btn-ghost" (click)="leaveRoom()">← Odadan Ayrıl</button>
@@ -313,7 +326,7 @@ import { FormsModule } from '@angular/forms';
     }
   `
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private loc = inject(LocationService);
@@ -328,16 +341,21 @@ export class RoomComponent implements OnInit {
 
   joinCode = '';
   roomTitle = 'Bugünkü Ekip Yemeği';
+  private pollTimer: ReturnType<typeof setInterval> | null = null;
 
   async ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['code']) {
-        this.joinCode = params['code'];
+        this.joinCode = params['code'].trim().toUpperCase();
         this.joinRoom();
       }
     });
 
     await this.loadNearbyForSelection();
+  }
+
+  ngOnDestroy() {
+    this.stopPolling();
   }
 
   isCreator() {
@@ -353,21 +371,56 @@ export class RoomComponent implements OnInit {
     }));
   }
 
+  candidateSearch = '';
+
+  async searchCandidates() {
+    if (!this.candidateSearch.trim()) return;
+    try {
+      const results = await this.api.searchRestaurants(this.candidateSearch.trim());
+      if (results && results.length > 0) {
+        const current = this.availableCandidates();
+        const newItems = results.filter(r => !current.some(c => c.id === r.id));
+        this.availableCandidates.set([...newItems, ...current]);
+        const toAdd = newItems.slice(0, 2).map(x => x.id);
+        this.selectedRestaurantIds.update(ids => Array.from(new Set([...ids, ...toAdd])));
+        this.toast.success(`${newItems.length} yeni mekan listeye eklendi! ✨`);
+        this.candidateSearch = '';
+      } else {
+        this.toast.info('Aramaya uygun mekan bulunamadı.');
+      }
+    } catch {
+      this.toast.error('Arama sırasında hata oluştu.');
+    }
+  }
+
   async loadNearbyForSelection() {
     try {
       const coords = await this.loc.locate();
       const list = await this.api.candidates({
         lat: coords.lat,
         lng: coords.lng,
-        radius: 2000,
-        limit: 8
+        radius: 3500,
+        limit: 10
       });
-      this.availableCandidates.set(list);
-      // İlk 4 tanesini otomatik seç
-      this.selectedRestaurantIds.set(list.slice(0, 4).map(c => c.id));
+      if (list && list.length > 0) {
+        this.availableCandidates.set(list);
+        this.selectedRestaurantIds.set(list.slice(0, 4).map(c => c.id));
+        return;
+      }
     } catch {
-      // offline / demo fallback
+      // fallback to Ankara coordinates
     }
+
+    try {
+      const fallbackList = await this.api.candidates({
+        lat: 39.8722,
+        lng: 32.7489,
+        radius: 6000,
+        limit: 10
+      });
+      this.availableCandidates.set(fallbackList);
+      this.selectedRestaurantIds.set(fallbackList.slice(0, 4).map(c => c.id));
+    } catch {}
   }
 
   toggleCandidate(id: number) {
@@ -383,6 +436,7 @@ export class RoomComponent implements OnInit {
       this.currentRoom.set(room);
       burstConfetti(40);
       this.toast.success(`Oda oluşturuldu! Kod: ${room.code} 👥`);
+      this.startPolling();
     } catch {
       this.toast.error('Oda oluşturulamadı.');
     } finally {
@@ -394,9 +448,10 @@ export class RoomComponent implements OnInit {
     if (!this.joinCode.trim()) return;
     this.loading.set(true);
     try {
-      const room = await this.api.getRoom(this.joinCode.trim());
+      const room = await this.api.getRoom(this.joinCode.trim().toUpperCase());
       this.currentRoom.set(room);
       this.toast.success(`Odaya katıldın: ${room.title}`);
+      this.startPolling();
     } catch {
       this.toast.error('Oda bulunamadı veya kod hatalı.');
     } finally {
@@ -410,9 +465,10 @@ export class RoomComponent implements OnInit {
     try {
       const updated = await this.api.voteRoom(r.code, roomOptionId);
       this.currentRoom.set(updated);
+      burstConfetti(35);
       this.toast.success('Oyun kaydedildi 👍');
-    } catch {
-      this.toast.error('Oy verilemedi.');
+    } catch (err: any) {
+      this.toast.error(err?.error || 'Oy verilemedi.');
     }
   }
 
@@ -428,12 +484,35 @@ export class RoomComponent implements OnInit {
     }
   }
 
+  private startPolling() {
+    this.stopPolling();
+    this.pollTimer = setInterval(async () => {
+      const r = this.currentRoom();
+      if (!r || r.isClosed) {
+        this.stopPolling();
+        return;
+      }
+      try {
+        const updated = await this.api.getRoom(r.code);
+        this.currentRoom.set(updated);
+      } catch {}
+    }, 3000);
+  }
+
+  private stopPolling() {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
+    }
+  }
+
   async closeRoom(winnerId?: number) {
     const r = this.currentRoom();
     if (!r) return;
     try {
       const updated = await this.api.closeRoom(r.code, winnerId);
       this.currentRoom.set(updated);
+      this.stopPolling();
       burstConfetti(80);
       this.toast.success(`Oylama tamamlandı! Kazanan: ${updated.winningRestaurantName} 🏆`);
     } catch {
@@ -460,7 +539,9 @@ export class RoomComponent implements OnInit {
   }
 
   leaveRoom() {
+    this.stopPolling();
     this.currentRoom.set(null);
     this.joinCode = '';
   }
 }
+

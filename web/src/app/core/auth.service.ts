@@ -53,9 +53,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
-  return auth.isLoggedIn() ? true : inject(Router).parseUrl('/login');
+  if (auth.isLoggedIn()) return true;
+  const router = inject(Router);
+  return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 };
 
 export const guestGuard: CanActivateFn = () => {

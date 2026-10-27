@@ -13,6 +13,7 @@ export class ToastService {
     setTimeout(() => this.toasts.update((l) => l.filter((x) => x.id !== t.id)), ms);
   }
 
+  info(text: string) { this.show(text, 'info'); }
   success(text: string) { this.show(text, 'success'); }
   error(text: string) { this.show(text, 'error', 4000); }
 }

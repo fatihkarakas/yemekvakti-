@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
 import { ToastService } from '../../core/toast.service';
@@ -21,17 +21,18 @@ import { FormsModule } from '@angular/forms';
 
       <div class="login-card glass pop-in">
         <h2>Giriş Yap</h2>
-        <p class="muted sub">Favorilerini, geçmişini ve puanlarını saklamak için giriş yap.</p>
+        <p class="muted sub">Favorilerini, geçmişini ve oylamalarını kaydetmek için giriş yap.</p>
 
         <!-- Google Giriş Konteyneri -->
         <div id="google-btn-container" class="google-wrap"></div>
 
         @if (demoEnabled()) {
-          <div class="divider"><span>veya hızlı dene</span></div>
+          <div class="divider"><span>veya isim / hesap ile katıl</span></div>
           <div class="demo-form">
-            <input id="demo-name-input" type="text" class="input" [(ngModel)]="demoName" placeholder="Adınız (Örn: Fatih)" (keyup.enter)="loginDemo()" />
-            <button id="demo-login-btn" type="button" class="btn btn-primary btn-block" [disabled]="loading()" (click)="loginDemo()">
-              {{ loading() ? 'Giriş yapılıyor...' : 'Hızlı Giriş Yap 🚀' }}
+            <input id="demo-name-input" type="text" class="input" [(ngModel)]="demoName" placeholder="Adınız Soyadınız (Örn: Burak, Selin...)" (keyup.enter)="loginDemo()" />
+            <input id="demo-email-input" type="email" class="input" [(ngModel)]="demoEmail" placeholder="E-posta (İsteğe bağlı)" (keyup.enter)="loginDemo()" />
+            <button id="demo-login-btn" type="button" class="btn btn-primary btn-block" [disabled]="loading() || !demoName.trim()" (click)="loginDemo()">
+              {{ loading() ? 'Giriş yapılıyor...' : 'Giriş Yap & Başla 🚀' }}
             </button>
           </div>
         }
@@ -150,11 +151,13 @@ export class LoginComponent implements OnInit {
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toast = inject(ToastService);
 
   readonly demoEnabled = signal(true);
   readonly loading = signal(false);
-  demoName = 'Fatih Karakaş';
+  demoName = '';
+  demoEmail = '';
 
   async ngOnInit() {
     try {
@@ -185,7 +188,8 @@ export class LoginComponent implements OnInit {
             const loginRes = await this.api.loginGoogle(res.credential);
             this.auth.setSession(loginRes);
             this.toast.success(`Hoş geldin, ${loginRes.user.name}! 🌟`);
-            this.router.navigateByUrl('/');
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+            this.router.navigateByUrl(returnUrl);
           } catch {
             this.toast.error('Google ile giriş yapılamadı.');
           } finally {
@@ -208,10 +212,11 @@ export class LoginComponent implements OnInit {
     if (!this.demoName.trim()) return;
     this.loading.set(true);
     try {
-      const res = await this.api.loginDemo(this.demoName.trim());
+      const res = await this.api.loginDemo(this.demoName.trim(), this.demoEmail.trim() || undefined);
       this.auth.setSession(res);
       this.toast.success(`Hoş geldin, ${res.user.name}! 🌟`);
-      this.router.navigateByUrl('/');
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+      this.router.navigateByUrl(returnUrl);
     } catch {
       this.toast.error('Giriş başarısız oldu.');
     } finally {

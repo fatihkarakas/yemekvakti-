@@ -2,7 +2,7 @@ namespace YemekVakti.Api.Models;
 
 public record AuthConfigDto(string? GoogleClientId, bool DemoLoginEnabled, bool PlacesEnabled, bool GeminiEnabled);
 public record GoogleLoginRequest(string IdToken);
-public record DemoLoginRequest(string Name);
+public record DemoLoginRequest(string Name, string? DeviceId = null, string? Email = null);
 public record UserDto(int Id, string Name, string Email, string? PhotoUrl);
 public record LoginResponse(string Token, UserDto User);
 

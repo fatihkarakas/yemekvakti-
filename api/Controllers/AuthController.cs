@@ -48,7 +48,22 @@ public class AuthController(AppDbContext db, TokenService tokens, IConfiguration
         var name = string.IsNullOrWhiteSpace(req.Name) ? "Misafir" : req.Name.Trim();
         if (name.Length > 60) name = name[..60];
         var slug = name.ToLowerInvariant().Replace(' ', '.');
-        var user = await Upsert($"demo:{slug}", $"{slug}@demo.local", name, null);
+
+        string externalId;
+        string email;
+        if (!string.IsNullOrWhiteSpace(req.Email))
+        {
+            email = req.Email.Trim().ToLowerInvariant();
+            externalId = $"account:{email}";
+        }
+        else
+        {
+            var dev = string.IsNullOrWhiteSpace(req.DeviceId) ? Guid.NewGuid().ToString("N")[..8] : req.DeviceId.Trim();
+            externalId = $"guest:{slug}:{dev}";
+            email = $"{slug}_{dev[..Math.Min(6, dev.Length)]}@yemekvakti.local";
+        }
+
+        var user = await Upsert(externalId, email, name, null);
         return new LoginResponse(tokens.Create(user), ToDto(user));
     }
 

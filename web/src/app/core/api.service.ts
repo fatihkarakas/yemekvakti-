@@ -18,7 +18,17 @@ export class ApiService {
   // Auth
   authConfig() { return this.get<AuthConfig>('/api/auth/config'); }
   loginGoogle(idToken: string) { return this.post<LoginResponse>('/api/auth/google', { idToken }); }
-  loginDemo(name: string) { return this.post<LoginResponse>('/api/auth/demo', { name }); }
+  loginDemo(name: string, email?: string) {
+    let deviceId = '';
+    try {
+      deviceId = localStorage.getItem('yv_device_id') || '';
+      if (!deviceId) {
+        deviceId = 'dev_' + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem('yv_device_id', deviceId);
+      }
+    } catch {}
+    return this.post<LoginResponse>('/api/auth/demo', { name, deviceId, email });
+  }
 
   // Öneri
   cuisines() { return this.get<Cuisine[]>('/api/cuisines'); }
