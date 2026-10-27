@@ -132,6 +132,27 @@ export class LocationService {
     }
   }
 
+  /** Verilen metin veya adres için doğrudan koordinat bulur (Geocoding) */
+  async geocodeAddress(address: string, userLat?: number, userLng?: number): Promise<{ lat: number; lng: number; label: string } | null> {
+    if (!address.trim() || address.trim().length < 3) return null;
+    try {
+      let url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=tr&addressdetails=1&limit=3&q=${encodeURIComponent(address.trim())}`;
+      if (userLat !== undefined && userLng !== undefined) {
+        const d = 0.35;
+        url += `&viewbox=${userLng - d},${userLat + d},${userLng + d},${userLat - d}`;
+      }
+      const results = await firstValueFrom(this.http.get<any[]>(url, { headers: { 'Accept-Language': 'tr' } }));
+      if (results && results.length > 0) {
+        return {
+          lat: parseFloat(results[0].lat),
+          lng: parseFloat(results[0].lon),
+          label: results[0].display_name
+        };
+      }
+    } catch {}
+    return null;
+  }
+
   private async reverseGeocode(c: Coords) {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${c.lat}&lon=${c.lng}&zoom=16&addressdetails=1`;

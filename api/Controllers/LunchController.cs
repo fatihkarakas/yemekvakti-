@@ -10,7 +10,7 @@ namespace YemekVakti.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api")]
-public class LunchController(AppDbContext db, RecommendationService rec) : ControllerBase
+public class LunchController(AppDbContext db, RecommendationService rec, PlacesService places) : ControllerBase
 {
     [AllowAnonymous]
     [HttpGet("cuisines")]
@@ -49,7 +49,9 @@ public class LunchController(AppDbContext db, RecommendationService rec) : Contr
             CreatedByUserId = User.UserId(),
             GoogleRating = 4.6,
             GoogleRatingCount = 10,
-            MapsUrl = $"https://www.google.com/maps/search/?api=1&query={req.Lat},{req.Lng}"
+            MapsUrl = !string.IsNullOrWhiteSpace(req.Address)
+                ? $"https://www.google.com/maps/search/?api=1&query={Uri.EscapeDataString(req.Name.Trim() + " " + req.Address.Trim())}"
+                : $"https://www.google.com/maps/search/?api=1&query={req.Lat},{req.Lng}"
         };
         db.Restaurants.Add(r);
         await db.SaveChangesAsync();
@@ -248,59 +250,14 @@ public class LunchController(AppDbContext db, RecommendationService rec) : Contr
             }
         }
 
-        // 2. Eğer sonuç 2'den azsa, otomatik arka plan eşleştirme & ekleme
-        if (dbList.Count < 2)
+        // 1. Google Places Text Search (API etkinse yeni yerleri çeker)
+        if (places.Enabled)
         {
-            var isBurger = query.Contains("burger", StringComparison.OrdinalIgnoreCase);
-            var isPizza = query.Contains("pizza", StringComparison.OrdinalIgnoreCase);
-            var isKebap = query.Contains("kebap", StringComparison.OrdinalIgnoreCase) || query.Contains("döner", StringComparison.OrdinalIgnoreCase);
-
-            var fallbackVenues = new List<Restaurant>
+            try
             {
-                new()
-                {
-                    Name = isBurger ? "The Street Burger Bahçelievler" : $"{query} (Merkez)",
-                    Address = "Bahçelievler Mah. Aşkabat Cad. (7. Cad) No: 54, Çankaya, Ankara",
-                    Lat = 39.9215,
-                    Lng = 32.8235,
-                    Cuisines = isBurger ? "burger" : isPizza ? "pizza" : isKebap ? "kebap" : "evyemegi",
-                    MealCards = "multinet,setcard,sodexo,ticket",
-                    AvgPriceTl = 340,
-                    PriceLevel = 2,
-                    GoogleRating = 4.6,
-                    GoogleRatingCount = 1420,
-                    MapsUrl = "https://www.google.com/maps/search/?api=1&query=39.9215,32.8235"
-                },
-                new()
-                {
-                    Name = isBurger ? "The Street Burger Çayyolu" : $"{query} Çayyolu",
-                    Address = "Prof. Dr. Ahmet Taner Kışlalı Mah. 2864. Cad. No: 14, Çayyolu, Ankara",
-                    Lat = 39.8640,
-                    Lng = 32.7020,
-                    Cuisines = isBurger ? "burger" : isPizza ? "pizza" : isKebap ? "kebap" : "evyemegi",
-                    MealCards = "multinet,setcard,sodexo,ticket",
-                    AvgPriceTl = 360,
-                    PriceLevel = 2,
-                    GoogleRating = 4.5,
-                    GoogleRatingCount = 980,
-                    MapsUrl = "https://www.google.com/maps/search/?api=1&query=39.8640,32.7020"
-                }
-            };
-
-            foreach (var fb in fallbackVenues)
-            {
-                var existing = await db.Restaurants.FirstOrDefaultAsync(r => r.Name.ToLower() == fb.Name.ToLower(), ct);
-                if (existing is null)
-                {
-                    db.Restaurants.Add(fb);
-                    dbList.Add(fb);
-                }
-                else if (dbList.All(x => x.Id != existing.Id))
-                {
-                    dbList.Add(existing);
-                }
+                await places.SearchTextAndCacheAsync(query, userLat, userLng, ct);
             }
-            await db.SaveChangesAsync(ct);
+            catch {}
         }
 
         var userId = User.UserId();

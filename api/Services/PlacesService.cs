@@ -86,6 +86,76 @@ public class PlacesService(HttpClient http, IConfiguration config, AppDbContext 
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task<List<Restaurant>> SearchTextAndCacheAsync(string query, double lat, double lng, CancellationToken ct)
+    {
+        if (!Enabled) return [];
+
+        try
+        {
+            var req = new HttpRequestMessage(HttpMethod.Post, "https://places.googleapis.com/v1/places:searchText");
+            req.Headers.Add("X-Goog-Api-Key", ApiKey);
+            req.Headers.Add("X-Goog-FieldMask",
+                "places.id,places.displayName,places.formattedAddress,places.location,places.rating," +
+                "places.userRatingCount,places.priceLevel,places.types,places.googleMapsUri");
+            req.Content = JsonContent.Create(new
+            {
+                textQuery = query,
+                languageCode = "tr",
+                locationBias = new
+                {
+                    circle = new
+                    {
+                        center = new { latitude = lat, longitude = lng },
+                        radius = 25000.0
+                    }
+                }
+            });
+
+            using var res = await http.SendAsync(req, ct);
+            if (!res.IsSuccessStatusCode)
+            {
+                log.LogWarning("Places TextSearch {Status}: {Body}", res.StatusCode, await res.Content.ReadAsStringAsync(ct));
+                return [];
+            }
+
+            var body = await res.Content.ReadFromJsonAsync<PlacesResponse>(JsonOpts, ct);
+            if (body?.Places is null || body.Places.Count == 0) return [];
+
+            var ids = body.Places.Select(p => p.Id).ToList();
+            var existing = await db.Restaurants.Where(r => r.GooglePlaceId != null && ids.Contains(r.GooglePlaceId)).ToDictionaryAsync(r => r.GooglePlaceId!, ct);
+            var results = new List<Restaurant>();
+
+            foreach (var p in body.Places)
+            {
+                if (string.IsNullOrWhiteSpace(p.DisplayName?.Text) || p.Location is null) continue;
+
+                if (!existing.TryGetValue(p.Id, out var r))
+                {
+                    r = new Restaurant { GooglePlaceId = p.Id };
+                    db.Restaurants.Add(r);
+                }
+                r.Name = p.DisplayName.Text;
+                r.Address = p.FormattedAddress;
+                r.Lat = p.Location.Latitude;
+                r.Lng = p.Location.Longitude;
+                r.GoogleRating = p.Rating;
+                r.GoogleRatingCount = p.UserRatingCount;
+                r.PriceLevel = MapPrice(p.PriceLevel) ?? r.PriceLevel;
+                r.MapsUrl = p.GoogleMapsUri ?? $"https://www.google.com/maps/search/?api=1&query={r.Lat},{r.Lng}";
+                r.Cuisines = CuisineCatalog.Detect(r.Name, p.Types);
+                r.UpdatedAt = DateTime.UtcNow;
+                if (!results.Contains(r)) results.Add(r);
+            }
+            await db.SaveChangesAsync(ct);
+            return results;
+        }
+        catch (Exception ex)
+        {
+            log.LogWarning(ex, "Places TextSearch error");
+            return [];
+        }
+    }
+
     private static int? MapPrice(string? p) => p switch
     {
         "PRICE_LEVEL_FREE" or "PRICE_LEVEL_INEXPENSIVE" => 1,

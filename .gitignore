@@ -30,3 +30,8 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+## Publish & Archives
+publish/
+publish.zip
+*.zip

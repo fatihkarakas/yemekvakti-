@@ -212,7 +212,10 @@ export class RestaurantCardComponent {
 
   readonly directionsUrl = computed(() => {
     const c = this.r();
-    return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+    const dest = (c.address && c.address.trim())
+      ? `${c.name}, ${c.address.trim()}`
+      : `${c.lat},${c.lng}`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
   });
 
   async toggleFav(e: MouseEvent) {

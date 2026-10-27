@@ -18,11 +18,40 @@ import { LocationService } from '../core/location.service';
         <p class="muted sub">Eklediğin mekan veri tabanına kaydedilir; çarkta ve akıllı önerilerde hemen yer alır.</p>
 
         <form (ngSubmit)="save()" class="form-body">
-          <!-- Mekan Adı -->
-          <div class="field">
-            <label for="rest-name">Mekan Adı <span class="req">*</span></label>
-            <input id="rest-name" type="text" [(ngModel)]="name" name="name"
-                   placeholder="Örn: Kemah Ekmek Teknesi, Koç Cağ Kebabı" required autocomplete="off" />
+          <!-- Mekan Adı + Arama -->
+          <div class="field has-autocomplete">
+            <div class="field-header">
+              <label for="rest-name">Mekan Adı <span class="req">*</span></label>
+              @if (isSearching()) {
+                <span class="searching-badge">🔍 Yakınlarda aranıyor...</span>
+              }
+            </div>
+            <input id="rest-name" type="text" [ngModel]="name()" (ngModelChange)="onNameChange($event)" name="name"
+                   placeholder="Örn: Ciğerci Bahattin, Koç Cağ Kebabı" required autocomplete="off" />
+
+            <!-- Canlı Arama Açılır Menüsü -->
+            @if (searchResults().length > 0) {
+              <div class="search-dropdown">
+                <div class="dropdown-header">📍 Yakındaki Restoranlar (Tıkla ve Bilgileri Doldur)</div>
+                @for (item of searchResults(); track $index) {
+                  <button type="button" class="search-item" (click)="selectSuggestion(item)">
+                    <div class="item-main">
+                      <span class="item-name">🏪 {{ item.name }}</span>
+                      @if (item.address) {
+                        <span class="item-addr">{{ item.address }}</span>
+                      }
+                    </div>
+                    @if (item.distanceM) {
+                      <span class="item-dist">{{ item.distanceM }}m</span>
+                    }
+                  </button>
+                }
+              </div>
+            }
+
+            @if (searchSuccessMsg()) {
+              <div class="success-pill">{{ searchSuccessMsg() }}</div>
+            }
           </div>
 
           <!-- Mutfak / Tür Seçimi (Chips) -->
@@ -53,9 +82,14 @@ import { LocationService } from '../core/location.service';
 
           <!-- Adres & Semt -->
           <div class="field">
-            <label for="rest-addr">Adres veya Semt</label>
-            <input id="rest-addr" type="text" [(ngModel)]="address" name="address"
-                   placeholder="Örn: Şaşmaz Oto Sanayi 1757. Sokak No: 22" autocomplete="off" />
+            <div class="field-header">
+              <label for="rest-addr">Adres veya Semt</label>
+              <button type="button" class="btn-action-text" (click)="locateAddress()" title="Adresten harita koordinatlarını bul">
+                📍 Adresten Konum Bul
+              </button>
+            </div>
+            <input id="rest-addr" type="text" [(ngModel)]="address" name="address" (blur)="locateAddress()"
+                   placeholder="Örn: Beytepe Mah. Ertuğrul Gazi Blv. No: 29/F, Çankaya" autocomplete="off" />
           </div>
 
           <!-- Tahmini Fiyat (TL) -->
@@ -71,11 +105,14 @@ import { LocationService } from '../core/location.service';
           <div class="coords-box">
             <div class="coords-header">
               <span class="muted">📍 Konum Koordinatları:</span>
-              <button type="button" class="btn-use-current" (click)="useCurrentLocation()">Mevcut Konumumu Kullan</button>
+              <div class="coords-actions">
+                <button type="button" class="btn-use-current" (click)="useCurrentLocation()">Mevcut Konum</button>
+                <a [href]="getMapPreviewUrl()" target="_blank" rel="noopener" class="btn-map-link">🗺️ Haritada Gör ↗</a>
+              </div>
             </div>
             <div class="coords-row">
-              <input type="number" step="0.0001" [(ngModel)]="lat" name="lat" placeholder="Enlem (Lat)" />
-              <input type="number" step="0.0001" [(ngModel)]="lng" name="lng" placeholder="Boylam (Lng)" />
+              <input type="number" step="0.000001" [(ngModel)]="lat" name="lat" placeholder="Enlem (Lat)" />
+              <input type="number" step="0.000001" [(ngModel)]="lng" name="lng" placeholder="Boylam (Lng)" />
             </div>
           </div>
 
@@ -117,7 +154,7 @@ import { LocationService } from '../core/location.service';
 
     .form-body { display: flex; flex-direction: column; gap: 16px; }
     .field {
-      display: flex; flex-direction: column; gap: 6px;
+      display: flex; flex-direction: column; gap: 6px; position: relative;
       label { font-size: 13px; font-weight: 600; color: #ddd; }
       .req { color: var(--danger, #ff4d4f); }
       input[type="text"], input[type="number"] {
@@ -125,6 +162,54 @@ import { LocationService } from '../core/location.service';
         background: rgba(0,0,0,0.3); color: #fff; font-size: 14.5px; outline: none;
         &:focus { border-color: var(--accent); box-shadow: 0 0 0 2px hsla(22,100%,62%,0.2); }
       }
+    }
+
+    .field-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .searching-badge {
+      font-size: 11px; font-weight: 600; color: #70b4ff; animation: pulse 1.5s infinite;
+    }
+    .btn-action-text {
+      background: none; border: none; color: #ff9800; cursor: pointer; font-size: 12px; font-weight: 600;
+      text-decoration: underline; padding: 0;
+      &:hover { color: #ffb74d; }
+    }
+
+    .search-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60;
+      background: #1e192de6; border: 1px solid rgba(255,255,255,0.18); border-radius: 14px;
+      backdrop-filter: blur(14px); box-shadow: 0 16px 36px rgba(0,0,0,0.6);
+      max-height: 220px; overflow-y: auto; display: flex; flex-direction: column;
+    }
+    .dropdown-header {
+      padding: 8px 12px; font-size: 11.5px; font-weight: 700; color: var(--muted);
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.08);
+      letter-spacing: 0.3px;
+    }
+    .search-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 10px 14px; background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #fff; text-align: left; cursor: pointer; transition: background .15s;
+      &:hover { background: rgba(255,122,24,0.18); }
+      &:last-child { border-bottom: none; }
+    }
+    .item-main {
+      display: flex; flex-direction: column; gap: 2px; overflow: hidden;
+    }
+    .item-name {
+      font-size: 13.5px; font-weight: 600; color: #fff;
+    }
+    .item-addr {
+      font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px;
+    }
+    .item-dist {
+      font-size: 11.5px; font-weight: 700; color: #22c55e; white-space: nowrap;
+    }
+
+    .success-pill {
+      margin-top: 4px; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #4ade80;
     }
 
     .cuisine-chips {
@@ -153,9 +238,16 @@ import { LocationService } from '../core/location.service';
     }
     .coords-header {
       display: flex; align-items: center; justify-content: space-between; font-size: 12.5px;
+    }
+    .coords-actions {
+      display: flex; align-items: center; gap: 12px;
       .btn-use-current {
         background: none; border: none; color: #70b4ff; cursor: pointer; font-size: 12px; font-weight: 600;
-        text-decoration: underline;
+        text-decoration: underline; padding: 0;
+      }
+      .btn-map-link {
+        color: #ff9800; text-decoration: underline; font-size: 12px; font-weight: 600;
+        &:hover { color: #ffb74d; }
       }
     }
     .coords-row {
@@ -173,6 +265,11 @@ import { LocationService } from '../core/location.service';
       .btn { flex: 1; padding: 13px; border-radius: 14px; font-size: 14.5px; font-weight: 600; cursor: pointer; }
       .btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #ccc; }
       .btn-primary { background: linear-gradient(135deg, #ff7a18, #af002d); border: none; color: #fff; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
   `
 })
@@ -193,6 +290,128 @@ export class AddRestaurantSheetComponent {
   readonly lng = signal<number>(this.loc.coords()?.lng ?? 32.748);
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
+
+  readonly isSearching = signal(false);
+  readonly searchResults = signal<any[]>([]);
+  readonly searchSuccessMsg = signal<string | null>(null);
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
+
+  onNameChange(val: string) {
+    this.name.set(val);
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    if (!val.trim() || val.trim().length < 2) {
+      this.searchResults.set([]);
+      this.isSearching.set(false);
+      return;
+    }
+
+    this.searchTimer = setTimeout(() => {
+      this.executeSearch(val.trim());
+    }, 350);
+  }
+
+  async executeSearch(query: string) {
+    this.isSearching.set(true);
+    try {
+      const c = this.loc.coords();
+      const [backendResults, geoResults] = await Promise.all([
+        this.api.searchRestaurants(query, c?.lat, c?.lng).catch(() => []),
+        this.loc.searchAddress(query).catch(() => [])
+      ]);
+
+      const combined: any[] = [];
+      const seen = new Set<string>();
+
+      // Backend (Google / DB)
+      for (const r of (backendResults || [])) {
+        const key = r.name.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          combined.push({
+            name: r.name,
+            address: r.address || '',
+            lat: r.lat,
+            lng: r.lng,
+            cuisines: r.cuisines || [],
+            source: 'Google / Veritabanı',
+            distanceM: r.distanceM
+          });
+        }
+      }
+
+      // Geocoder / Nominatim POI
+      for (const g of (geoResults || [])) {
+        const cleanName = g.label.split(',')[0].trim();
+        const key = cleanName.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          combined.push({
+            name: cleanName,
+            address: g.label,
+            lat: g.lat,
+            lng: g.lng,
+            cuisines: [],
+            source: 'Harita',
+            distanceM: null
+          });
+        }
+      }
+
+      this.searchResults.set(combined.slice(0, 6));
+    } finally {
+      this.isSearching.set(false);
+    }
+  }
+
+  selectSuggestion(item: any) {
+    this.name.set(item.name);
+    if (item.address) this.address.set(item.address);
+    if (item.lat && item.lng) {
+      this.lat.set(Number(item.lat.toFixed(6)));
+      this.lng.set(Number(item.lng.toFixed(6)));
+    }
+    if (item.cuisines && item.cuisines.length > 0) {
+      this.selectedCuisines.set(item.cuisines);
+    } else {
+      const lower = item.name.toLowerCase();
+      if (lower.includes('ciğer') || lower.includes('kebap') || lower.includes('ocakbaşı')) {
+        this.selectedCuisines.set(['kebap']);
+      } else if (lower.includes('burger')) {
+        this.selectedCuisines.set(['burger']);
+      } else if (lower.includes('pizza') || lower.includes('makarna')) {
+        this.selectedCuisines.set(['pizza']);
+      } else if (lower.includes('pide') || lower.includes('lahmacun')) {
+        this.selectedCuisines.set(['pide']);
+      }
+    }
+    this.searchResults.set([]);
+    this.searchSuccessMsg.set(`📍 "${item.name}" seçildi, adres ve koordinatlar güncellendi!`);
+    setTimeout(() => this.searchSuccessMsg.set(null), 4000);
+  }
+
+  async locateAddress() {
+    const addr = this.address().trim();
+    if (!addr || addr.length < 3) return;
+    this.error.set(null);
+    const c = this.loc.coords();
+    const found = await this.loc.geocodeAddress(addr, c?.lat, c?.lng);
+    if (found) {
+      this.lat.set(Number(found.lat.toFixed(6)));
+      this.lng.set(Number(found.lng.toFixed(6)));
+      this.searchSuccessMsg.set(`📍 Adres koordinatı güncellendi: ${found.lat.toFixed(4)}, ${found.lng.toFixed(4)}`);
+      setTimeout(() => this.searchSuccessMsg.set(null), 4000);
+    }
+  }
+
+  getMapPreviewUrl() {
+    const name = this.name().trim();
+    const addr = this.address().trim();
+    const query = [name, addr].filter(Boolean).join(' ');
+    if (query) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    }
+    return `https://www.google.com/maps/search/?api=1&query=${this.lat()},${this.lng()}`;
+  }
 
   toggleCuisine(code: string) {
     const list = this.selectedCuisines();
@@ -217,6 +436,8 @@ export class AddRestaurantSheetComponent {
     if (c) {
       this.lat.set(c.lat);
       this.lng.set(c.lng);
+      this.searchSuccessMsg.set('📍 Mevcut GPS konumunuz atandı.');
+      setTimeout(() => this.searchSuccessMsg.set(null), 3000);
     }
   }
 

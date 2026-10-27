@@ -198,7 +198,7 @@ import { burstConfetti } from '../../shared/confetti';
                 <button id="accept-wheel-btn" type="button" class="btn btn-success btn-block" (click)="acceptLunch(winner, 'wheel')">
                   ✅ Karar Verildi, Gidelim!
                 </button>
-                <a [href]="'https://www.google.com/maps/dir/?api=1&destination=' + winner.lat + ',' + winner.lng"
+                <a [href]="getDirectionsUrl(winner)"
                    target="_blank" rel="noopener" class="btn btn-sm btn-ghost">
                   🧭 Haritada Yol Tarifi Al ↗
                 </a>
@@ -657,6 +657,12 @@ export class HomeComponent implements OnInit {
     this.wheelWinner.set(winner);
     burstConfetti(80);
     this.toast.success(`Çark kararını verdi: ${item.label}! 🎡🎉`);
+  }
+
+  getDirectionsUrl(c: Candidate | null): string {
+    if (!c) return '#';
+    const dest = (c.address && c.address.trim()) ? `${c.name}, ${c.address.trim()}` : `${c.lat},${c.lng}`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
   }
 
   async acceptLunch(r: Candidate, source: 'suggestion' | 'wheel' = 'suggestion') {
