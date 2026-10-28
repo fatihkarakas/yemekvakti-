@@ -1,0 +1,560 @@
+{
+  "Ankara": [
+    {
+      "name": "Trilye Restoran",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 450,
+      "rating": 4.8,
+      "reviews": 4200,
+      "address": "Gaziosmanpaşa Mah. Budapeşte Cad. No:11, Çankaya",
+      "lat": 39.9050,
+      "lon": 32.8620
+    },
+    {
+      "name": "Günaydın Kebap Panora",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 450,
+      "rating": 4.8,
+      "reviews": 4100,
+      "address": "Panora AVM Oran, Çankaya",
+      "lat": 39.8550,
+      "lon": 32.8420
+    },
+    {
+      "name": "Kebap 49",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 250,
+      "rating": 4.7,
+      "reviews": 5400,
+      "address": "Tunus Cad. No:69/A, Çankaya",
+      "lat": 39.9110,
+      "lon": 32.8580
+    },
+    {
+      "name": "Hacı Arif Bey",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 400,
+      "rating": 4.7,
+      "reviews": 3600,
+      "address": "Güniz Sok. No:48, Kavaklıdere, Çankaya",
+      "lat": 39.9040,
+      "lon": 32.8550
+    },
+    {
+      "name": "Develi Ankara",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 480,
+      "rating": 4.7,
+      "reviews": 3100,
+      "address": "Turan Güneş Bulv. No:61, Çankaya",
+      "lat": 39.8800,
+      "lon": 32.8550
+    },
+    {
+      "name": "Köşebaşı Çankaya",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 420,
+      "rating": 4.6,
+      "reviews": 2800,
+      "address": "Yıldız Mah. Turan Güneş Bulv. No:18, Çankaya",
+      "lat": 39.8910,
+      "lon": 32.8610
+    },
+    {
+      "name": "Tavdin Kebap",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 310,
+      "rating": 4.6,
+      "reviews": 1600,
+      "address": "Yıldızevler Mah. 434. Sok. No:4, Çankaya",
+      "lat": 39.8950,
+      "lon": 32.8680
+    },
+    {
+      "name": "Tarsuslu Mehmet Usta",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 300,
+      "rating": 4.6,
+      "reviews": 1620,
+      "address": "Çayyolu Alacaatlı Cad. No:25, Çankaya",
+      "lat": 39.8850,
+      "lon": 32.6850
+    },
+    {
+      "name": "Ocakbaşı 1969",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 390,
+      "rating": 4.7,
+      "reviews": 2400,
+      "address": "Gaziosmanpaşa Arjantin Cad. No:18, Çankaya",
+      "lat": 39.8980,
+      "lon": 32.8600
+    },
+    {
+      "name": "Gaziantep İmam Çağdaş Ankara",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 460,
+      "rating": 4.8,
+      "reviews": 3900,
+      "address": "Atakule AVM Kat:3, Çankaya",
+      "lat": 39.8870,
+      "lon": 32.8580
+    },
+    {
+      "name": "Salih Usta Kebap Salonu",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 290,
+      "rating": 4.5,
+      "reviews": 1350,
+      "address": "İvedik Cad. No:85, Yenimahalle",
+      "lat": 39.9700,
+      "lon": 32.8200
+    },
+    {
+      "name": "Birecik Kebap Salonu",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 280,
+      "rating": 4.6,
+      "reviews": 1500,
+      "address": "Batıkent Bulv. GimSA Karşısı, Yenimahalle",
+      "lat": 39.9750,
+      "lon": 32.7450
+    },
+    {
+      "name": "Kaburgacı Haydar Usta",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 330,
+      "rating": 4.7,
+      "reviews": 2200,
+      "address": "Demetevler 4. Cad. No:32, Yenimahalle",
+      "lat": 39.9650,
+      "lon": 32.8100
+    },
+    {
+      "name": "İskenderci Hasan Usta",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 310,
+      "rating": 4.6,
+      "reviews": 1700,
+      "address": "Batıkent Ostim Cad. No:22, Yenimahalle",
+      "lat": 39.9780,
+      "lon": 32.7600
+    },
+    {
+      "name": "Dürümcü Ali Usta",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 210,
+      "rating": 4.6,
+      "reviews": 3400,
+      "address": "Kızılay Meşrutiyet Cad. No:15, Çankaya",
+      "lat": 39.9200,
+      "lon": 32.8550
+    },
+    {
+      "name": "Cigerci Ahmet",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 240,
+      "rating": 4.5,
+      "reviews": 1890,
+      "address": "Bahçelievler 3. Cad. No:12, Çankaya",
+      "lat": 39.9230,
+      "lon": 32.8280
+    },
+    {
+      "name": "Gaziantep Şölen Kebap",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 350,
+      "rating": 4.7,
+      "reviews": 2100,
+      "address": "Çukurambar Mah. Söğütözü Cad. No:14, Çankaya",
+      "lat": 39.9100,
+      "lon": 32.8120
+    },
+    {
+      "name": "Paşa Mangal",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 360,
+      "rating": 4.6,
+      "reviews": 1950,
+      "address": "İncek Bulv. No:140, Gölbaşı",
+      "lat": 39.8200,
+      "lon": 32.7900
+    },
+    {
+      "name": "Antepli Mahmut Usta",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 310,
+      "rating": 4.6,
+      "reviews": 1540,
+      "address": "Balgat Mevlana Bulv. No:140, Çankaya",
+      "lat": 39.9050,
+      "lon": 32.8180
+    },
+    {
+      "name": "Dürümcü Dayı",
+      "category": "kebap",
+      "city_id": 6,
+      "price_level": 200,
+      "rating": 4.5,
+      "reviews": 2900,
+      "address": "Demetevler 12. Cad. No:10, Yenimahalle",
+      "lat": 39.9680,
+      "lon": 32.8150
+    }
+  ],
+  "İstanbul": [
+    {
+      "name": "Zübeyir Ocakbaşı",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 450,
+      "rating": 4.7,
+      "reviews": 8500,
+      "address": "Şehit Muhtar Mah. İstiklal Cad. No:101, Beyoğlu",
+      "lat": 41.0360,
+      "lon": 28.9820
+    },
+    {
+      "name": "Develi Nişantaşı",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 500,
+      "rating": 4.8,
+      "reviews": 7200,
+      "address": "Harbiye Mah. Mim Kemal Öke Cad. No:19, Şişli",
+      "lat": 41.0480,
+      "lon": 28.9890
+    },
+    {
+      "name": "Kaşıbeyaz Etiler",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 550,
+      "rating": 4.8,
+      "reviews": 9100,
+      "address": "Etiler Mah. Nispetiye Cad. No:7, Beşiktaş",
+      "lat": 41.0800,
+      "lon": 29.0300
+    },
+    {
+      "name": "Beyti",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 750,
+      "rating": 4.9,
+      "reviews": 11200,
+      "address": "Şenlikköy Mah. İhlas Cad. No:10, Bakırköy",
+      "lat": 40.9780,
+      "lon": 28.8150
+    },
+    {
+      "name": "Ali Ocakbaşı Karaköy",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 460,
+      "rating": 4.7,
+      "reviews": 5400,
+      "address": "Kemankeş Karamustafa Paşa Mah. Rıhtım Cad. No:48, Beyoğlu",
+      "lat": 41.0220,
+      "lon": 28.9780
+    },
+    {
+      "name": "Çiya Sofrası",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 360,
+      "rating": 4.7,
+      "reviews": 14500,
+      "address": "Caferağa Mah. Güneşli Bahçe Sok. No:43, Kadıköy",
+      "lat": 40.9900,
+      "lon": 29.0270
+    },
+    {
+      "name": "Hamdi Restoran Eminönü",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 480,
+      "rating": 4.6,
+      "reviews": 16000,
+      "address": "Rüstem Paşa Mah. Kalçın Sok. No:11, Eminönü",
+      "lat": 41.0170,
+      "lon": 28.9690
+    },
+    {
+      "name": "Metet Et Lokantası",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 410,
+      "rating": 4.7,
+      "reviews": 4900,
+      "address": "Kuzguncuk Mah. İcadiye Cad. No:49, Üsküdar",
+      "lat": 41.0320,
+      "lon": 29.0300
+    },
+    {
+      "name": "Bedri Usta Caddebostan",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 390,
+      "rating": 4.6,
+      "reviews": 4300,
+      "address": "Caddebostan Mah. İskele Sok. No:24, Kadıköy",
+      "lat": 40.9650,
+      "lon": 29.0620
+    },
+    {
+      "name": "Hatay Medeniyetler Sofrası",
+      "category": "kebap",
+      "city_id": 34,
+      "price_level": 440,
+      "rating": 4.6,
+      "reviews": 12000,
+      "address": "Sakızağacı Mah. Kennedy Cad. No:43, Bakırköy",
+      "lat": 40.9750,
+      "lon": 28.8700
+    }
+  ],
+  "Adana": [
+    {
+      "name": "Birbiçer Kebap Salonu",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 280,
+      "rating": 4.8,
+      "reviews": 3400,
+      "address": "Dumlupınar Mah. 39014 Sok. No:3, Seyhan",
+      "lat": 36.9890,
+      "lon": 35.3220
+    },
+    {
+      "name": "Tarihi Kazancılar Kebapçısı",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 320,
+      "rating": 4.7,
+      "reviews": 4100,
+      "address": "Karasoku Mah. 28014 Sok. No:8, Seyhan",
+      "lat": 36.9850,
+      "lon": 35.3310
+    },
+    {
+      "name": "Hacıbaba Kebap",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 350,
+      "rating": 4.8,
+      "reviews": 5200,
+      "address": "Ziyapaşa Bulv. No:34, Seyhan",
+      "lat": 37.0020,
+      "lon": 35.3210
+    },
+    {
+      "name": "Asım Usta Kebap",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 330,
+      "rating": 4.8,
+      "reviews": 4800,
+      "address": "Kuruköprü Mah. İnönü Cad. No:22, Seyhan",
+      "lat": 36.9870,
+      "lon": 35.3280
+    },
+    {
+      "name": "Kaburgacı Yaşar Usta",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 360,
+      "rating": 4.8,
+      "reviews": 6100,
+      "address": "Gazipaşa Bulv. Ziyapaşa Apt. No:18, Seyhan",
+      "lat": 37.0100,
+      "lon": 35.3240
+    },
+    {
+      "name": "Mesut Usta Kebap Salonu",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 260,
+      "rating": 4.6,
+      "reviews": 2150,
+      "address": "Reşatbey Mah. 62010 Sok. No:12, Seyhan",
+      "lat": 37.0010,
+      "lon": 35.3260
+    },
+    {
+      "name": "Cemil Usta Kebap",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 300,
+      "rating": 4.7,
+      "reviews": 2900,
+      "address": "Güzelyalı Mah. 81042 Sok. No:5, Çukurova",
+      "lat": 37.0340,
+      "lon": 35.3050
+    },
+    {
+      "name": "Ali Usta Ocakbaşı",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 290,
+      "rating": 4.7,
+      "reviews": 2100,
+      "address": "Belediye Evleri Mah. 84012 Sok. No:9, Çukurova",
+      "lat": 37.0420,
+      "lon": 35.2890
+    },
+    {
+      "name": "Kaburgacı Selim Usta",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 350,
+      "rating": 4.8,
+      "reviews": 4300,
+      "address": "Karasoku Mah. 28010 Sok. No:5, Seyhan",
+      "lat": 36.9860,
+      "lon": 35.3290
+    },
+    {
+      "name": "Beyzade Kebap",
+      "category": "kebap",
+      "city_id": 1,
+      "price_level": 340,
+      "rating": 4.7,
+      "reviews": 2500,
+      "address": "Güzelyalı Mah. Kenan Evren Bulv. No:90, Çukurova",
+      "lat": 37.0310,
+      "lon": 35.3020
+    }
+  ],
+  "Gaziantep": [
+    {
+      "name": "İmam Çağdaş Kebap ve Baklava",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 480,
+      "rating": 4.9,
+      "reviews": 18500,
+      "address": "Eski Saray Cad. No:22, Şahinbey",
+      "lat": 37.0650,
+      "lon": 37.3820
+    },
+    {
+      "name": "Küşlemeci Halil Usta",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 420,
+      "rating": 4.8,
+      "reviews": 14200,
+      "address": "Kozluca Mah. İmam Ali Sok. No:3, Şahinbey",
+      "lat": 37.0630,
+      "lon": 37.3800
+    },
+    {
+      "name": "Çavuşoğlu Kebap",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 360,
+      "rating": 4.7,
+      "reviews": 7500,
+      "address": "İncilipınar Mah. Muammer Aksoy Bulv. No:14, Şehitkamil",
+      "lat": 37.0780,
+      "lon": 37.3750
+    },
+    {
+      "name": "Bayazhan Restoran",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 500,
+      "rating": 4.7,
+      "reviews": 6100,
+      "address": "Akyol Mah. Atatürk Bulv. No:99, Şahinbey",
+      "lat": 37.0700,
+      "lon": 37.3850
+    },
+    {
+      "name": "Kebapçı Halil Usta",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 390,
+      "rating": 4.8,
+      "reviews": 9100,
+      "address": "Kadı Mebde Sok. No:48, Şahinbey",
+      "lat": 37.0620,
+      "lon": 37.3830
+    },
+    {
+      "name": "Metanet Lokantası",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 280,
+      "rating": 4.7,
+      "reviews": 8300,
+      "address": "Kozluca Mah. Kozluca Cad. No:11, Şahinbey",
+      "lat": 37.0640,
+      "lon": 37.3810
+    },
+    {
+      "name": "Koçak Baklava ve Kebap",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 450,
+      "rating": 4.8,
+      "reviews": 12000,
+      "address": "Gazi Mühtar Paşa Bulv. No:38, Şehitkamil",
+      "lat": 37.0730,
+      "lon": 37.3700
+    },
+    {
+      "name": "Küşlemeci Mehmet Usta",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 410,
+      "rating": 4.7,
+      "reviews": 6500,
+      "address": "Osmangazi Mah. Prof. Dr. Necmettin Erbakan Bulv. No:14, Şehitkamil",
+      "lat": 37.0900,
+      "lon": 37.3650
+    },
+    {
+      "name": "Aşina Kebap",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 370,
+      "rating": 4.6,
+      "reviews": 4100,
+      "address": "İncilipınar Mah. Ali Fuat Cebesoy Bulv. No:20, Şehitkamil",
+      "lat": 37.0790,
+      "lon": 37.3780
+    },
+    {
+      "name": "Üçler Kebap Salonu",
+      "category": "kebap",
+      "city_id": 27,
+      "price_level": 340,
+      "rating": 4.6,
+      "reviews": 5200,
+      "address": "Kavaklık Mah. Alaeddinbey Cad. No:12, Şahinbey",
+      "lat": 37.0600,
+      "lon": 37.3700
+    }
+  ]
+}

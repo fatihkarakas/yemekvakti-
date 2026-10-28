@@ -24,19 +24,10 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                 nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
             }
         }
-        else if (nearby.Count < 15)
+        else
         {
-            var expandedRadius = Math.Max(q.Radius, 5000);
-            var expanded = await places.GetNearbyAsync(q.Lat, q.Lng, expandedRadius, ct);
-            if (expanded.Count > nearby.Count) nearby = expanded;
-        }
-
-        if (!places.Enabled || config.GetValue<bool>("SeedDemoRestaurants", false))
-        {
-            var totalCount = await db.Restaurants.CountAsync(ct);
-            var needsSeed = await db.Restaurants.AnyAsync(r => r.MealCards == null, ct)
-                || !await db.Restaurants.AnyAsync(r => r.Name.Contains("Street Burger"), ct);
-            if (needsSeed || totalCount < 55 || nearby.Count < 15)
+            var hasBuyukIl = nearby.Any(r => r.GooglePlaceId != null && r.GooglePlaceId.StartsWith("buyukil_"));
+            if (nearby.Count < 18 || !hasBuyukIl)
             {
                 await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
                 nearby = await places.GetNearbyAsync(q.Lat, q.Lng, Math.Max(q.Radius, 5000), ct);
@@ -82,12 +73,14 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                 var last = rv.FirstOrDefault();
                 var recent = last is not null && last.VisitedAt >= avoidSince;
                 var isSanayi = IsSanayiVenue(r);
+                var isBuyukIl = r.GooglePlaceId != null && r.GooglePlaceId.StartsWith("buyukil_");
 
-                // Yıldız kısıtlaması kaldırıldı; mesafe ve tercihlere göre dengeli puanlama
+                // Yıldız kısıtlaması kaldırıldı; mesafe, büyük il ve tercihlere göre dengeli puanlama
                 var baseScore = (r.GoogleRating ?? 4.0) / 5.0 * 2.2
                                 + (my.HasValue ? (my.Value - 3) * 0.8 : 0)
                                 + (fav ? 1.2 : 0)
                                 + (isSanayi ? 0.6 : 0)
+                                + (isBuyukIl ? 1.0 : 0)
                                 + (rv.Count == 0 ? 0.5 : 0)
                                 - dist / (q.Radius * 1.5);
                 var randomBonus = rnd.NextDouble() * 2.0;

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using YemekVakti.Api.Data;
 using YemekVakti.Api.Models;
@@ -164,6 +166,97 @@ public static class DemoSeeder
         new("Şaşmaz Kelle Paça & İşkembe Salonu", "sanayi,evyemegi", 1, 270, 4.6, 1800, "Şaşmaz Sanayi 2540. Sk. No: 8, Şaşmaz", 39.9360, 32.7130)
     ];
 
+    public class BuyukIlEntry
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = "";
+        [JsonPropertyName("category")] public string Category { get; set; } = "kebap";
+        [JsonPropertyName("city_id")] public int CityId { get; set; }
+        [JsonPropertyName("price_level")] public int PriceLevel { get; set; }
+        [JsonPropertyName("rating")] public double Rating { get; set; }
+        [JsonPropertyName("reviews")] public int Reviews { get; set; }
+        [JsonPropertyName("address")] public string Address { get; set; } = "";
+        [JsonPropertyName("lat")] public double Lat { get; set; }
+        [JsonPropertyName("lon")] public double Lon { get; set; }
+    }
+
+    private static Dictionary<string, List<BuyukIlEntry>>? _buyukIlCache;
+    private static readonly object _buyukIlLock = new();
+
+    public static Dictionary<string, List<BuyukIlEntry>> GetBuyukIlData()
+    {
+        if (_buyukIlCache != null) return _buyukIlCache;
+        lock (_buyukIlLock)
+        {
+            if (_buyukIlCache != null) return _buyukIlCache;
+
+            var paths = new[]
+            {
+                Path.Combine(AppContext.BaseDirectory, "Data", "buyukil.json"),
+                Path.Combine(AppContext.BaseDirectory, "buyukil.json"),
+                Path.Combine(Directory.GetCurrentDirectory(), "Data", "buyukil.json"),
+                Path.Combine(Directory.GetCurrentDirectory(), "buyukil.json")
+            };
+
+            foreach (var p in paths)
+            {
+                if (File.Exists(p))
+                {
+                    try
+                    {
+                        var json = File.ReadAllText(p);
+                        var data = JsonSerializer.Deserialize<Dictionary<string, List<BuyukIlEntry>>>(json,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        if (data != null && data.Count > 0)
+                        {
+                            _buyukIlCache = data;
+                            return _buyukIlCache;
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            _buyukIlCache = new Dictionary<string, List<BuyukIlEntry>>();
+            return _buyukIlCache;
+        }
+    }
+
+    public static (string CityName, List<BuyukIlEntry> Venues) GetCityVenuesForLocation(double lat, double lng)
+    {
+        var data = GetBuyukIlData();
+        if (data.Count == 0) return ("", []);
+
+        // Şehir merkezleri: Ankara, İstanbul, Adana, Gaziantep
+        var cityCenters = new Dictionary<string, (double Lat, double Lng)>
+        {
+            ["Ankara"] = (39.9208, 32.8541),
+            ["İstanbul"] = (41.0082, 28.9784),
+            ["Adana"] = (37.0000, 35.3213),
+            ["Gaziantep"] = (37.0662, 37.3833)
+        };
+
+        string closestCity = "Ankara";
+        double minDist = double.MaxValue;
+
+        foreach (var (cityName, center) in cityCenters)
+        {
+            var d = Geo.DistanceMeters(lat, lng, center.Lat, center.Lng);
+            if (d < minDist)
+            {
+                minDist = d;
+                closestCity = cityName;
+            }
+        }
+
+        if (data.TryGetValue(closestCity, out var venues))
+        {
+            return (closestCity, venues);
+        }
+
+        var first = data.First();
+        return (first.Key, first.Value);
+    }
+
     public static async Task SeedAroundAsync(AppDbContext db, double lat, double lng, CancellationToken ct)
     {
         var remainingList = await db.Restaurants.ToListAsync(ct);
@@ -211,26 +304,128 @@ public static class DemoSeeder
             }
         }
 
-        // 2. Şimdi kullanıcının tam koordinatının 5 km yarıçapında kaç mekan olduğuna bak
-        // (Çakırlar, Teknokent, Kadıköy, Alsancak veya herhangi bir il/ilçe)
-        var allCurrent = remainingList.Concat(toAdd).ToList();
-        var nearbyCount = allCurrent.Count(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000);
-
-        // Eğer kullanıcının 5 km çevresinde 15'ten az restoran varsa, o koordinatın çevresine (400m - 4.5km)
-        // zengin restoranları (ve sanayi lezzetlerini) dinamik olarak yerleştir
-        if (nearbyCount < 15)
+        // 2. buyukil.json dosyasındaki tüm şehirlerin (Ankara, İstanbul, Adana, Gaziantep)
+        // orijinal restoranlarını DB'ye kalıcı olarak ekle/güncelle
+        var buyukIlAll = GetBuyukIlData();
+        foreach (var kvp in buyukIlAll)
         {
-            int addedCount = 0;
-            foreach (var v in AnkaraVenues)
+            foreach (var b in kvp.Value)
             {
-                if (nearbyCount + addedCount >= 25) break;
+                var key = b.Name.Trim().ToLower();
+                int priceLevel = b.PriceLevel >= 400 ? 3 : (b.PriceLevel >= 250 ? 2 : 1);
+                if (existingDict.TryGetValue(key, out var existing))
+                {
+                    existing.Lat = b.Lat;
+                    existing.Lng = b.Lon;
+                    existing.Address = b.Address;
+                    existing.GoogleRating = b.Rating;
+                    existing.GoogleRatingCount = b.Reviews;
+                    existing.AvgPriceTl = b.PriceLevel;
+                    existing.PriceLevel = priceLevel;
+                    existing.Cuisines = b.Category;
+                    existing.MealCards ??= "multinet,setcard,sodexo,ticket";
+                    existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={b.Lat},{b.Lon}";
+                }
+                else
+                {
+                    var r = new Restaurant
+                    {
+                        GooglePlaceId = $"buyukil_{b.CityId}_{b.Name.GetHashCode():x8}",
+                        Name = b.Name,
+                        Cuisines = b.Category,
+                        MealCards = "multinet,setcard,sodexo,ticket",
+                        PriceLevel = priceLevel,
+                        AvgPriceTl = b.PriceLevel,
+                        GoogleRating = b.Rating,
+                        GoogleRatingCount = b.Reviews,
+                        Lat = b.Lat,
+                        Lng = b.Lon,
+                        Address = b.Address,
+                        MapsUrl = $"https://www.google.com/maps/search/?api=1&query={b.Lat},{b.Lon}"
+                    };
+                    toAdd.Add(r);
+                    existingDict[key] = r;
+                }
+            }
+        }
 
+        // 3. Konuma uygun buyukil mekanlarını belirle ve kullanıcının 5 km yarıçapına rastgele dahil et
+        // Kullanıcı nerede olursa olsun (Çakırlar, Teknokent, Kadıköy, Seyhan, vb.),
+        // o şehre uygun büyükil restoranlarından rastgele seçilerek 5 km yarıçap içine yerleştirilir.
+        var (cityName, cityVenues) = GetCityVenuesForLocation(lat, lng);
+        var allCurrent = remainingList.Concat(toAdd).ToList();
+
+        var existingNearbyNames = allCurrent
+            .Where(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000)
+            .Select(r => r.Name.Trim().ToLower())
+            .ToHashSet();
+
+        if (cityVenues.Count > 0)
+        {
+            var shuffledCity = cityVenues.OrderBy(_ => rnd.Next()).ToList();
+            int injectedCount = 0;
+
+            foreach (var b in shuffledCity)
+            {
+                var cleanName = b.Name;
+                var key = cleanName.Trim().ToLower();
+
+                // Eğer bu mekan veya ismi zaten kullanıcının 5 km içinde varsa tekrar ekleme
+                if (existingNearbyNames.Contains(key)) continue;
+
+                // 400m - 4.5km arasında rastgele açı ve mesafeyle konuma yerleştir
                 var angle = rnd.NextDouble() * Math.PI * 2;
-                var dist = 350 + rnd.NextDouble() * 4200; // 350m ile 4.5km arası (5km içi)
+                var dist = 400 + rnd.NextDouble() * 3800; // 400m - 4.2km
                 var dLat = dist * Math.Cos(angle) / 111_000.0;
                 var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
 
+                int priceLevel = b.PriceLevel >= 400 ? 3 : (b.PriceLevel >= 250 ? 2 : 1);
+                var r = new Restaurant
+                {
+                    GooglePlaceId = $"buyukil_{b.CityId}_{b.Name.GetHashCode():x8}_{lat:F3}_{lng:F3}_{injectedCount}",
+                    Name = cleanName,
+                    Cuisines = b.Category,
+                    MealCards = "multinet,setcard,sodexo,ticket",
+                    PriceLevel = priceLevel,
+                    AvgPriceTl = b.PriceLevel,
+                    GoogleRating = b.Rating,
+                    GoogleRatingCount = b.Reviews,
+                    Lat = Math.Round(lat + dLat, 6),
+                    Lng = Math.Round(lng + dLng, 6),
+                    Address = $"{b.Name} ({b.Address})",
+                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
+                };
+                toAdd.Add(r);
+                existingNearbyNames.Add(key);
+                injectedCount++;
+
+                // Her seferinde konuma uygun en az 6-8 adet büyükil mekanını garanti et
+                if (injectedCount >= 8) break;
+            }
+        }
+
+        // 4. Şimdi kullanıcının tam koordinatının 5 km yarıçapındaki toplam mekan sayısına bak
+        var allUpdated = allCurrent.Concat(toAdd).ToList();
+        var nearbyCount = allUpdated.Count(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000);
+
+        // Eğer hala 18'den azsa, Ankara / Sanayi havuzundan da ekle (toplam en az 20-25 olsun)
+        if (nearbyCount < 18)
+        {
+            int addedCount = 0;
+            var pool = AnkaraVenues.OrderBy(_ => rnd.Next()).ToList();
+            foreach (var v in pool)
+            {
+                if (nearbyCount + addedCount >= 25) break;
+
                 var cleanName = v.Name.Replace(" Batıkent", "").Replace(" Çayyolu", "").Replace(" Tunalı", "").Replace(" Bilkent", "");
+                var key = cleanName.Trim().ToLower();
+                if (existingNearbyNames.Contains(key)) continue;
+
+                var angle = rnd.NextDouble() * Math.PI * 2;
+                var dist = 350 + rnd.NextDouble() * 4200;
+                var dLat = dist * Math.Cos(angle) / 111_000.0;
+                var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
+
                 toAdd.Add(new Restaurant
                 {
                     GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}_{lat:F3}_{lng:F3}_{addedCount}",
@@ -246,6 +441,7 @@ public static class DemoSeeder
                     Address = $"{cleanName} (Merkez Mah. Cad. No: {rnd.Next(1, 110)})",
                     MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
                 });
+                existingNearbyNames.Add(key);
                 addedCount++;
             }
         }
