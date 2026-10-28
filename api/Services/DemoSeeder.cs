@@ -169,56 +169,129 @@ public static class DemoSeeder
     ];
 
     // =========================================================================
-    // 11. ANKARA'YA UZAK İLÇELER (BEYPAZARI, ÇUBUK, AKYURT, POLATLI, KIZILCAHAMAM, KAHRAMANKAZAN)
+    // 11. ANKARA'YA UZAK İLÇELER (ÇUBUK, BEYPAZARI, AYAŞ, KIZILCAHAMAM, KAHRAMANKAZAN, POLATLI, NALLIHAN, KALECİK, ELMADAĞ, AKYURT)
     // =========================================================================
     private static readonly SeedVenue[] DistrictVenues =
     [
-        // BEYPAZARI (Tarihi Konaklar, Güveç, Yaprak Sarma, 80 Katlı Baklava)
-        new("Tarihi Taş Mektep Restoranı", "evyemegi", 2, 480, 4.8, 4100, "Beypazarı Cumhuriyet Cad. No: 14, Beypazarı", 40.1677, 31.9211, "ticket,sodexo"),
-        new("Meşhur Beypazarı Güveççi Ali Usta", "kebap", 2, 520, 4.7, 4400, "Milli Egemenlik Cad. No: 22, Beypazarı", 40.1690, 31.9230, "ticket"),
-        new("Fatma Teyze Yöresel Ev Yemekleri", "evyemegi", 1, 360, 4.8, 3100, "Tarihi Çarşı İçi No: 8, Beypazarı", 40.1665, 31.9195, "multinet"),
-        new("Beypazarı İpek Yolu Konağı", "evyemegi", 2, 460, 4.6, 2100, "İnözü Vadisi Girişi No: 5, Beypazarı", 40.1750, 31.9280, "ticket,sodexo"),
-        new("Beypazarı Taş Fırın Kurusu & Pide", "pide", 1, 260, 4.7, 3400, "Alaaddin Sok. No: 12, Beypazarı", 40.1682, 31.9215, "ticket,sodexo"),
-        new("İnözü Vadisi Kır Bahçesi & Alabalık", "balik,tavuk", 2, 460, 4.6, 2600, "İnözü Vadisi Doğal Park İçi, Beypazarı", 40.1820, 31.9350, ""),
-        new("Beypazarı Havuç Konağı Yöresel Mutfak", "evyemegi", 2, 390, 4.7, 1950, "Hacılar Sok. No: 4, Beypazarı", 40.1670, 31.9200, "ticket,multinet"),
-        new("Beypazarı Sanayi Köfte & Çorba Salonu", "sanayi,kebap", 1, 340, 4.6, 1600, "Beypazarı Küçük Sanayi Sitesi No: 18, Beypazarı", 40.1580, 31.9120, "ticket"),
+        // ÇUBUK (Esnaf, Mangal ve Yöresel Duraklar)
+        new("Meşhur Çubuk Çorbacısı (Yanık Usta)", "evyemegi", 1, 180, 4.8, 3400, "Cumhuriyet Mah. Ankara Bulvarı, Çubuk", 40.2355, 33.0295, "multinet"),
+        new("Bodur Köfte Kebap", "kebap,sanayi", 1, 220, 4.7, 2900, "Yavuz Selim Mah. Çarşı İçi, Çubuk", 40.2375, 33.0315, "ticket,sodexo"),
+        new("Lefkoşe Et & Mangal", "kebap", 1, 350, 4.7, 2100, "Kıbrıs Cad. Çubuk", 40.2365, 33.0312, "ticket,sodexo"),
+        new("Meşhur Çubuk Turşucusu & Yöresel Sofrası", "evyemegi", 1, 210, 4.8, 3800, "Atatürk Cad. No: 28, Çubuk", 40.2370, 33.0305, "ticket"),
+        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 1, 240, 4.7, 4600, "Yavuz Selim Mah. Cengiz Topel Cad. No: 12, Çubuk", 40.2386, 33.0322, "ticket,sodexo,multinet"),
+        new("Çubuklu Esnaf Lokantası Hacıbaba", "evyemegi", 1, 230, 4.6, 2700, "Cumhuriyet Mah. Çubuk Çarşısı, Çubuk", 40.2395, 33.0340, "ticket"),
+        new("Çubuk Taş Fırın Pide & Kebap", "pide,kebap", 1, 190, 4.6, 2200, "Kıbrıs Cad. No: 18, Çubuk", 40.2360, 33.0310, "ticket,sodexo"),
+        new("Karagöl Kır Lokantası & Mangal", "tavuk,kebap", 1, 320, 4.7, 3100, "Karagöl Tabiat Parkı İçi, Çubuk", 40.3950, 32.9980, ""),
+        new("Çubuk Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.6, 1950, "Küçük Sanayi Sitesi 3. Blok, Çubuk", 40.2310, 33.0250, "ticket"),
+        new("Çubuk Yayla Tandır & Izgara", "kebap", 1, 280, 4.6, 1850, "Şabanözü Yolu 2. Km, Çubuk", 40.2450, 33.0420, "ticket,multinet"),
 
-        // ÇUBUK (Meşhur Yanık Usta, Bodur Köfte, Ağaçbaba Döner, Karagöl)
-        new("Meşhur Yanık Usta Çorbacısı", "evyemegi,kebap", 2, 340, 4.9, 6800, "Yavuz Selim Mah. Ankara Bulvarı No: 54, Çubuk", 40.2372, 33.0312, "multinet"),
-        new("Çubuk Meşhur Bodur Köftecisi", "kebap,sanayi", 2, 390, 4.8, 5200, "Cumhuriyet Mah. Cengiz Topel Cad. No: 18, Çubuk", 40.2388, 33.0335, "ticket,sodexo"),
-        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 2, 440, 4.6, 4300, "Cengiz Topel Cad. No: 24, Çubuk", 40.2384, 33.0320, "ticket,sodexo,multinet"),
-        new("Çubuk Sanayi Köftecisi Ali Usta", "sanayi,kebap", 1, 320, 4.7, 2600, "Çubuk Küçük Sanayi Sitesi 2. Blok No: 14, Çubuk", 40.2315, 33.0260, "ticket"),
-        new("Çubuk Bekir Usta Izgara", "kebap", 2, 400, 4.6, 2200, "Atatürk Cad. No: 36, Çubuk", 40.2368, 33.0298, "ticket,multinet"),
-        new("Karagöl Tabiat Parkı Kır Lokantası", "tavuk,kebap", 2, 480, 4.7, 3500, "Karagöl Tabiat Parkı İçi, Çubuk", 40.3950, 32.9980, ""),
-        new("Çubuk Yöresel Ev Yemekleri & Turşucu", "evyemegi", 1, 280, 4.6, 2800, "Yıldırım Beyazıt Mah. Ankara Cad. No: 42, Çubuk", 40.2355, 33.0285, "ticket,sodexo"),
-        new("Çubuk Taş Fırın Pide & Kebap Salonu", "pide", 1, 260, 4.6, 2200, "Kıbrıs Cad. No: 18, Çubuk", 40.2360, 33.0310, "ticket,sodexo"),
+        // BEYPAZARI (Tarihi Konaklar, Güveç ve İnözü Vadisi)
+        new("Tarihi Taş Mektep", "evyemegi", 1, 320, 4.6, 5200, "İstiklal Mah. Çınar Sok. Beypazarı", 40.1685, 31.9212, "ticket,sodexo"),
+        new("Değirmen Restaurant", "evyemegi,kebap", 1, 350, 4.5, 4100, "İnözü Vadisi, Beypazarı", 40.1850, 31.9180, "ticket,sodexo"),
+        new("Zindancık Tesisleri", "evyemegi", 1, 280, 4.4, 3100, "İnözü Vadisi No:15, Beypazarı", 40.1830, 31.9190, "ticket"),
+        new("Fatma Teyzenin Yeri", "evyemegi,kahvalti", 1, 220, 4.7, 2600, "Alaaddin Sok. Beypazarı Merkez", 40.1690, 31.9220, "multinet"),
+        new("Tarihi Güveç Fırını", "evyemegi", 1, 290, 4.6, 1900, "Milli Egemenlik Cad. Beypazarı", 40.1680, 31.9200, "ticket"),
+        new("Beypazarı Konağı Restaurant", "evyemegi", 1, 300, 4.5, 2300, "Çarşı İçi, Beypazarı", 40.1675, 31.9215, "ticket,sodexo"),
+        new("Asmaaltı Yöresel Lezzetler", "evyemegi", 1, 200, 4.6, 1800, "Tarihi Çarşı, Beypazarı", 40.1682, 31.9205, "multinet"),
+        new("Çınaraltı Et Mangal", "kebap", 1, 310, 4.4, 1500, "Ankara Yolu Üzeri, Beypazarı", 40.1650, 31.9300, "ticket"),
+        new("İnözü Alabalık Tesisleri", "balik", 1, 290, 4.5, 1750, "İnözü Vadisi 3. Km, Beypazarı", 40.1870, 31.9170, ""),
+        new("Beypazarı Sanayi Esnaf Lokantası", "sanayi,evyemegi", 1, 180, 4.5, 1200, "Sanayi Sitesi, Beypazarı", 40.1600, 31.9400, "ticket"),
 
-        // AKYURT (Sanayi Sitesi, Kuzu Haşlama, Kır Bahçeleri)
-        new("Akyurt Sanayi Sitesi Köftecisi & Çorbacısı", "sanayi,kebap", 1, 360, 4.7, 3100, "Akyurt Sanayi Sitesi No: 22, Akyurt", 40.1280, 33.0820, "ticket,multinet"),
-        new("Akyurt Merkez Esnaf Lokantası", "evyemegi", 1, 320, 4.6, 2400, "Beyazıt Mah. Çankırı Bulv. No: 14, Akyurt", 40.1308, 33.0872, "ticket"),
-        new("Tarihi Akyurt Taş Fırın Pide & Lahmacun", "pide", 1, 260, 4.6, 2100, "Cumhuriyet Meydanı No: 6, Akyurt", 40.1315, 33.0885, "ticket,sodexo"),
-        new("Akyurt Kır Bahçesi & Izgara", "tavuk,kebap", 2, 440, 4.5, 1700, "Büğdüz Mah. Havaalanı Yolu No: 45, Akyurt", 40.1180, 33.0650, ""),
-        new("Akyurt Lezzet Sofrası & Döner", "kebap", 2, 390, 4.5, 1900, "Kızık Cad. No: 9, Akyurt", 40.1295, 33.0850, "ticket,sodexo,multinet"),
-        new("Akyurt Sultan Sofrası", "evyemegi", 1, 310, 4.6, 1400, "Ankara Cad. No: 31, Akyurt", 40.1300, 33.0860, "ticket"),
+        // AYAŞ (Güveç, Kapama ve Yol Üstü Durakları)
+        new("Ayaş Sofrası", "evyemegi", 1, 260, 4.5, 2800, "Ankara Yolu Üzeri, Ayaş", 40.0150, 32.3320, "ticket,sodexo"),
+        new("Meşhur Ayaş Dutlu Tahtalı Tesisleri", "evyemegi,kebap", 1, 290, 4.6, 3300, "Ayaş Yolu 45. Km, Ayaş", 40.0200, 32.3400, "ticket,multinet"),
+        new("Tarihi Ayaş Güveççisi", "evyemegi", 1, 280, 4.7, 2100, "Cumhuriyet Meydanı, Ayaş", 40.0160, 32.3330, "ticket"),
+        new("Başak Lokantası", "evyemegi", 1, 210, 4.5, 1600, "Çarşı İçi, Ayaş", 40.0155, 32.3325, "ticket"),
+        new("Ayaş Sanayi Köftecisi", "sanayi,kebap", 1, 200, 4.6, 1100, "Ayaş Sanayi Sitesi, Ayaş", 40.0120, 32.3350, "ticket"),
+        new("Akkaya Tesisleri", "kebap", 1, 270, 4.4, 1900, "Beypazarı Yolu Çıkışı, Ayaş", 40.0180, 32.3250, "ticket,sodexo"),
+        new("Ayaş Hanımeli Mantı & Gözleme", "evyemegi,kahvalti", 1, 180, 4.7, 1400, "Belediye Karşısı, Ayaş", 40.0165, 32.3340, "multinet"),
+        new("Öz Ayaş Taş Fırın Pide", "pide", 1, 190, 4.5, 1300, "Ankara Bulvarı, Ayaş", 40.0140, 32.3310, "ticket,sodexo"),
+        new("Kirazlı Bahçe Kendin Pişir", "tavuk,kebap", 1, 300, 4.6, 1700, "İlhan Vadisi Yolu, Ayaş", 40.0250, 32.3200, ""),
+        new("Ayaş Çorba & Kelle Paça", "evyemegi", 1, 170, 4.6, 1250, "Merkez Camii Yanı, Ayaş", 40.0158, 32.3335, "multinet"),
 
-        // POLATLI (Soğanlı Kuzu Tandır, İstasyon Gar Lokantası, Duatepe Kebap)
-        new("Meşhur Polatlı Soğanlı Kuzu Tandır", "kebap", 2, 540, 4.8, 5100, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı", 39.5855, 32.1465, "ticket,sodexo"),
-        new("Polatlı Tarihi Duatepe Kebapçısı", "kebap", 2, 480, 4.7, 3900, "İnönü Cad. No: 18, Polatlı", 39.5840, 32.1440, "ticket,multinet"),
-        new("Polatlı İstasyon Gar Lokantası", "evyemegi", 1, 360, 4.6, 2900, "İstasyon Mah. Gar Yanı No: 4, Polatlı", 39.5820, 32.1410, "ticket,sodexo"),
-        new("Polatlı Taş Fırın Güveç & Pide", "pide", 1, 280, 4.6, 2400, "Sivrihisar Cad. No: 42, Polatlı", 39.5870, 32.1490, "ticket,sodexo"),
-        new("Polatlı Sanayi Sitesi Kavurmacısı", "sanayi,kebap", 1, 420, 4.7, 3100, "Yeni Sanayi Sitesi 12. Blok No: 5, Polatlı", 39.5790, 32.1350, "ticket"),
+        // KIZILCAHAMAM (Orman, Milli Park ve Et Mangal)
+        new("Çamaltı Restaurant", "kebap,tavuk", 1, 350, 4.7, 4500, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4630, 32.6415, "ticket,sodexo"),
+        new("Kasap Hüseyin Et Mangal", "kebap", 1, 380, 4.8, 3800, "Ankara İstanbul Yolu Üzeri, Kızılcahamam", 40.4500, 32.6400, "ticket,sodexo"),
+        new("Bahar Bahçe Lokantası", "evyemegi,kahvalti", 1, 250, 4.6, 2100, "Kazım Karabekir Cad. Kızılcahamam", 40.4690, 32.6500, "ticket"),
+        new("Kızılcahamam Meşhur Bazlamacısı", "kahvalti,evyemegi", 1, 210, 4.8, 6200, "Kazım Karabekir Cad. No: 16, Kızılcahamam", 40.4700, 32.6500, "ticket,multinet"),
+        new("Soğuksu Alabalık Tesisleri", "balik", 1, 310, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4620, 32.6410, ""),
+        new("Kızılcahamam Taş Fırın Güveç", "kebap", 1, 330, 4.7, 4400, "Kaplıca Cad. No: 24, Kızılcahamam", 40.4715, 32.6520, "ticket,sodexo"),
+        new("Yabanabat Sofrası", "evyemegi", 1, 230, 4.5, 1800, "Ankara Cad. Kızılcahamam", 40.4680, 32.6480, "ticket"),
+        new("Orman Köşkü Restaurant", "kebap", 1, 340, 4.6, 2200, "Milli Park Girişi, Kızılcahamam", 40.4650, 32.6430, "ticket,sodexo"),
+        new("Termal Çorba Sarayı", "evyemegi", 1, 180, 4.5, 1500, "Hamamlar Mevkii, Kızılcahamam", 40.4720, 32.6530, "multinet"),
+        new("Kızılcahamam Sanayi Lokantası", "sanayi,evyemegi", 1, 190, 4.6, 1100, "Sanayi Sitesi, Kızılcahamam", 40.4600, 32.6600, "ticket"),
 
-        // KIZILCAHAMAM (Meşhur Bazlama, Taş Fırın Güveç, Kaplıca & Milli Park)
-        new("Kızılcahamam Meşhur Bazlamacısı & Gözleme Konağı", "kahvalti", 1, 290, 4.8, 6500, "Kazım Karabekir Cad. No: 16, Kızılcahamam", 40.4700, 32.6500, "ticket,multinet"),
-        new("Kızılcahamam Taş Fırın Güveç & Kuzu Kebap", "kebap", 2, 540, 4.7, 4700, "Kaplıca Cad. No: 24, Kızılcahamam", 40.4715, 32.6520, "ticket,sodexo"),
-        new("Soğuksu Milli Parkı Mangal & Alabalık", "balik,tavuk", 2, 480, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4620, 32.6410, ""),
-        new("Kızılcahamam Esnaf Lokantası", "evyemegi", 1, 340, 4.6, 2600, "Cumhuriyet Meydanı No: 8, Kızılcahamam", 40.4690, 32.6490, "ticket,multinet"),
+        // KAHRAMANKAZAN (Kavurma, Saray ve Sanayi Durakları)
+        new("Kahramankazan Kavurmacısı (Mehmet Usta)", "sanayi,kebap", 1, 290, 4.8, 3800, "Fatih Mah. Ankara Bulv. No: 88, Kazan", 40.1983, 32.6842, "ticket,sodexo"),
+        new("Saray Et Mangal", "kebap,tavuk", 1, 350, 4.6, 3400, "Saray Mah. FSM Bulvarı, Kazan", 40.1450, 32.6700, "ticket,sodexo"),
+        new("Kazan Saray Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.7, 3100, "Saray Sanayi Sitesi 5. Sk, Kazan", 40.1850, 32.6710, "ticket,multinet,setcard"),
+        new("Kahramankazan Esnaf Mutfağı", "evyemegi", 1, 230, 4.6, 2100, "Cumhuriyet Cad. No: 14, Kazan", 40.1995, 32.6860, "ticket"),
+        new("Akıncılar Et Lokantası", "kebap", 1, 310, 4.5, 1800, "Ankara Yolu 25. Km, Kazan", 40.1700, 32.6750, "ticket,sodexo"),
+        new("Kazan Taş Fırın Pide", "pide", 1, 180, 4.6, 1850, "Termal Cad. No: 7, Kazan", 40.1970, 32.6820, "ticket,sodexo"),
+        new("Ova Kavurma & Çorba", "sanayi,evyemegi", 1, 240, 4.7, 1600, "Gişeler Çıkışı, Kazan", 40.1500, 32.6650, "ticket"),
+        new("Meşhur Kazan Köftecisi", "kebap", 1, 210, 4.5, 1400, "Milli Egemenlik Cad. Kazan", 40.2000, 32.6850, "ticket"),
+        new("Kazan Park Kahvaltı & Gözleme", "kahvalti,evyemegi", 1, 190, 4.6, 1200, "Kazan Aile Parkı Yanı, Kazan", 40.2020, 32.6800, "multinet"),
+        new("Saraykent Yöresel Ev Yemekleri", "evyemegi", 1, 200, 4.4, 950, "Saraykent Sanayi Girişi, Kazan", 40.1400, 32.6720, "ticket"),
 
-        // KAHRAMANKAZAN (Saray Sanayi, Kavurmacı, Esnaf Mutfağı)
-        new("Kahramankazan Kavurmacısı Mehmet Usta", "sanayi,kebap", 2, 490, 4.8, 4100, "Fatih Mah. Ankara Bulv. No: 88, Kahramankazan", 40.1983, 32.6842, "ticket,sodexo"),
-        new("Kazan Saray Sanayi Köftecisi", "sanayi,kebap", 1, 380, 4.7, 3300, "Saray Sanayi Sitesi 5. Sk. No: 12, Kahramankazan", 40.1850, 32.6710, "ticket,multinet,setcard"),
-        new("Kahramankazan Esnaf Mutfağı", "evyemegi", 1, 340, 4.6, 2100, "Cumhuriyet Cad. No: 14, Kahramankazan", 40.1995, 32.6860, "ticket"),
-        new("Kazan Taş Fırın Pide & Lahmacun", "pide", 1, 260, 4.6, 1850, "Termal Cad. No: 7, Kahramankazan", 40.1970, 32.6820, "ticket,sodexo")
+        // POLATLI (Tandır, Çorba ve Tarım Yöresi)
+        new("Yılmaz Usta Konya Tandır", "kebap", 1, 320, 4.8, 4200, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı", 39.5855, 32.1465, "ticket,sodexo"),
+        new("Recep Usta Restaurant", "kebap", 1, 300, 4.5, 2900, "İnönü Cad. Polatlı", 39.5840, 32.1440, "ticket"),
+        new("Polatlı İstasyon Gar Lokantası", "evyemegi", 1, 240, 4.6, 2900, "İstasyon Mah. Gar Yanı, Polatlı", 39.5820, 32.1410, "ticket,sodexo"),
+        new("Polatlı Sanayi Sitesi Kavurmacısı", "sanayi,kebap", 1, 250, 4.7, 3100, "Yeni Sanayi Sitesi 12. Blok, Polatlı", 39.5790, 32.1350, "ticket"),
+        new("Tarihi Duatepe Kebapçısı", "kebap", 1, 280, 4.7, 3600, "İnönü Cad. No: 18, Polatlı", 39.5840, 32.1440, "ticket,multinet"),
+        new("Güçlü Yemek Esnaf Lokantası", "evyemegi", 1, 210, 4.6, 2200, "Çarşı İçi, Polatlı", 39.5860, 32.1450, "ticket"),
+        new("Anadolu Çorba Sarayı", "evyemegi", 1, 180, 4.5, 2700, "Eskişehir Yolu Üzeri, Polatlı", 39.5800, 32.1500, "multinet"),
+        new("Polatlı Taş Fırın Güveç & Pide", "pide", 1, 210, 4.6, 2400, "Sivrihisar Cad. No: 42, Polatlı", 39.5870, 32.1490, "ticket,sodexo"),
+        new("Gordion Dinlenme Tesisleri", "kebap,evyemegi", 1, 290, 4.3, 3500, "Polatlı Çıkışı 5. Km, Polatlı", 39.5750, 32.1200, "ticket,sodexo"),
+        new("Bozkır Et Lokantası", "kebap", 1, 270, 4.5, 1400, "Turan Cad. Polatlı", 39.5830, 32.1420, "ticket"),
+
+        // NALLIHAN (Tarihi Han, Çayırhan ve Yöresel Lezzetler)
+        new("Tapduk Emre Sofrası (Kocahan)", "evyemegi", 1, 240, 4.7, 1800, "Nasuhpaşa Mah. Nallıhan", 40.1870, 31.3500, "ticket"),
+        new("Ata Çimen Restaurant", "balik,kebap", 1, 300, 4.6, 2200, "Çayırhan Baraj Gölü Kenarı, Nallıhan", 40.0950, 31.6050, "ticket,sodexo"),
+        new("Dostlar Sofrası", "evyemegi", 1, 210, 4.5, 1400, "Nallıhan Çarşı, Nallıhan", 40.1865, 31.3510, "ticket"),
+        new("Çimen Lokantası", "evyemegi", 1, 220, 4.4, 1100, "Çayırhan Merkez, Nallıhan", 40.0960, 31.6000, "ticket"),
+        new("Bacım Sultan Yöresel Ev Yemekleri", "evyemegi,kahvalti", 1, 190, 4.8, 1600, "Kocahan İçi, Nallıhan", 40.1872, 31.3495, "multinet"),
+        new("Juliopolis Balık & Mangal", "balik", 1, 280, 4.5, 1300, "Çayırhan Baraj Yolu, Nallıhan", 40.0930, 31.6100, ""),
+        new("Nallıhan Güveç Salonu", "evyemegi", 1, 260, 4.6, 1250, "Ankara Yolu Girişi, Nallıhan", 40.1850, 31.3550, "ticket"),
+        new("Hanımeli Mantı Evi", "evyemegi", 1, 180, 4.7, 950, "Atatürk Meydanı, Nallıhan", 40.1880, 31.3480, "multinet"),
+        new("Nallıhan Merkez Çorbacısı", "evyemegi", 1, 170, 4.5, 1050, "Belediye Caddesi, Nallıhan", 40.1860, 31.3520, "multinet"),
+        new("Kuş Cenneti Mola Tesisleri", "kahvalti,tavuk", 1, 200, 4.4, 1500, "Nallıhan Kuş Cenneti Yolu, Nallıhan", 40.1100, 31.5800, "ticket,sodexo"),
+
+        // KALECİK (Bağ Yolu ve Kır Tesisleri)
+        new("Kalecik Belediyesi Muhabbet Konağı", "evyemegi,kahvalti", 1, 250, 4.7, 1500, "Kalecik Kalesi Yolu, Kalecik", 40.0980, 33.4080, "ticket,sodexo"),
+        new("Kalecik Kalesi Et Mangal", "kebap", 1, 290, 4.5, 1200, "Kale Altı Mevkii, Kalecik", 40.0990, 33.4070, "ticket"),
+        new("Tarihi Kalecik Lokantası", "evyemegi", 1, 210, 4.6, 950, "Cumhuriyet Meydanı, Kalecik", 40.0970, 33.4100, "ticket"),
+        new("Kızılırmak Balıkçısı", "balik", 1, 280, 4.4, 1100, "Kızılırmak Köprüsü Yanı, Kalecik", 40.0800, 33.4200, ""),
+        new("Bağ Evi Restaurant", "evyemegi,kebap", 1, 320, 4.6, 1400, "Bağlar Yolu, Kalecik", 40.1050, 33.4000, "ticket,sodexo"),
+        new("Kalecik Sanayi Köftecisi", "sanayi,kebap", 1, 200, 4.5, 800, "Kalecik Sanayi Sitesi, Kalecik", 40.0900, 33.4150, "ticket"),
+        new("Kalecik Taş Fırın Pide", "pide", 1, 180, 4.5, 850, "İstasyon Cad. Kalecik", 40.0950, 33.4120, "ticket"),
+        new("Bizim Sofra Ev Yemekleri", "evyemegi", 1, 190, 4.7, 750, "Çarşı İçi, Kalecik", 40.0975, 33.4090, "multinet"),
+        new("Kalecik Çorba Salonu", "evyemegi", 1, 160, 4.4, 600, "Ankara Yolu Çıkışı, Kalecik", 40.0920, 33.4180, "multinet"),
+        new("Hanımeller Yöresel Gözleme", "evyemegi,kahvalti", 1, 170, 4.6, 900, "Kale Yolu Girişi, Kalecik", 40.0985, 33.4085, "multinet"),
+
+        // ELMADAĞ (Doğa, Kayak Tesisleri ve Et Mangal)
+        new("Elmadağ Renkli Et Lokantası", "kebap", 1, 300, 4.5, 2600, "Ankara-Samsun Yolu Üzeri, Elmadağ", 39.9050, 33.2350, "ticket,sodexo"),
+        new("Hasanoğlan Köftecisi", "kebap", 1, 230, 4.6, 1800, "Hasanoğlan Girişi, Elmadağ", 39.9300, 33.1900, "ticket"),
+        new("Elmadağ Tandır Konağı", "kebap", 1, 310, 4.7, 2100, "Cumhuriyet Cad. Elmadağ", 39.9070, 33.2380, "ticket,multinet"),
+        new("Elmadağ Kayak Merkezi Tesisleri", "kebap,kahvalti", 1, 350, 4.4, 3200, "Kayak Merkezi Yolu, Elmadağ", 39.8500, 33.3000, "ticket,sodexo"),
+        new("Lalahan Et Mangal", "kebap,tavuk", 1, 280, 4.5, 1900, "Lalahan Mevkii Yozgat Bulvarı, Elmadağ", 39.9500, 33.1000, ""),
+        new("Elmadağ Esnaf Lokantası", "evyemegi", 1, 200, 4.5, 1400, "Çarşı İçi, Elmadağ", 39.9060, 33.2360, "ticket"),
+        new("Çamlık Kır Bahçesi", "tavuk,kahvalti", 1, 240, 4.6, 1600, "Çamlık Parkı İçi, Elmadağ", 39.9080, 33.2400, ""),
+        new("Yücel Usta'nın Yeri", "sanayi,kebap", 1, 220, 4.7, 1200, "Elmadağ Sanayi, Elmadağ", 39.9000, 33.2300, "ticket"),
+        new("Elmadağ Pide & Lahmacun", "pide", 1, 190, 4.4, 1100, "İstasyon Cad. Elmadağ", 39.9040, 33.2340, "ticket"),
+        new("Elmadağ Çorba & İşkembe", "evyemegi", 1, 180, 4.5, 1350, "Ankara Yolu Üzeri, Elmadağ", 39.9055, 33.2330, "multinet"),
+
+        // AKYURT (Sanayi Sitesi ve Kır Bahçeleri)
+        new("Akyurt Sanayi Sitesi Köftecisi", "sanayi,kebap", 1, 210, 4.7, 2800, "Akyurt Sanayi Sitesi No: 22, Akyurt", 40.1280, 33.0820, "ticket,multinet"),
+        new("Akyurt Merkez Esnaf Lokantası", "evyemegi", 1, 220, 4.6, 2400, "Beyazıt Mah. Çankırı Bulv. No: 14, Akyurt", 40.1308, 33.0872, "ticket"),
+        new("Tarihi Akyurt Taş Fırın Pide", "pide", 1, 180, 4.6, 2100, "Cumhuriyet Meydanı No: 6, Akyurt", 40.1315, 33.0885, "ticket,sodexo"),
+        new("Akyurt Kır Bahçesi & Izgara", "tavuk,kebap", 1, 260, 4.5, 1700, "Büğdüz Mah. Havaalanı Yolu No: 45, Akyurt", 40.1180, 33.0650, ""),
+        new("Akyurt Lezzet Sofrası & Döner", "kebap", 1, 230, 4.5, 1900, "Kızık Cad. No: 9, Akyurt", 40.1295, 33.0850, "ticket,sodexo,multinet"),
+        new("Akyurt Sultan Sofrası", "evyemegi", 1, 200, 4.6, 1400, "Ankara Cad. No: 31, Akyurt", 40.1300, 33.0860, "ticket"),
+        new("Fuar Et Mangal", "kebap,tavuk", 1, 290, 4.4, 2200, "Fuar Alanı Kavşağı, Akyurt", 40.1000, 33.0500, "ticket,sodexo"),
+        new("Çankırı Yolu Mola Tesisleri", "evyemegi,kebap", 1, 240, 4.3, 3100, "Akyurt Çıkışı, Akyurt", 40.1400, 33.1000, "ticket,sodexo"),
+        new("Akyurt Kuzu Çevirme", "kebap", 1, 330, 4.7, 1800, "Havaalanı Yolu Üzeri, Akyurt", 40.1200, 33.0700, ""),
+        new("Akyurt Çorba Sarayı", "evyemegi", 1, 170, 4.5, 1500, "Çarşı Merkezi, Akyurt", 40.1310, 33.0880, "multinet")
     ];
 
     public class BuyukIlEntry

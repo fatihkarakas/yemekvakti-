@@ -33,6 +33,11 @@ const POPULAR_LOCATIONS: QuickCity[] = [
       { name: 'Beypazarı', query: 'Beypazarı Ankara', lat: 40.1677, lng: 31.9211 },
       { name: 'Polatlı', query: 'Polatlı Ankara', lat: 39.5855, lng: 32.1465 },
       { name: 'Kızılcahamam', query: 'Kızılcahamam Ankara', lat: 40.4700, lng: 32.6500 },
+      { name: 'Ayaş', query: 'Ayaş Ankara', lat: 40.0150, lng: 32.3320 },
+      { name: 'Kahramankazan', query: 'Kahramankazan Ankara', lat: 40.1983, lng: 32.6842 },
+      { name: 'Nallıhan', query: 'Nallıhan Ankara', lat: 40.1870, lng: 31.3500 },
+      { name: 'Kalecik', query: 'Kalecik Ankara', lat: 40.0980, lng: 33.4080 },
+      { name: 'Elmadağ', query: 'Elmadağ Ankara', lat: 39.9050, lng: 33.2350 },
     ]
   },
   {
