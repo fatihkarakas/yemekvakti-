@@ -61,6 +61,11 @@ import { StarsComponent } from './stars.component';
             </span>
           }
         </div>
+      } @else {
+        <div class="meal-cards-row">
+          <span class="meal-cards-title muted">Yemek Kartı:</span>
+          <span class="meal-badge card-cash">💵 Kart geçmez (Nakit / Kredi Kartı)</span>
+        </div>
       }
 
       @if (r().myRating) {
@@ -163,6 +168,7 @@ import { StarsComponent } from './stars.component';
       &.card-sodexo { background: rgba(59, 130, 246, 0.18); border-color: rgba(59, 130, 246, 0.45); color: #93c5fd; }
       &.card-ticket { background: rgba(239, 68, 68, 0.18); border-color: rgba(239, 68, 68, 0.45); color: #fca5a5; }
       &.card-metropol { background: rgba(34, 197, 94, 0.18); border-color: rgba(34, 197, 94, 0.45); color: #86efac; }
+      &.card-cash { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.12); color: var(--muted); font-weight: 500; }
     }
 
     .fav-btn {

@@ -98,30 +98,32 @@ public static class DemoSeeder
         // ==========================================
         // 5. ÇANKAYA, GAZİOSMANPAŞA & DİKMEN VADİSİ
         // ==========================================
-        new("Meşhur Tavacı Recep Usta Park Vadi", "kebap", 3, 650, 4.7, 5800, "Park Vadi Evleri İçi, Hoşdere Cad., Çankaya", 39.8824, 32.8481),
-        new("Trilye Balık Restoranı", "balik", 4, 950, 4.7, 2400, "Hafta Sk. No: 1, Gaziosmanpaşa", 39.8965, 32.8675),
-        new("Double Zero Pizza GOP", "pizza", 2, 430, 4.6, 1800, "Büyükesat Mah. Uğur Mumcu Cad. No: 37/B, GOP", 39.8970, 32.8710),
-        new("Nusr-Et Steakhouse Ankara", "kebap", 4, 1350, 4.5, 4200, "Boğaz Sk. No: 22, Gaziosmanpaşa", 39.8980, 32.8690),
-        new("Cafemiz Filistin", "evyemegi,kahvalti", 2, 420, 4.4, 2200, "Filistin Cad. No: 12, Gaziosmanpaşa", 39.8985, 32.8680),
+        new("Meşhur Tavacı Recep Usta Park Vadi", "kebap", 3, 780, 4.7, 6400, "Park Vadi Evleri İçi, Hoşdere Cad., Çankaya", 39.8824, 32.8481, "ticket,sodexo"),
+        new("Trilye Balık Restoranı", "balik", 3, 1600, 4.8, 4500, "Gaziosmanpaşa Mah. Budapeşte Cad. No: 11, Çankaya", 39.9050, 32.8620, ""),
+        new("Double Zero Pizza GOP", "pizza", 2, 450, 4.6, 1800, "Büyükesat Mah. Uğur Mumcu Cad. No: 37/B, GOP", 39.8970, 32.8710, "ticket,sodexo"),
+        new("Nusr-Et Steakhouse Ankara", "kebap", 3, 1650, 4.5, 4200, "Boğaz Sk. No: 22, Gaziosmanpaşa", 39.8980, 32.8690, ""),
+        new("Cafemiz Filistin", "evyemegi,kahvalti", 2, 480, 4.4, 2200, "Filistin Cad. No: 12, Gaziosmanpaşa", 39.8985, 32.8680, "ticket,sodexo,multinet"),
 
         // ==========================================
         // 6. TUNALI HİLMİ, KAVAKLIDERE, BESTEKAR & ESAT
         // ==========================================
-        new("Meşhur Özçelik Aspava Esat", "kebap", 2, 390, 4.7, 6400, "Bülbülderesi Cad. No: 19, Esat", 39.9056, 32.8623),
-        new("Kebap 49 Tunalı", "kebap,pide", 2, 380, 4.5, 3100, "Tunalı Hilmi Cad. Bülten Sk. No: 5, Kavaklıdere", 39.9020, 32.8610),
-        new("Devrez Restoran Küçükesat", "evyemegi,kebap", 2, 310, 4.6, 4400, "Esat Cad. No: 143/A, Küçükesat", 39.9075, 32.8660),
-        new("Midpoint Tunalı Hilmi", "burger,evyemegi", 2, 440, 4.3, 1920, "Tunalı Hilmi Cad. No: 88, Kavaklıdere", 39.9028, 32.8601),
-        new("Süha Döner Tunalı", "kebap", 2, 340, 4.5, 1350, "Tunalı Hilmi Cad. No: 72, Kavaklıdere", 39.9035, 32.8605),
-        new("Anadolu Esnaf Lokantası Büklüm", "evyemegi", 1, 220, 4.6, 910, "Büklüm Sk. No: 18, Kavaklıdere", 39.9030, 32.8580),
+        new("Meşhur Özçelik Aspava Esat", "kebap", 2, 580, 4.8, 9800, "Bülbülderesi Cad. No: 19, Esat", 39.9056, 32.8623, "multinet,setcard,sodexo,ticket"),
+        new("Kebap 49 Tunalı", "kebap,pide", 2, 520, 4.7, 5800, "Tunalı Hilmi Cad. Bülten Sk. No: 5, Kavaklıdere", 39.9020, 32.8610, "ticket,sodexo,multinet"),
+        new("Devrez Restoran Küçükesat", "evyemegi,kebap", 2, 460, 4.6, 7800, "Esat Cad. No: 143/A, Küçükesat", 39.9075, 32.8660, "multinet,setcard,sodexo,ticket"),
+        new("Midpoint Tunalı Hilmi", "burger,evyemegi", 2, 490, 4.3, 1920, "Tunalı Hilmi Cad. No: 88, Kavaklıdere", 39.9028, 32.8601, "multinet,setcard,sodexo,ticket"),
+        new("Süha Döner Tunalı", "kebap", 2, 490, 4.6, 3900, "Tunalı Hilmi Cad. No: 72, Kavaklıdere", 39.9035, 32.8605, "ticket,sodexo,multinet"),
+        new("Anadolu Esnaf Lokantası Büklüm", "evyemegi", 1, 260, 4.6, 910, "Büklüm Sk. No: 18, Kavaklıdere", 39.9030, 32.8580, "ticket,multinet"),
 
         // ==========================================
         // 7. KIZILAY, MALTEPE & TARİHİ ULUS
         // ==========================================
-        new("Tarihi Boğaziçi Lokantası Ulus", "evyemegi", 2, 340, 4.7, 2900, "Anafartalar Mah. Denizciler Cad. No: 1/A, Altındağ", 39.9412, 32.8542),
-        new("Düveroğlu Kebap Anıttepe", "kebap,pide", 2, 410, 4.6, 4100, "Gençlik Cad. No: 28, Anıttepe", 39.9245, 32.8390),
-        new("Meşhur Aspava Selanik", "kebap", 2, 370, 4.5, 3300, "Kocatepe Mah. Selanik Cad. No: 19/C, Kızılay", 39.9180, 32.8560),
-        new("Urfalı Hacı Mehmet Kebap Kızılay", "kebap", 2, 350, 4.4, 1650, "Mithatpaşa Cad. No: 33, Kızılay", 39.9198, 32.8545),
-        new("Urfa Çıtır Lahmacun Maltepe", "pide", 1, 190, 4.7, 1150, "Gazi Mustafa Kemal Blv. No: 64, Maltepe", 39.9240, 32.8450),
+        new("Cici Piknik Kömürde Döner", "kebap", 2, 480, 4.8, 5800, "Kızılay Mah. Fevzi Çakmak 1 Sok. No: 16/A, Çankaya", 39.9215, 32.8530, "ticket,sodexo"),
+        new("Mutlu Döner Ayrancı", "kebap", 2, 510, 4.8, 4600, "Güvenlik Cad. No: 69, Aşağı Ayrancı, Çankaya", 39.9015, 32.8490, "ticket,sodexo,multinet"),
+        new("Tarihi Boğaziçi Lokantası Ulus", "evyemegi", 2, 480, 4.7, 6700, "Anafartalar Mah. Denizciler Cad. No: 1/A, Altındağ", 39.9412, 32.8542, "ticket,sodexo,multinet"),
+        new("Düveroğlu Kebap Anıttepe", "kebap,pide", 2, 620, 4.7, 10200, "Gençlik Cad. No: 28, Anıttepe", 39.9245, 32.8390, "ticket,sodexo,multinet"),
+        new("Meşhur Aspava Selanik", "kebap", 2, 560, 4.6, 3300, "Kocatepe Mah. Selanik Cad. No: 19/C, Kızılay", 39.9180, 32.8560, "multinet,setcard,sodexo,ticket"),
+        new("Urfalı Hacı Mehmet Kebap Kızılay", "kebap", 2, 440, 4.5, 1650, "Mithatpaşa Cad. No: 33, Kızılay", 39.9198, 32.8545, "ticket,sodexo"),
+        new("Urfa Çıtır Lahmacun Maltepe", "pide", 1, 260, 4.7, 3100, "Gazi Mustafa Kemal Blv. No: 64, Maltepe", 39.9240, 32.8450, "ticket,sodexo"),
 
         // ==========================================
         // 8. BAHÇELİEVLER (7. Cadde)
@@ -172,51 +174,51 @@ public static class DemoSeeder
     private static readonly SeedVenue[] DistrictVenues =
     [
         // BEYPAZARI (Tarihi Konaklar, Güveç, Yaprak Sarma, 80 Katlı Baklava)
-        new("Tarihi Taş Mektep Restoranı", "evyemegi", 2, 290, 4.8, 3800, "Beypazarı Cumhuriyet Cad. No: 14, Beypazarı", 40.1677, 31.9211),
-        new("Meşhur Beypazarı Güveççi Ali Usta", "kebap", 2, 310, 4.7, 4200, "Milli Egemenlik Cad. No: 22, Beypazarı", 40.1690, 31.9230),
-        new("Fatma Teyze Yöresel Ev Yemekleri", "evyemegi", 1, 240, 4.8, 2900, "Tarihi Çarşı İçi No: 8, Beypazarı", 40.1665, 31.9195),
-        new("Beypazarı İpek Yolu Konağı", "evyemegi", 2, 320, 4.6, 2100, "İnözü Vadisi Girişi No: 5, Beypazarı", 40.1750, 31.9280),
-        new("Beypazarı Taş Fırın Kurusu & Pide", "pide", 1, 180, 4.7, 3400, "Alaaddin Sok. No: 12, Beypazarı", 40.1682, 31.9215),
-        new("İnözü Vadisi Kır Bahçesi & Alabalık", "balik,tavuk", 2, 340, 4.6, 2600, "İnözü Vadisi Doğal Park İçi, Beypazarı", 40.1820, 31.9350),
-        new("Beypazarı Havuç Konağı Yöresel Mutfak", "evyemegi", 2, 250, 4.7, 1950, "Hacılar Sok. No: 4, Beypazarı", 40.1670, 31.9200),
-        new("Beypazarı Sanayi Köfte & Çorba Salonu", "sanayi,kebap", 1, 220, 4.6, 1600, "Beypazarı Küçük Sanayi Sitesi No: 18, Beypazarı", 40.1580, 31.9120),
+        new("Tarihi Taş Mektep Restoranı", "evyemegi", 2, 480, 4.8, 4100, "Beypazarı Cumhuriyet Cad. No: 14, Beypazarı", 40.1677, 31.9211, "ticket,sodexo"),
+        new("Meşhur Beypazarı Güveççi Ali Usta", "kebap", 2, 520, 4.7, 4400, "Milli Egemenlik Cad. No: 22, Beypazarı", 40.1690, 31.9230, "ticket"),
+        new("Fatma Teyze Yöresel Ev Yemekleri", "evyemegi", 1, 360, 4.8, 3100, "Tarihi Çarşı İçi No: 8, Beypazarı", 40.1665, 31.9195, "multinet"),
+        new("Beypazarı İpek Yolu Konağı", "evyemegi", 2, 460, 4.6, 2100, "İnözü Vadisi Girişi No: 5, Beypazarı", 40.1750, 31.9280, "ticket,sodexo"),
+        new("Beypazarı Taş Fırın Kurusu & Pide", "pide", 1, 260, 4.7, 3400, "Alaaddin Sok. No: 12, Beypazarı", 40.1682, 31.9215, "ticket,sodexo"),
+        new("İnözü Vadisi Kır Bahçesi & Alabalık", "balik,tavuk", 2, 460, 4.6, 2600, "İnözü Vadisi Doğal Park İçi, Beypazarı", 40.1820, 31.9350, ""),
+        new("Beypazarı Havuç Konağı Yöresel Mutfak", "evyemegi", 2, 390, 4.7, 1950, "Hacılar Sok. No: 4, Beypazarı", 40.1670, 31.9200, "ticket,multinet"),
+        new("Beypazarı Sanayi Köfte & Çorba Salonu", "sanayi,kebap", 1, 340, 4.6, 1600, "Beypazarı Küçük Sanayi Sitesi No: 18, Beypazarı", 40.1580, 31.9120, "ticket"),
 
-        // ÇUBUK (Meşhur Çubuk Turşusu, Ağaçbaba Döneri, Yayla Tandır)
-        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 1, 240, 4.7, 4600, "Yavuz Selim Mah. Cengiz Topel Cad. No: 12, Çubuk", 40.2386, 33.0322),
-        new("Meşhur Çubuk Turşucusu & Yöresel Sofrası", "evyemegi", 1, 210, 4.8, 3800, "Atatürk Cad. No: 28, Çubuk", 40.2370, 33.0305),
-        new("Çubuklu Esnaf Lokantası Hacıbaba", "evyemegi", 1, 230, 4.6, 2700, "Cumhuriyet Mah. Çubuk Çarşısı No: 15, Çubuk", 40.2395, 33.0340),
-        new("Çubuk Taş Fırın Pide & Kebap Salonu", "pide", 1, 190, 4.6, 2200, "Kıbrıs Cad. No: 18, Çubuk", 40.2360, 33.0310),
-        new("Çubuk Yayla Tandır & Izgara", "kebap", 2, 280, 4.6, 1850, "Şabanözü Yolu 2. Km, Çubuk", 40.2450, 33.0420),
-        new("Karagöl Kır Lokantası & Mangal", "tavuk,kebap", 2, 320, 4.7, 3100, "Karagöl Tabiat Parkı İçi, Çubuk", 40.3950, 32.9980),
-        new("Çubuk Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.6, 1950, "Çubuk Küçük Sanayi Sitesi 3. Blok No: 8, Çubuk", 40.2310, 33.0250),
-        new("Çubuk Çorbacısı & Kelle Paça", "evyemegi", 1, 180, 4.6, 1750, "Ankara Bulvarı No: 42, Çubuk", 40.2350, 33.0290),
+        // ÇUBUK (Meşhur Yanık Usta, Bodur Köfte, Ağaçbaba Döner, Karagöl)
+        new("Meşhur Yanık Usta Çorbacısı", "evyemegi,kebap", 2, 340, 4.9, 6800, "Yavuz Selim Mah. Ankara Bulvarı No: 54, Çubuk", 40.2372, 33.0312, "multinet"),
+        new("Çubuk Meşhur Bodur Köftecisi", "kebap,sanayi", 2, 390, 4.8, 5200, "Cumhuriyet Mah. Cengiz Topel Cad. No: 18, Çubuk", 40.2388, 33.0335, "ticket,sodexo"),
+        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 2, 440, 4.6, 4300, "Cengiz Topel Cad. No: 24, Çubuk", 40.2384, 33.0320, "ticket,sodexo,multinet"),
+        new("Çubuk Sanayi Köftecisi Ali Usta", "sanayi,kebap", 1, 320, 4.7, 2600, "Çubuk Küçük Sanayi Sitesi 2. Blok No: 14, Çubuk", 40.2315, 33.0260, "ticket"),
+        new("Çubuk Bekir Usta Izgara", "kebap", 2, 400, 4.6, 2200, "Atatürk Cad. No: 36, Çubuk", 40.2368, 33.0298, "ticket,multinet"),
+        new("Karagöl Tabiat Parkı Kır Lokantası", "tavuk,kebap", 2, 480, 4.7, 3500, "Karagöl Tabiat Parkı İçi, Çubuk", 40.3950, 32.9980, ""),
+        new("Çubuk Yöresel Ev Yemekleri & Turşucu", "evyemegi", 1, 280, 4.6, 2800, "Yıldırım Beyazıt Mah. Ankara Cad. No: 42, Çubuk", 40.2355, 33.0285, "ticket,sodexo"),
+        new("Çubuk Taş Fırın Pide & Kebap Salonu", "pide", 1, 260, 4.6, 2200, "Kıbrıs Cad. No: 18, Çubuk", 40.2360, 33.0310, "ticket,sodexo"),
 
         // AKYURT (Sanayi Sitesi, Kuzu Haşlama, Kır Bahçeleri)
-        new("Akyurt Merkez Esnaf Lokantası", "evyemegi", 1, 220, 4.6, 2400, "Beyazıt Mah. Çankırı Bulv. No: 14, Akyurt", 40.1308, 33.0872),
-        new("Akyurt Sanayi Sitesi Köftecisi & Çorbacısı", "sanayi,kebap", 1, 210, 4.7, 2800, "Akyurt Sanayi Sitesi No: 22, Akyurt", 40.1280, 33.0820),
-        new("Tarihi Akyurt Taş Fırın Pide & Lahmacun", "pide", 1, 180, 4.6, 2100, "Cumhuriyet Meydanı No: 6, Akyurt", 40.1315, 33.0885),
-        new("Akyurt Kır Bahçesi & Izgara", "tavuk,kebap", 2, 260, 4.5, 1700, "Büğdüz Mah. Havaalanı Yolu No: 45, Akyurt", 40.1180, 33.0650),
-        new("Akyurt Lezzet Sofrası & Döner", "kebap", 1, 230, 4.5, 1900, "Kızık Cad. No: 9, Akyurt", 40.1295, 33.0850),
-        new("Akyurt Sultan Sofrası", "evyemegi", 1, 200, 4.6, 1400, "Ankara Cad. No: 31, Akyurt", 40.1300, 33.0860),
+        new("Akyurt Sanayi Sitesi Köftecisi & Çorbacısı", "sanayi,kebap", 1, 360, 4.7, 3100, "Akyurt Sanayi Sitesi No: 22, Akyurt", 40.1280, 33.0820, "ticket,multinet"),
+        new("Akyurt Merkez Esnaf Lokantası", "evyemegi", 1, 320, 4.6, 2400, "Beyazıt Mah. Çankırı Bulv. No: 14, Akyurt", 40.1308, 33.0872, "ticket"),
+        new("Tarihi Akyurt Taş Fırın Pide & Lahmacun", "pide", 1, 260, 4.6, 2100, "Cumhuriyet Meydanı No: 6, Akyurt", 40.1315, 33.0885, "ticket,sodexo"),
+        new("Akyurt Kır Bahçesi & Izgara", "tavuk,kebap", 2, 440, 4.5, 1700, "Büğdüz Mah. Havaalanı Yolu No: 45, Akyurt", 40.1180, 33.0650, ""),
+        new("Akyurt Lezzet Sofrası & Döner", "kebap", 2, 390, 4.5, 1900, "Kızık Cad. No: 9, Akyurt", 40.1295, 33.0850, "ticket,sodexo,multinet"),
+        new("Akyurt Sultan Sofrası", "evyemegi", 1, 310, 4.6, 1400, "Ankara Cad. No: 31, Akyurt", 40.1300, 33.0860, "ticket"),
 
         // POLATLI (Soğanlı Kuzu Tandır, İstasyon Gar Lokantası, Duatepe Kebap)
-        new("Meşhur Polatlı Soğanlı Kuzu Tandır", "kebap", 2, 320, 4.8, 4800, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı", 39.5855, 32.1465),
-        new("Polatlı Tarihi Duatepe Kebapçısı", "kebap", 2, 280, 4.7, 3600, "İnönü Cad. No: 18, Polatlı", 39.5840, 32.1440),
-        new("Polatlı İstasyon Gar Lokantası", "evyemegi", 1, 240, 4.6, 2900, "İstasyon Mah. Gar Yanı No: 4, Polatlı", 39.5820, 32.1410),
-        new("Polatlı Taş Fırın Güveç & Pide", "pide", 1, 210, 4.6, 2400, "Sivrihisar Cad. No: 42, Polatlı", 39.5870, 32.1490),
-        new("Polatlı Sanayi Sitesi Kavurmacısı", "sanayi,kebap", 1, 250, 4.7, 3100, "Yeni Sanayi Sitesi 12. Blok No: 5, Polatlı", 39.5790, 32.1350),
+        new("Meşhur Polatlı Soğanlı Kuzu Tandır", "kebap", 2, 540, 4.8, 5100, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı", 39.5855, 32.1465, "ticket,sodexo"),
+        new("Polatlı Tarihi Duatepe Kebapçısı", "kebap", 2, 480, 4.7, 3900, "İnönü Cad. No: 18, Polatlı", 39.5840, 32.1440, "ticket,multinet"),
+        new("Polatlı İstasyon Gar Lokantası", "evyemegi", 1, 360, 4.6, 2900, "İstasyon Mah. Gar Yanı No: 4, Polatlı", 39.5820, 32.1410, "ticket,sodexo"),
+        new("Polatlı Taş Fırın Güveç & Pide", "pide", 1, 280, 4.6, 2400, "Sivrihisar Cad. No: 42, Polatlı", 39.5870, 32.1490, "ticket,sodexo"),
+        new("Polatlı Sanayi Sitesi Kavurmacısı", "sanayi,kebap", 1, 420, 4.7, 3100, "Yeni Sanayi Sitesi 12. Blok No: 5, Polatlı", 39.5790, 32.1350, "ticket"),
 
         // KIZILCAHAMAM (Meşhur Bazlama, Taş Fırın Güveç, Kaplıca & Milli Park)
-        new("Kızılcahamam Meşhur Bazlamacısı & Gözleme Konağı", "kahvalti", 1, 210, 4.8, 6200, "Kazım Karabekir Cad. No: 16, Kızılcahamam", 40.4700, 32.6500),
-        new("Kızılcahamam Taş Fırın Güveç & Kuzu Kebap", "kebap", 2, 330, 4.7, 4400, "Kaplıca Cad. No: 24, Kızılcahamam", 40.4715, 32.6520),
-        new("Soğuksu Milli Parkı Mangal & Alabalık", "balik,tavuk", 2, 310, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4620, 32.6410),
-        new("Kızılcahamam Esnaf Lokantası", "evyemegi", 1, 240, 4.6, 2600, "Cumhuriyet Meydanı No: 8, Kızılcahamam", 40.4690, 32.6490),
+        new("Kızılcahamam Meşhur Bazlamacısı & Gözleme Konağı", "kahvalti", 1, 290, 4.8, 6500, "Kazım Karabekir Cad. No: 16, Kızılcahamam", 40.4700, 32.6500, "ticket,multinet"),
+        new("Kızılcahamam Taş Fırın Güveç & Kuzu Kebap", "kebap", 2, 540, 4.7, 4700, "Kaplıca Cad. No: 24, Kızılcahamam", 40.4715, 32.6520, "ticket,sodexo"),
+        new("Soğuksu Milli Parkı Mangal & Alabalık", "balik,tavuk", 2, 480, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4620, 32.6410, ""),
+        new("Kızılcahamam Esnaf Lokantası", "evyemegi", 1, 340, 4.6, 2600, "Cumhuriyet Meydanı No: 8, Kızılcahamam", 40.4690, 32.6490, "ticket,multinet"),
 
         // KAHRAMANKAZAN (Saray Sanayi, Kavurmacı, Esnaf Mutfağı)
-        new("Kahramankazan Kavurmacısı Mehmet Usta", "sanayi,kebap", 2, 290, 4.8, 3800, "Fatih Mah. Ankara Bulv. No: 88, Kahramankazan", 40.1983, 32.6842),
-        new("Kazan Saray Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.7, 3100, "Saray Sanayi Sitesi 5. Sk. No: 12, Kahramankazan", 40.1850, 32.6710),
-        new("Kahramankazan Esnaf Mutfağı", "evyemegi", 1, 230, 4.6, 2100, "Cumhuriyet Cad. No: 14, Kahramankazan", 40.1995, 32.6860),
-        new("Kazan Taş Fırın Pide & Lahmacun", "pide", 1, 180, 4.6, 1850, "Termal Cad. No: 7, Kahramankazan", 40.1970, 32.6820)
+        new("Kahramankazan Kavurmacısı Mehmet Usta", "sanayi,kebap", 2, 490, 4.8, 4100, "Fatih Mah. Ankara Bulv. No: 88, Kahramankazan", 40.1983, 32.6842, "ticket,sodexo"),
+        new("Kazan Saray Sanayi Köftecisi", "sanayi,kebap", 1, 380, 4.7, 3300, "Saray Sanayi Sitesi 5. Sk. No: 12, Kahramankazan", 40.1850, 32.6710, "ticket,multinet,setcard"),
+        new("Kahramankazan Esnaf Mutfağı", "evyemegi", 1, 340, 4.6, 2100, "Cumhuriyet Cad. No: 14, Kahramankazan", 40.1995, 32.6860, "ticket"),
+        new("Kazan Taş Fırın Pide & Lahmacun", "pide", 1, 260, 4.6, 1850, "Termal Cad. No: 7, Kahramankazan", 40.1970, 32.6820, "ticket,sodexo")
     ];
 
     public class BuyukIlEntry
@@ -230,6 +232,7 @@ public static class DemoSeeder
         [JsonPropertyName("address")] public string Address { get; set; } = "";
         [JsonPropertyName("lat")] public double Lat { get; set; }
         [JsonPropertyName("lon")] public double Lon { get; set; }
+        [JsonPropertyName("meal_cards")] public string? MealCards { get; set; }
     }
 
     private static Dictionary<string, List<BuyukIlEntry>>? _buyukIlCache;
@@ -351,7 +354,7 @@ public static class DemoSeeder
     public static async Task SeedAroundAsync(AppDbContext db, double lat, double lng, CancellationToken ct)
     {
         var remainingList = await db.Restaurants.ToListAsync(ct);
-        var existingDict = remainingList.ToDictionary(r => r.Name.Trim().ToLower(), r => r);
+        var existingDict = remainingList.GroupBy(r => r.Name.Trim().ToLower()).ToDictionary(g => g.Key, g => g.First());
 
         var toAdd = new List<Restaurant>();
         var rnd = new Random();
@@ -361,6 +364,7 @@ public static class DemoSeeder
         foreach (var v in allPresets)
         {
             var key = v.Name.Trim().ToLower();
+            string presetCards = v.MealCards ?? "";
             if (existingDict.TryGetValue(key, out var existing))
             {
                 existing.Lat = v.RealLat ?? existing.Lat;
@@ -371,7 +375,7 @@ public static class DemoSeeder
                 existing.AvgPriceTl = v.PriceTl;
                 existing.PriceLevel = v.PriceLevel;
                 existing.Cuisines = v.Cuisines;
-                existing.MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket";
+                existing.MealCards = presetCards;
                 existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? existing.Lat},{v.RealLng ?? existing.Lng}";
             }
             else
@@ -381,7 +385,7 @@ public static class DemoSeeder
                     GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}",
                     Name = v.Name,
                     Cuisines = v.Cuisines,
-                    MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
+                    MealCards = presetCards,
                     PriceLevel = v.PriceLevel,
                     AvgPriceTl = v.PriceTl,
                     GoogleRating = v.Rating,
@@ -404,7 +408,8 @@ public static class DemoSeeder
             foreach (var b in kvp.Value)
             {
                 var key = b.Name.Trim().ToLower();
-                int priceLevel = b.PriceLevel >= 400 ? 3 : (b.PriceLevel >= 250 ? 2 : 1);
+                int priceLevel = b.PriceLevel >= 650 ? 3 : (b.PriceLevel >= 380 ? 2 : 1);
+                string mealCards = b.MealCards ?? "";
                 if (existingDict.TryGetValue(key, out var existing))
                 {
                     existing.Lat = b.Lat;
@@ -415,7 +420,7 @@ public static class DemoSeeder
                     existing.AvgPriceTl = b.PriceLevel;
                     existing.PriceLevel = priceLevel;
                     existing.Cuisines = b.Category;
-                    existing.MealCards ??= "multinet,setcard,sodexo,ticket";
+                    existing.MealCards = mealCards;
                     existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={b.Lat},{b.Lon}";
                 }
                 else
@@ -425,7 +430,7 @@ public static class DemoSeeder
                         GooglePlaceId = $"buyukil_{b.CityId}_{b.Name.GetHashCode():x8}",
                         Name = b.Name,
                         Cuisines = b.Category,
-                        MealCards = "multinet,setcard,sodexo,ticket",
+                        MealCards = mealCards,
                         PriceLevel = priceLevel,
                         AvgPriceTl = b.PriceLevel,
                         GoogleRating = b.Rating,
@@ -458,20 +463,20 @@ public static class DemoSeeder
         {
             var districtTemplates = new[]
             {
-                (Name: $"{districtName} Esnaf Lokantası", Cuisines: "evyemegi", Price: 220, Rating: 4.7, Type: "evyemegi"),
-                (Name: $"{districtName} Meşhur Taş Fırın Pide & Kebap", Cuisines: "pide,kebap", Price: 210, Rating: 4.6, Type: "pide"),
-                (Name: $"{districtName} Sanayi Köftecisi", Cuisines: "sanayi,kebap", Price: 230, Rating: 4.8, Type: "sanayi"),
-                (Name: $"{districtName} Sanayi Tostçusu & Çay Ocağı", Cuisines: "sanayi,kahvalti", Price: 150, Rating: 4.7, Type: "sanayi"),
-                (Name: $"{districtName} Kelle Paça & Çorba Salonu", Cuisines: "evyemegi", Price: 190, Rating: 4.6, Type: "evyemegi"),
-                (Name: $"{districtName} Yayla Tandır & Güveç Konağı", Cuisines: "kebap,evyemegi", Price: 290, Rating: 4.8, Type: "kebap"),
-                (Name: $"{districtName} Tarihi Çarşı Dönercisi", Cuisines: "kebap", Price: 230, Rating: 4.6, Type: "kebap"),
-                (Name: $"{districtName} Kır Bahçesi & Mangal", Cuisines: "tavuk,kebap", Price: 270, Rating: 4.5, Type: "tavuk"),
-                (Name: $"{districtName} Yöresel Anne Eli Mantı & Gözleme", Cuisines: "kahvalti,evyemegi", Price: 200, Rating: 4.7, Type: "kahvalti"),
-                (Name: $"{districtName} Sanayi Sac Kavurmacısı", Cuisines: "sanayi,kebap,evyemegi", Price: 280, Rating: 4.7, Type: "sanayi"),
-                (Name: $"{districtName} Çıtır Lahmacun & Pide Salonu", Cuisines: "pide", Price: 180, Rating: 4.6, Type: "pide"),
-                (Name: $"{districtName} Köfteci Dayı", Cuisines: "kebap", Price: 210, Rating: 4.5, Type: "kebap"),
-                (Name: $"{districtName} Karadeniz Pide & Balık", Cuisines: "pide,balik", Price: 260, Rating: 4.6, Type: "balik"),
-                (Name: $"{districtName} Sultan Sofrası", Cuisines: "evyemegi", Price: 210, Rating: 4.6, Type: "evyemegi"),
+                (Name: $"{districtName} Esnaf Lokantası", Cuisines: "evyemegi", Price: 340, Rating: 4.7, Type: "evyemegi", Cards: "ticket"),
+                (Name: $"{districtName} Meşhur Taş Fırın Pide & Kebap", Cuisines: "pide,kebap", Price: 280, Rating: 4.6, Type: "pide", Cards: "ticket,sodexo"),
+                (Name: $"{districtName} Sanayi Köftecisi", Cuisines: "sanayi,kebap", Price: 360, Rating: 4.8, Type: "sanayi", Cards: "ticket,multinet"),
+                (Name: $"{districtName} Sanayi Tostçusu & Çay Ocağı", Cuisines: "sanayi,kahvalti", Price: 180, Rating: 4.7, Type: "sanayi", Cards: "ticket"),
+                (Name: $"{districtName} Kelle Paça & Çorba Salonu", Cuisines: "evyemegi", Price: 320, Rating: 4.8, Type: "evyemegi", Cards: "multinet"),
+                (Name: $"{districtName} Yayla Tandır & Güveç Konağı", Cuisines: "kebap,evyemegi", Price: 460, Rating: 4.8, Type: "kebap", Cards: "ticket,sodexo"),
+                (Name: $"{districtName} Tarihi Çarşı Dönercisi", Cuisines: "kebap", Price: 390, Rating: 4.6, Type: "kebap", Cards: "ticket,sodexo,multinet"),
+                (Name: $"{districtName} Kır Bahçesi & Mangal", Cuisines: "tavuk,kebap", Price: 450, Rating: 4.5, Type: "tavuk", Cards: ""),
+                (Name: $"{districtName} Yöresel Anne Eli Mantı & Gözleme", Cuisines: "kahvalti,evyemegi", Price: 310, Rating: 4.7, Type: "kahvalti", Cards: "multinet"),
+                (Name: $"{districtName} Sanayi Sac Kavurmacısı", Cuisines: "sanayi,kebap,evyemegi", Price: 420, Rating: 4.7, Type: "sanayi", Cards: "ticket,multinet"),
+                (Name: $"{districtName} Çıtır Lahmacun & Pide Salonu", Cuisines: "pide", Price: 260, Rating: 4.6, Type: "pide", Cards: "ticket,sodexo"),
+                (Name: $"{districtName} Köfteci Dayı", Cuisines: "kebap", Price: 340, Rating: 4.5, Type: "kebap", Cards: "ticket"),
+                (Name: $"{districtName} Karadeniz Pide & Balık", Cuisines: "pide,balik", Price: 380, Rating: 4.6, Type: "balik", Cards: "ticket,sodexo"),
+                (Name: $"{districtName} Sultan Sofrası", Cuisines: "evyemegi", Price: 330, Rating: 4.6, Type: "evyemegi", Cards: "ticket")
             };
 
             int addedCount = 0;
@@ -486,7 +491,7 @@ public static class DemoSeeder
                 var dLat = dist * Math.Cos(angle) / 111_000.0;
                 var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
 
-                int priceLevel = t.Price >= 400 ? 3 : (t.Price >= 250 ? 2 : 1);
+                int priceLevel = t.Price >= 650 ? 3 : (t.Price >= 380 ? 2 : 1);
                 var address = t.Cuisines.Contains("sanayi")
                     ? $"{districtName} Sanayi Sitesi {rnd.Next(1, 8)}. Blok No: {rnd.Next(1, 30)}, {districtName}"
                     : $"{districtName} Merkez Mah. Atatürk Cad. No: {rnd.Next(1, 60)}, {districtName}";
@@ -496,7 +501,7 @@ public static class DemoSeeder
                     GooglePlaceId = $"district_{districtName.GetHashCode():x8}_{lat:F3}_{lng:F3}_{addedCount}",
                     Name = t.Name,
                     Cuisines = t.Cuisines,
-                    MealCards = "multinet,setcard,sodexo,ticket",
+                    MealCards = t.Cards,
                     PriceLevel = priceLevel,
                     AvgPriceTl = t.Price,
                     GoogleRating = t.Rating,
