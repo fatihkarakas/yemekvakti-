@@ -808,7 +808,10 @@ export class HomeComponent implements OnInit {
 
   getDirectionsUrl(c: Candidate | null): string {
     if (!c) return '#';
-    const dest = (c.address && c.address.trim()) ? `${c.name}, ${c.address.trim()}` : `${c.lat},${c.lng}`;
+    if (c.lat && c.lng) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+    }
+    const dest = (c.address && c.address.trim()) ? `${c.name}, ${c.address.trim()}` : (c.name || '');
     return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
   }
 

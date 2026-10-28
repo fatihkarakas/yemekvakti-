@@ -212,9 +212,11 @@ export class RestaurantCardComponent {
 
   readonly directionsUrl = computed(() => {
     const c = this.r();
-    const dest = (c.address && c.address.trim())
-      ? `${c.name}, ${c.address.trim()}`
-      : `${c.lat},${c.lng}`;
+    if (!c) return '#';
+    if (c.lat && c.lng) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+    }
+    const dest = (c.address && c.address.trim()) ? `${c.name}, ${c.address.trim()}` : c.name;
     return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
   });
 

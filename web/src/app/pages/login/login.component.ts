@@ -39,12 +39,12 @@ import { FormsModule } from '@angular/forms';
         </div>
 
         @if (demoEnabled()) {
-          <div class="divider"><span>veya isim / hesap ile katıl</span></div>
+          <div class="divider"><span>veya isim / hızlı giriş ile katıl</span></div>
           <div class="demo-form">
             <input id="demo-name-input" type="text" class="input" [(ngModel)]="demoName" placeholder="Adınız Soyadınız (Örn: Burak, Selin...)" (keyup.enter)="loginDemo()" />
             <input id="demo-email-input" type="email" class="input" [(ngModel)]="demoEmail" placeholder="E-posta (İsteğe bağlı)" (keyup.enter)="loginDemo()" />
-            <button id="demo-login-btn" type="button" class="btn btn-primary btn-block" [disabled]="loading() || !demoName.trim()" (click)="loginDemo()">
-              {{ loading() ? 'Giriş yapılıyor...' : 'Giriş Yap & Başla 🚀' }}
+            <button id="demo-login-btn" type="button" class="btn btn-primary btn-block" [disabled]="loading()" (click)="loginDemo()">
+              {{ loading() ? 'Giriş yapılıyor...' : (demoName.trim() ? 'Giriş Yap & Başla 🚀' : 'Hızlı Giriş Yap & Başla 🚀') }}
             </button>
           </div>
         }
@@ -120,6 +120,30 @@ import { FormsModule } from '@angular/forms';
       justify-content: center;
       min-height: 44px;
       margin-bottom: 12px;
+      width: 100%;
+    }
+    .google-custom-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #3c4043;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid #dadce0;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+      &:hover {
+        background: #f8f9fa;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        transform: translateY(-1px);
+      }
     }
     .divider {
       position: relative;
@@ -269,19 +293,50 @@ export class LoginComponent implements OnInit {
     document.head.appendChild(script);
   }
 
-  async loginDemo() {
-    if (!this.demoName.trim()) return;
+  async loginDemo(nameOverride?: string) {
+    const rawName = (nameOverride || this.demoName).trim();
+    const finalName = rawName || 'Misafir Gurme';
     this.loading.set(true);
     try {
-      const res = await this.api.loginDemo(this.demoName.trim(), this.demoEmail.trim() || undefined);
+      const res = await this.api.loginDemo(finalName, this.demoEmail.trim() || undefined);
       this.auth.setSession(res);
       this.toast.success(`Hoş geldin, ${res.user.name}! 🌟`);
       const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
       this.router.navigateByUrl(returnUrl);
     } catch (err: any) {
+      console.warn('Backend login request error:', err);
+      // Localhost ortamında backend kapalı olsa dahi geliştiriciyi kilitli bırakma
+      const isLocal = typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+      if (isLocal) {
+        const exp = Math.floor(Date.now() / 1000) + 86400 * 30;
+        const payloadObj = {
+          sub: '1',
+          name: finalName,
+          email: this.demoEmail.trim() || `${finalName.toLowerCase().replace(/\s+/g, '.')}@yemekvakti.local`,
+          exp
+        };
+        const payloadBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(payloadObj))));
+        const mockToken = `dev.${payloadBase64}.signature`;
+        this.auth.setSession({
+          token: mockToken,
+          user: {
+            id: 1,
+            name: finalName,
+            email: payloadObj.email,
+            photoUrl: null
+          }
+        });
+        this.toast.success(`Hoş geldin, ${finalName}! 🌟 (Yerel oturum açıldı)`);
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.router.navigateByUrl(returnUrl);
+        return;
+      }
+
       const msg = typeof err?.error === 'string' && !err.error.includes('<html') && !err.error.includes('<!DOCTYPE')
         ? err.error
-        : 'Giriş başarısız oldu.';
+        : 'Giriş başarısız oldu. Lütfen tekrar deneyin.';
       this.toast.error(msg);
     } finally {
       this.loading.set(false);
