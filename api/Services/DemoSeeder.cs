@@ -278,9 +278,9 @@ public static class DemoSeeder
     {
         var districtCenters = new Dictionary<string, (double Lat, double Lng, double MaxDistMeters)>
         {
-            ["Beypazarı"] = (40.1677, 31.9211, 25_000),
-            ["Çubuk"] = (40.2386, 33.0322, 22_000),
             ["Akyurt"] = (40.1308, 33.0872, 18_000),
+            ["Çubuk"] = (40.2386, 33.0322, 20_000),
+            ["Beypazarı"] = (40.1677, 31.9211, 25_000),
             ["Polatlı"] = (39.5855, 32.1465, 25_000),
             ["Kızılcahamam"] = (40.4700, 32.6500, 25_000),
             ["Kahramankazan"] = (40.1983, 32.6842, 20_000),
@@ -296,15 +296,20 @@ public static class DemoSeeder
             ["Etimesgut"] = (39.9500, 32.6800, 10_000),
         };
 
+        string closest = "Merkez";
+        double minDist = double.MaxValue;
+
         foreach (var (name, info) in districtCenters)
         {
-            if (Geo.DistanceMeters(lat, lng, info.Lat, info.Lng) <= info.MaxDistMeters)
+            var d = Geo.DistanceMeters(lat, lng, info.Lat, info.Lng);
+            if (d <= info.MaxDistMeters && d < minDist)
             {
-                return name;
+                minDist = d;
+                closest = name;
             }
         }
 
-        return "Merkez";
+        return closest;
     }
 
     public static (string CityName, List<BuyukIlEntry> Venues) GetCityVenuesForLocation(double lat, double lng)
