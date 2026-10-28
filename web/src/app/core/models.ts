@@ -42,6 +42,7 @@ export interface CandidateQuery {
   excludeIds?: number[];
   avoidDays?: number;
   limit?: number;
+  sanayiOnly?: boolean;
 }
 
 export interface Candidate {
@@ -66,6 +67,7 @@ export interface Candidate {
   isFavorite: boolean;
   mapsUrl: string | null;
   score: number;
+  isSanayi?: boolean;
 }
 
 export interface SuggestionResponse {

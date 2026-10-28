@@ -22,6 +22,7 @@ public class CandidateQuery
     public int[]? ExcludeIds { get; set; }
     public int AvoidDays { get; set; } = 5;
     public int Limit { get; set; } = 15;
+    public bool SanayiOnly { get; set; } = false;
 }
 
 public record CandidateDto(
@@ -45,7 +46,8 @@ public record CandidateDto(
     string? LastNote,
     bool IsFavorite,
     string? MapsUrl,
-    double Score);
+    double Score,
+    bool IsSanayi = false);
 
 public record SuggestionResponse(CandidateDto? Restaurant, string Reason, bool AiUsed, int? SuggestionLogId, List<CandidateDto> Alternatives);
 

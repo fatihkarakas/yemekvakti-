@@ -17,6 +17,7 @@ public static class CuisineCatalog
         new("balik", "Balık", "🐟", ["seafood_restaurant"], ["balık", "balik", "fish", "midye"]),
         new("kahvalti", "Kahvaltı / Tost / Kafe", "🥪", ["breakfast_restaurant", "brunch_restaurant", "cafe", "sandwich_shop", "bakery", "coffee_shop"], ["kahvaltı", "tost", "sandviç", "kafe", "cafe", "börek", "simit"]),
         new("tavuk", "Tavuk / Izgara", "🍗", ["barbecue_restaurant", "steak_house"], ["tavuk", "piliç", "chicken", "ızgara", "et", "steak"]),
+        new("sanayi", "Sanayi Lezzetleri", "🔧", ["turkish_restaurant"], ["sanayi", "kavurma", "tostçu", "sanayi tostu", "sanayi köfte", "esnaf", "ostim", "şaşmaz", "sasmaz", "ivedik", "siteler", "gersan"]),
     ];
 
     public static readonly HashSet<string> Codes = All.Select(c => c.Code).ToHashSet();

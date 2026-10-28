@@ -128,11 +128,40 @@ public static class DemoSeeder
         new("Kuki House Bahçelievler", "kahvalti,burger", 2, 360, 4.5, 1200, "Azerbaycan Cad. (3. Cadde) No: 14, Bahçelievler", 39.9190, 32.8220),
 
         // ==========================================
-        // 9. BATIKENT, YENİMAHALLE & ŞAŞMAZ
+        // 9. ÇAKIRLAR, BATIKENT, GÖKSU & ERYAMAN
         // ==========================================
-        new("Kemah Ekmek Teknesi Şaşmaz", "evyemegi,kebap", 1, 280, 4.7, 2600, "İnönü Mah. 1757. Sokak No: 22, Şaşmaz Oto Sanayi, Yenimahalle", 39.9320, 32.7150),
+        new("Meşhur Çakırlar Sac Tavası & Köy Sofrası", "kebap,evyemegi", 2, 380, 4.6, 2150, "Turgut Özal Mah. 2164. Cad. No: 14, Çakırlar, Yenimahalle", 39.9925, 32.7050),
+        new("Çakırlar Çamlıtepe Gözleme & Kahvaltı", "kahvalti,evyemegi", 1, 260, 4.7, 1850, "Çakırlar Köy İçi Yolu No: 28, Çakırlar, Yenimahalle", 39.9912, 32.7085),
+        new("Cengiz Usta Kebap & Lahmacun Batıkent", "kebap,pide", 2, 360, 4.5, 3100, "Batı Sitesi Mah. Gersan Girişi No: 4, Batıkent", 39.9720, 32.7310),
+        new("Gülçimen Aspava Batıkent", "kebap", 2, 390, 4.6, 4200, "Atlantis AVM Karşısı, Başkent Bulvarı No: 218, Batıkent", 39.9735, 32.7305),
+        new("Meydan Döner & İskender Batıkent", "kebap", 2, 340, 4.4, 2400, "Batıkent Meydan AVM Zemin Kat, Batıkent", 39.9715, 32.7340),
+        new("Düveroğlu Kebap & Baklava Atlantis", "kebap,pide", 2, 430, 4.6, 3800, "Atlantis AVM Açık Alan No: 12, Batıkent", 39.9740, 32.7290),
+        new("Kardelen Taş Fırın Pide Çakırlar", "pide", 1, 240, 4.5, 980, "Turgut Özal Mah. 2170. Sk. No: 6, Çakırlar", 39.9880, 32.7120),
+        new("Göksu Parkı Balıkçısı & Izgara", "balik,tavuk", 2, 440, 4.4, 1650, "Göksu Parkı İçi Göl Kenarı No: 4, Eryaman", 39.9890, 32.6580),
+        new("Pizza Il Forno Batıkent Atlantis", "pizza", 2, 390, 4.6, 1750, "Atlantis AVM Dış Avlu No: 24, Batıkent", 39.9745, 32.7295),
+        new("Craft Burger Lab Batıkent", "burger", 2, 360, 4.5, 1200, "Cengiz Aytmatov Cad. No: 14, Batıkent", 39.9730, 32.7320),
+        new("Tavuk Dünyası Atlantis AVM", "tavuk", 2, 320, 4.3, 1900, "Atlantis AVM Kat 1, Batıkent", 39.9742, 32.7292),
+        new("Mado Atlantis Batıkent", "kahvalti", 2, 350, 4.4, 1500, "Atlantis AVM Dış Cephe, Batıkent", 39.9738, 32.7285),
+        new("Köfteci Yusuf Batıkent", "kebap", 1, 260, 4.3, 3100, "Gimsa Park AVM Yanı, Batıkent", 39.9680, 32.7420),
         new("Gülçimen Çıtır Pide Batıkent", "pide", 1, 240, 4.6, 890, "Batıkent Meydan AVM No: 8, Batıkent", 39.9680, 32.7420),
-        new("Hemşin Lokantası Gimat", "evyemegi", 1, 230, 4.5, 1450, "Macun Mah. Anadolu Bulvarı No: 27/A, Yenimahalle", 39.9620, 32.7690)
+        new("Hemşin Lokantası Gimat", "evyemegi", 1, 230, 4.5, 1450, "Macun Mah. Anadolu Bulvarı No: 27/A, Yenimahalle", 39.9620, 32.7690),
+
+        // ==========================================
+        // 10. SANAYİ LEZZETLERİ (OSTİM, ŞAŞMAZ, İVEDİK, GERSAN, SİTELER)
+        // ==========================================
+        new("Ostim Sanayi Kavurmacısı Sadık Usta", "sanayi,kebap,evyemegi", 2, 380, 4.8, 3400, "Ostim Sanayi Sitesi 100. Yıl Bulvarı No: 54, Yenimahalle", 39.9740, 32.7450),
+        new("Şaşmaz Sanayi Tostçusu Hüseyin Usta", "sanayi,kahvalti", 1, 160, 4.7, 4100, "Şaşmaz Oto Sanayi 2516. Sk. No: 18, Etimesgut / Yenimahalle", 39.9380, 32.7120),
+        new("Meşhur Şaşmaz Sanayi Köftecisi", "sanayi,kebap", 2, 320, 4.6, 2900, "Şaşmaz Oto Sanayi 2. Cadde No: 42, Yenimahalle", 39.9395, 32.7150),
+        new("Kemah Ekmek Teknesi Şaşmaz", "sanayi,evyemegi,kebap", 1, 280, 4.7, 2600, "İnönü Mah. 1757. Sokak No: 22, Şaşmaz Oto Sanayi, Yenimahalle", 39.9320, 32.7150),
+        new("İvedik OSB Hacıbaba Esnaf Lokantası", "sanayi,evyemegi", 1, 260, 4.6, 2200, "İvedik Organize Sanayi Ağaç Metal Koop. No: 12, Yenimahalle", 39.9920, 32.7620),
+        new("Şaşmaz Ciğercisi Aydın Usta", "sanayi,kebap", 2, 370, 4.6, 3100, "Şaşmaz Sanayi 1. Cadde No: 33, Etimesgut", 39.9370, 32.7100),
+        new("Gersan Sanayi Sac Kavurma & Güveç", "sanayi,evyemegi,kebap", 2, 350, 4.7, 1850, "Gersan Sanayi Sitesi 2310. Sk. No: 15, Batıkent", 39.9620, 32.7080),
+        new("Ostim Pide & Taş Fırın Kebap", "sanayi,pide,kebap", 1, 250, 4.5, 1400, "Ostim Sanayi Sitesi Bağdat Cad. No: 88, Ostim", 39.9710, 32.7460),
+        new("İvedik Kavurma & Haşlama Konağı", "sanayi,evyemegi", 2, 390, 4.7, 2400, "İvedik OSB 1354. Cadde No: 4, Yenimahalle", 39.9940, 32.7590),
+        new("Siteler Marangozlar Sanayi Lokantası", "sanayi,evyemegi", 1, 240, 4.6, 2750, "Siteler Demirhendek Cad. No: 76, Altındağ", 39.9540, 32.9020),
+        new("Ostim Dönercisi & Esnaf Mutfağı", "sanayi,kebap,evyemegi", 1, 260, 4.5, 1650, "Ostim Çıraklık Okulu Karşısı No: 14, Ostim", 39.9730, 32.7470),
+        new("Ergazi Sanayi Esnaf Lokantası", "sanayi,evyemegi", 1, 230, 4.5, 950, "Ergazi Sanayi Bölgesi No: 21, Batıkent", 39.9550, 32.7180),
+        new("Şaşmaz Kelle Paça & İşkembe Salonu", "sanayi,evyemegi", 1, 270, 4.6, 1800, "Şaşmaz Sanayi 2540. Sk. No: 8, Şaşmaz", 39.9360, 32.7130)
     ];
 
     public static async Task SeedAroundAsync(AppDbContext db, double lat, double lng, CancellationToken ct)
@@ -143,81 +172,81 @@ public static class DemoSeeder
         var toAdd = new List<Restaurant>();
         var rnd = new Random();
 
-        // Kullanıcı Ankara çevresinde mi? (lat ~ 39.5 - 40.3, lng ~ 32.3 - 33.3)
-        bool isInAnkara = lat >= 39.5 && lat <= 40.3 && lng >= 32.3 && lng <= 33.3;
-
-        if (isInAnkara)
+        // 1. Önce sabit koordinatlı tüm gerçek Ankara ve bölge mekanlarını DB'ye ekle/güncelle
+        foreach (var v in AnkaraVenues)
         {
-            foreach (var v in AnkaraVenues)
+            var key = v.Name.Trim().ToLower();
+            if (existingDict.TryGetValue(key, out var existing))
             {
-                var key = v.Name.Trim().ToLower();
-                if (existingDict.TryGetValue(key, out var existing))
+                existing.Lat = v.RealLat ?? existing.Lat;
+                existing.Lng = v.RealLng ?? existing.Lng;
+                existing.Address = v.Address;
+                existing.GoogleRating = v.Rating;
+                existing.GoogleRatingCount = v.RatingCount;
+                existing.AvgPriceTl = v.PriceTl;
+                existing.PriceLevel = v.PriceLevel;
+                existing.Cuisines = v.Cuisines;
+                existing.MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket";
+                existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? existing.Lat},{v.RealLng ?? existing.Lng}";
+            }
+            else
+            {
+                var r = new Restaurant
                 {
-                    existing.Lat = v.RealLat ?? existing.Lat;
-                    existing.Lng = v.RealLng ?? existing.Lng;
-                    existing.Address = v.Address;
-                    existing.GoogleRating = v.Rating >= 4.0 ? v.Rating : 4.4;
-                    existing.GoogleRatingCount = v.RatingCount;
-                    existing.AvgPriceTl = v.PriceTl;
-                    existing.PriceLevel = v.PriceLevel;
-                    existing.Cuisines = v.Cuisines;
-                    existing.MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket";
-                    existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? existing.Lat},{v.RealLng ?? existing.Lng}";
-                }
-                else
-                {
-                    toAdd.Add(new Restaurant
-                    {
-                        GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}",
-                        Name = v.Name,
-                        Cuisines = v.Cuisines,
-                        MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
-                        PriceLevel = v.PriceLevel,
-                        AvgPriceTl = v.PriceTl,
-                        GoogleRating = v.Rating >= 4.0 ? v.Rating : 4.4,
-                        GoogleRatingCount = v.RatingCount,
-                        Lat = v.RealLat ?? lat,
-                        Lng = v.RealLng ?? lng,
-                        Address = v.Address,
-                        MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? lat},{v.RealLng ?? lng}"
-                    });
-                }
+                    GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}",
+                    Name = v.Name,
+                    Cuisines = v.Cuisines,
+                    MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
+                    PriceLevel = v.PriceLevel,
+                    AvgPriceTl = v.PriceTl,
+                    GoogleRating = v.Rating,
+                    GoogleRatingCount = v.RatingCount,
+                    Lat = v.RealLat ?? lat,
+                    Lng = v.RealLng ?? lng,
+                    Address = v.Address,
+                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? lat},{v.RealLng ?? lng}"
+                };
+                toAdd.Add(r);
+                existingDict[key] = r;
             }
         }
-        else
+
+        // 2. Şimdi kullanıcının tam koordinatının 5 km yarıçapında kaç mekan olduğuna bak
+        // (Çakırlar, Teknokent, Kadıköy, Alsancak veya herhangi bir il/ilçe)
+        var allCurrent = remainingList.Concat(toAdd).ToList();
+        var nearbyCount = allCurrent.Count(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000);
+
+        // Eğer kullanıcının 5 km çevresinde 15'ten az restoran varsa, o koordinatın çevresine (400m - 4.5km)
+        // zengin restoranları (ve sanayi lezzetlerini) dinamik olarak yerleştir
+        if (nearbyCount < 15)
         {
-            // Ankara dışı herhangi bir il veya ilçe (İstanbul, İzmir, Bursa, Antalya, vb.)
-            // Bu koordinatın 5 km yarıçapında zaten mekan var mı kontrol et
-            var nearbyVenues = remainingList.Where(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000).ToList();
-            if (nearbyVenues.Count < 15)
+            int addedCount = 0;
+            foreach (var v in AnkaraVenues)
             {
-                int addedCount = 0;
-                foreach (var v in AnkaraVenues)
+                if (nearbyCount + addedCount >= 25) break;
+
+                var angle = rnd.NextDouble() * Math.PI * 2;
+                var dist = 350 + rnd.NextDouble() * 4200; // 350m ile 4.5km arası (5km içi)
+                var dLat = dist * Math.Cos(angle) / 111_000.0;
+                var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
+
+                var cleanName = v.Name.Replace(" Batıkent", "").Replace(" Çayyolu", "").Replace(" Tunalı", "").Replace(" Bilkent", "");
+                toAdd.Add(new Restaurant
                 {
-                    if (nearbyVenues.Count + addedCount >= 25) break;
-
-                    var angle = rnd.NextDouble() * Math.PI * 2;
-                    var dist = 350 + rnd.NextDouble() * 4200; // 350m ile 4.5km arası (5km içi)
-                    var dLat = dist * Math.Cos(angle) / 111_000.0;
-                    var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
-
-                    toAdd.Add(new Restaurant
-                    {
-                        GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}_{lat:F2}_{lng:F2}_{addedCount}",
-                        Name = v.Name,
-                        Cuisines = v.Cuisines,
-                        MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
-                        PriceLevel = v.PriceLevel,
-                        AvgPriceTl = v.PriceTl,
-                        GoogleRating = Math.Clamp(v.Rating >= 4.0 ? v.Rating : 4.3 + rnd.NextDouble() * 0.5, 4.0, 4.9),
-                        GoogleRatingCount = v.RatingCount > 0 ? v.RatingCount : rnd.Next(300, 2500),
-                        Lat = Math.Round(lat + dLat, 6),
-                        Lng = Math.Round(lng + dLng, 6),
-                        Address = $"{v.Name} Şubesi (Merkez Mah. No: {rnd.Next(1, 110)})",
-                        MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
-                    });
-                    addedCount++;
-                }
+                    GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}_{lat:F3}_{lng:F3}_{addedCount}",
+                    Name = cleanName,
+                    Cuisines = v.Cuisines,
+                    MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
+                    PriceLevel = v.PriceLevel,
+                    AvgPriceTl = v.PriceTl,
+                    GoogleRating = v.Rating,
+                    GoogleRatingCount = v.RatingCount > 0 ? v.RatingCount : rnd.Next(200, 2000),
+                    Lat = Math.Round(lat + dLat, 6),
+                    Lng = Math.Round(lng + dLng, 6),
+                    Address = $"{cleanName} (Merkez Mah. Cad. No: {rnd.Next(1, 110)})",
+                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
+                });
+                addedCount++;
             }
         }
 

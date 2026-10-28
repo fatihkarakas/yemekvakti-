@@ -13,8 +13,18 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         q.Radius = q.Radius <= 0 ? 5000 : Math.Clamp(q.Radius, 500, 25000);
         var nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
 
-        // Kullanıcının lokasyonuna en uygun 10-15 restoranı eksiksiz sunabilmek için:
-        if (nearby.Count < 15)
+        // Sanayi lezzetleri özel filtresi
+        if (q.SanayiOnly)
+        {
+            q.Radius = Math.Max(q.Radius, 8500);
+            nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
+            if (nearby.Count(IsSanayiVenue) < 8)
+            {
+                await DemoSeeder.SeedAroundAsync(db, q.Lat, q.Lng, ct);
+                nearby = await places.GetNearbyAsync(q.Lat, q.Lng, q.Radius, ct);
+            }
+        }
+        else if (nearby.Count < 15)
         {
             var expandedRadius = Math.Max(q.Radius, 5000);
             var expanded = await places.GetNearbyAsync(q.Lat, q.Lng, expandedRadius, ct);
@@ -46,15 +56,12 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
         var avoidSince = DateTime.UtcNow.Date.AddDays(-q.AvoidDays);
         var rnd = Random.Shared;
 
-        // 4 yıldız üzerindeki restoranları filtrele (yeterli sayıda varsa)
-        var hasEnoughHighRated = nearby.Count(r => (r.GoogleRating ?? 4.0) >= 4.0) >= 15;
-
         var all = nearby
             .GroupBy(r => r.Name.Trim().ToLowerInvariant())
             .Select(g => g.First())
             .Where(r => !exclude.Contains(r.Id))
             .Where(r => !prefs.TryGetValue(r.Id, out var t) || t != PreferenceType.Blacklist)
-            .Where(r => !hasEnoughHighRated || (r.GoogleRating ?? 4.0) >= 4.0)
+            .Where(r => !q.SanayiOnly || IsSanayiVenue(r))
             .Where(r => wanted.Count == 0 || CuisineCatalog.Split(r.Cuisines).Any(wanted.Contains))
             .Where(r => wantedCards.Count == 0 || MealCardCatalog.Split(r.MealCards).Any(wantedCards.Contains))
             .Where(r =>
@@ -74,14 +81,16 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                 var fav = prefs.TryGetValue(r.Id, out var pt) && pt == PreferenceType.Favorite;
                 var last = rv.FirstOrDefault();
                 var recent = last is not null && last.VisitedAt >= avoidSince;
+                var isSanayi = IsSanayiVenue(r);
 
-                // 4 yıldız üzeri, 5km çevrede, mesafeye ve puana göre dengeli rastgele 15 restoran seçimi
-                var baseScore = (r.GoogleRating ?? 4.2) / 5.0 * 2.5
+                // Yıldız kısıtlaması kaldırıldı; mesafe ve tercihlere göre dengeli puanlama
+                var baseScore = (r.GoogleRating ?? 4.0) / 5.0 * 2.2
                                 + (my.HasValue ? (my.Value - 3) * 0.8 : 0)
                                 + (fav ? 1.2 : 0)
+                                + (isSanayi ? 0.6 : 0)
                                 + (rv.Count == 0 ? 0.5 : 0)
                                 - dist / (q.Radius * 1.5);
-                var randomBonus = rnd.NextDouble() * 2.5; // Her girişte ve aramada rastgele canlı 15 alternatif sunması için
+                var randomBonus = rnd.NextDouble() * 2.0;
                 var score = baseScore + randomBonus;
 
                 var priceTl = EstimatePriceTl(r);
@@ -93,13 +102,23 @@ public class RecommendationService(AppDbContext db, PlacesService places, Gemini
                     r.GoogleRating, r.GoogleRatingCount, my, rv.Count, last?.VisitedAt,
                     rv.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.Note))?.Note,
                     fav, r.MapsUrl ?? $"https://www.google.com/maps/search/?api=1&query={r.Lat},{r.Lng}",
-                    Math.Round(score, 3));
+                    Math.Round(score, 3),
+                    isSanayi);
             })
             .OrderByDescending(c => c.Score)
-            .Take(Math.Clamp(q.Limit, 10, 15))
+            .Take(Math.Clamp(q.Limit, 10, 20))
             .ToList();
 
         return all;
+    }
+
+    public static bool IsSanayiVenue(Restaurant r)
+    {
+        var text = (r.Name + " " + (r.Address ?? "") + " " + (r.Cuisines ?? "")).ToLower(new System.Globalization.CultureInfo("tr-TR"));
+        return text.Contains("sanayi") || text.Contains("ostim") || text.Contains("şaşmaz") || text.Contains("sasmaz") ||
+               text.Contains("ivedik") || text.Contains("siteler") || text.Contains("gersan") || text.Contains("osb") ||
+               text.Contains("tamirhane") || text.Contains("oto sanayi") || text.Contains("marangozlar") || text.Contains("demirhendek") ||
+               text.Contains("gimat") || text.Contains("macun");
     }
 
     public async Task<SuggestionResponse> SuggestAsync(int userId, string userName, CandidateQuery q, CancellationToken ct)

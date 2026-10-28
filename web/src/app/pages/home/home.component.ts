@@ -38,6 +38,9 @@ import { burstConfetti } from '../../shared/confetti';
           <button id="favs-btn" type="button" class="btn btn-sm btn-ghost fav-head-btn" (click)="showFavoritesSheet.set(true)" title="Favori Mekanlarım & Çark Oranları">
             ⭐ Favorilerim @if (favorites().length > 0) { ({{ favorites().length }}) }
           </button>
+          <button id="sanayi-head-btn" type="button" class="btn btn-sm btn-ghost sanayi-head-btn" (click)="spinWithSanayi()" title="Sanayi Lezzetleri Çarkı">
+            🔧 Sanayi Lezzetleri
+          </button>
           <button id="add-restaurant-btn" type="button" class="btn btn-sm btn-ghost add-btn" (click)="showAddSheet.set(true)" title="Yeni Restoran / Mekan Ekle">
             ➕ Mekan Ekle
           </button>
@@ -98,6 +101,9 @@ import { burstConfetti } from '../../shared/confetti';
                   <button id="next-suggestion-btn" type="button" class="btn btn-sm" (click)="loadSuggestion(true)">
                     🔄 Başka Öner
                   </button>
+                  <button id="sanayi-wheel-cta" type="button" class="btn btn-sm btn-ghost sanayi-cta-btn" (click)="spinWithSanayi()">
+                    🔧 Sanayi Çarkı
+                  </button>
                   <button id="custom-cuisine-btn" type="button" class="btn btn-sm btn-ghost" (click)="showCuisineSheet.set(true)">
                     🎯 Tarz Değiştir
                   </button>
@@ -110,7 +116,7 @@ import { burstConfetti } from '../../shared/confetti';
               <div class="alternatives-header">
                 <div>
                   <h3 class="section-title">📍 Çevrendeki En Uygun Restoranlar</h3>
-                  <p class="muted sub-note">5 km yarıçapta 4+ yıldızlı mekanlar arasından seçilen alternatifler:</p>
+                  <p class="muted sub-note">5 km yarıçapta lokasyonuna en yakın mekanlar arasından seçilen alternatifler:</p>
                 </div>
                 <span class="alt-count-badge">{{ count + 1 }} Mekan</span>
               </div>
@@ -146,7 +152,7 @@ import { burstConfetti } from '../../shared/confetti';
       @if (mode() === 'wheel') {
         <div class="wheel-area">
           
-          <!-- Çark Kaynak Seçimi (Yakındakiler vs Favorilerim) -->
+          <!-- Çark Kaynak Seçimi (Yakındakiler vs Sanayi vs Favorilerim) -->
           <div class="wheel-source-toggle">
             <button
               id="wheel-source-candidates-btn"
@@ -158,13 +164,22 @@ import { burstConfetti } from '../../shared/confetti';
               📍 Yakındakiler ({{ candidates().length }})
             </button>
             <button
+              id="wheel-source-sanayi-btn"
+              type="button"
+              class="source-tab sanayi-tab"
+              [class.active]="wheelSource() === 'sanayi'"
+              (click)="setWheelSource('sanayi')"
+            >
+              🔧 Sanayi Lezzetleri @if (sanayiCandidates().length > 0) { ({{ sanayiCandidates().length }}) }
+            </button>
+            <button
               id="wheel-source-favs-btn"
               type="button"
               class="source-tab fav-tab"
               [class.active]="wheelSource() === 'favorites'"
               (click)="setWheelSource('favorites')"
             >
-              ⭐ Sadece Favorilerim ({{ favorites().length }})
+              ⭐ Favorilerim ({{ favorites().length }})
             </button>
           </div>
 
@@ -175,6 +190,15 @@ import { burstConfetti } from '../../shared/confetti';
               </span>
               <button type="button" class="btn btn-sm btn-ghost edit-fav-link" (click)="showFavoritesSheet.set(true)">
                 ⚙️ Oranları Düzenle
+              </button>
+            </div>
+          } @else if (wheelSource() === 'sanayi') {
+            <div class="sanayi-wheel-bar glass pop-in">
+              <span class="sanayi-bar-text">
+                🔧 Çevrendeki <strong>sanayi siteleri, esnaf lokantaları, köfteciler ve kavurmacılar</strong> çarka dahil edildi!
+              </span>
+              <button type="button" class="btn btn-sm btn-ghost edit-fav-link" (click)="loadSanayiCandidates(true)">
+                🔄 Yenile
               </button>
             </div>
           } @else {
@@ -190,6 +214,12 @@ import { burstConfetti } from '../../shared/confetti';
                 <p>Çarkı çevirmek için en az 2 favori mekana ihtiyacın var.</p>
                 <button type="button" class="btn btn-primary" (click)="showFavoritesSheet.set(true)">
                   ⭐ Favori Mekan Ekle & Oran Belirle
+                </button>
+              } @else if (wheelSource() === 'sanayi') {
+                <span class="empty-fav-icon">🔧</span>
+                <p>Çevrede sanayi lezzeti taranıyor veya bulunamadı.</p>
+                <button type="button" class="btn btn-primary" (click)="loadSanayiCandidates(true)">
+                  🔧 Sanayi Lezzetlerini Ara
                 </button>
               } @else {
                 <p>Çark için yeterli restoran bulunamadı. Mesafeyi artırmayı dene!</p>
@@ -409,6 +439,16 @@ import { burstConfetti } from '../../shared/confetti';
       color: #fde047;
       &:hover { background: rgba(234, 179, 8, 0.15); }
     }
+    .sanayi-head-btn {
+      border-color: rgba(249, 115, 22, 0.45);
+      color: #fb923c;
+      &:hover { background: rgba(249, 115, 22, 0.15); }
+    }
+    .sanayi-cta-btn {
+      border-color: rgba(249, 115, 22, 0.4);
+      color: #fb923c;
+      &:hover { background: rgba(249, 115, 22, 0.12); }
+    }
     .wheel-source-toggle {
       display: inline-flex;
       background: var(--surface);
@@ -437,6 +477,10 @@ import { burstConfetti } from '../../shared/confetti';
         background: linear-gradient(135deg, #f59e0b, #ef4444);
         box-shadow: 0 4px 14px -3px rgba(245, 158, 11, 0.6);
       }
+      &.sanayi-tab.active {
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        box-shadow: 0 4px 14px -3px rgba(234, 88, 12, 0.6);
+      }
     }
     .fav-wheel-bar {
       display: inline-flex;
@@ -449,7 +493,19 @@ import { burstConfetti } from '../../shared/confetti';
       border: 1px solid rgba(234, 179, 8, 0.3);
       background: rgba(234, 179, 8, 0.1);
     }
+    .sanayi-wheel-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      background: rgba(249, 115, 22, 0.1);
+    }
     .fav-bar-text { color: #fde047; font-size: 12.5px; }
+    .sanayi-bar-text { color: #fdba74; font-size: 12.5px; }
     .edit-fav-link {
       font-size: 12px;
       padding: 4px 10px;
@@ -479,10 +535,11 @@ export class HomeComponent implements OnInit {
   readonly loading = signal(false);
   readonly suggestion = signal<SuggestionResponse | null>(null);
   readonly candidates = signal<Candidate[]>([]);
+  readonly sanayiCandidates = signal<Candidate[]>([]);
   readonly favorites = signal<Preference[]>([]);
   readonly wheelItems = signal<WheelItem[]>([]);
   readonly wheelWinner = signal<Candidate | null>(null);
-  readonly wheelSource = signal<'candidates' | 'favorites'>('candidates');
+  readonly wheelSource = signal<'candidates' | 'favorites' | 'sanayi'>('candidates');
 
   readonly showCuisineSheet = signal(false);
   readonly showLocationSheet = signal(false);
@@ -506,7 +563,7 @@ export class HomeComponent implements OnInit {
     } catch {}
   }
 
-  setWheelSource(source: 'candidates' | 'favorites') {
+  setWheelSource(source: 'candidates' | 'favorites' | 'sanayi') {
     this.wheelSource.set(source);
     this.wheelWinner.set(null);
     if (source === 'candidates') {
@@ -518,6 +575,12 @@ export class HomeComponent implements OnInit {
           label: c.name,
           emoji: c.cuisines?.[0] ? this.fs.emoji(c.cuisines[0]) : '🍽️'
         })));
+      }
+    } else if (source === 'sanayi') {
+      if (this.sanayiCandidates().length === 0) {
+        this.loadSanayiCandidates();
+      } else {
+        this.updateWheelItemsFromSanayi();
       }
     } else {
       this.updateWheelItemsFromFavorites();
@@ -534,6 +597,15 @@ export class HomeComponent implements OnInit {
     })));
   }
 
+  updateWheelItemsFromSanayi() {
+    const list = this.sanayiCandidates();
+    this.wheelItems.set(list.map(c => ({
+      id: c.id,
+      label: c.name,
+      emoji: c.cuisines?.[0] ? this.fs.emoji(c.cuisines[0]) : '🔧'
+    })));
+  }
+
   onFavoritesUpdated(favs: Preference[]) {
     this.favorites.set(favs);
     if (this.wheelSource() === 'favorites') {
@@ -546,6 +618,11 @@ export class HomeComponent implements OnInit {
     this.setWheelSource('favorites');
   }
 
+  spinWithSanayi() {
+    this.setMode('wheel');
+    this.setWheelSource('sanayi');
+  }
+
   onLocationChanged() {
     this.showLocationSheet.set(false);
     if (this.mode() === 'suggest') {
@@ -553,6 +630,8 @@ export class HomeComponent implements OnInit {
     } else {
       if (this.wheelSource() === 'candidates') {
         this.loadCandidates();
+      } else if (this.wheelSource() === 'sanayi') {
+        this.loadSanayiCandidates(true);
       }
     }
   }
@@ -564,6 +643,8 @@ export class HomeComponent implements OnInit {
     } else {
       if (this.wheelSource() === 'candidates') {
         this.loadCandidates();
+      } else if (this.wheelSource() === 'sanayi') {
+        this.loadSanayiCandidates(true);
       }
     }
   }
@@ -573,6 +654,12 @@ export class HomeComponent implements OnInit {
     if (m === 'wheel') {
       if (this.wheelSource() === 'favorites') {
         this.updateWheelItemsFromFavorites();
+      } else if (this.wheelSource() === 'sanayi') {
+        if (this.sanayiCandidates().length === 0) {
+          this.loadSanayiCandidates();
+        } else {
+          this.updateWheelItemsFromSanayi();
+        }
       } else if (this.wheelItems().length === 0) {
         this.loadCandidates();
       }
@@ -652,6 +739,29 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  async loadSanayiCandidates(force = false) {
+    if (!force && this.sanayiCandidates().length > 0) {
+      this.updateWheelItemsFromSanayi();
+      return;
+    }
+    const coords = await this.loc.locate();
+    try {
+      const list = await this.api.candidates({
+        lat: coords.lat,
+        lng: coords.lng,
+        radius: 8500,
+        sanayiOnly: true,
+        limit: 20
+      });
+      this.sanayiCandidates.set(list);
+      if (this.wheelSource() === 'sanayi') {
+        this.updateWheelItemsFromSanayi();
+      }
+    } catch {
+      this.toast.error('Sanayi lezzetleri listelenemedi.');
+    }
+  }
+
   onSpinStart() {
     this.wheelWinner.set(null);
   }
@@ -685,6 +795,8 @@ export class HomeComponent implements OnInit {
           score: 5
         };
       }
+    } else if (this.wheelSource() === 'sanayi') {
+      winner = this.sanayiCandidates().find(c => c.id === item.id) ?? null;
     } else {
       winner = this.candidates().find(c => c.id === item.id) ?? null;
     }
