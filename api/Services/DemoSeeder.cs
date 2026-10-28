@@ -166,6 +166,59 @@ public static class DemoSeeder
         new("Şaşmaz Kelle Paça & İşkembe Salonu", "sanayi,evyemegi", 1, 270, 4.6, 1800, "Şaşmaz Sanayi 2540. Sk. No: 8, Şaşmaz", 39.9360, 32.7130)
     ];
 
+    // =========================================================================
+    // 11. ANKARA'YA UZAK İLÇELER (BEYPAZARI, ÇUBUK, AKYURT, POLATLI, KIZILCAHAMAM, KAHRAMANKAZAN)
+    // =========================================================================
+    private static readonly SeedVenue[] DistrictVenues =
+    [
+        // BEYPAZARI (Tarihi Konaklar, Güveç, Yaprak Sarma, 80 Katlı Baklava)
+        new("Tarihi Taş Mektep Restoranı", "evyemegi", 2, 290, 4.8, 3800, "Beypazarı Cumhuriyet Cad. No: 14, Beypazarı", 40.1677, 31.9211),
+        new("Meşhur Beypazarı Güveççi Ali Usta", "kebap", 2, 310, 4.7, 4200, "Milli Egemenlik Cad. No: 22, Beypazarı", 40.1690, 31.9230),
+        new("Fatma Teyze Yöresel Ev Yemekleri", "evyemegi", 1, 240, 4.8, 2900, "Tarihi Çarşı İçi No: 8, Beypazarı", 40.1665, 31.9195),
+        new("Beypazarı İpek Yolu Konağı", "evyemegi", 2, 320, 4.6, 2100, "İnözü Vadisi Girişi No: 5, Beypazarı", 40.1750, 31.9280),
+        new("Beypazarı Taş Fırın Kurusu & Pide", "pide", 1, 180, 4.7, 3400, "Alaaddin Sok. No: 12, Beypazarı", 40.1682, 31.9215),
+        new("İnözü Vadisi Kır Bahçesi & Alabalık", "balik,tavuk", 2, 340, 4.6, 2600, "İnözü Vadisi Doğal Park İçi, Beypazarı", 40.1820, 31.9350),
+        new("Beypazarı Havuç Konağı Yöresel Mutfak", "evyemegi", 2, 250, 4.7, 1950, "Hacılar Sok. No: 4, Beypazarı", 40.1670, 31.9200),
+        new("Beypazarı Sanayi Köfte & Çorba Salonu", "sanayi,kebap", 1, 220, 4.6, 1600, "Beypazarı Küçük Sanayi Sitesi No: 18, Beypazarı", 40.1580, 31.9120),
+
+        // ÇUBUK (Meşhur Çubuk Turşusu, Ağaçbaba Döneri, Yayla Tandır)
+        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 1, 240, 4.7, 4600, "Yavuz Selim Mah. Cengiz Topel Cad. No: 12, Çubuk", 40.2386, 33.0322),
+        new("Meşhur Çubuk Turşucusu & Yöresel Sofrası", "evyemegi", 1, 210, 4.8, 3800, "Atatürk Cad. No: 28, Çubuk", 40.2370, 33.0305),
+        new("Çubuklu Esnaf Lokantası Hacıbaba", "evyemegi", 1, 230, 4.6, 2700, "Cumhuriyet Mah. Çubuk Çarşısı No: 15, Çubuk", 40.2395, 33.0340),
+        new("Çubuk Taş Fırın Pide & Kebap Salonu", "pide", 1, 190, 4.6, 2200, "Kıbrıs Cad. No: 18, Çubuk", 40.2360, 33.0310),
+        new("Çubuk Yayla Tandır & Izgara", "kebap", 2, 280, 4.6, 1850, "Şabanözü Yolu 2. Km, Çubuk", 40.2450, 33.0420),
+        new("Karagöl Kır Lokantası & Mangal", "tavuk,kebap", 2, 320, 4.7, 3100, "Karagöl Tabiat Parkı İçi, Çubuk", 40.3950, 32.9980),
+        new("Çubuk Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.6, 1950, "Çubuk Küçük Sanayi Sitesi 3. Blok No: 8, Çubuk", 40.2310, 33.0250),
+        new("Çubuk Çorbacısı & Kelle Paça", "evyemegi", 1, 180, 4.6, 1750, "Ankara Bulvarı No: 42, Çubuk", 40.2350, 33.0290),
+
+        // AKYURT (Sanayi Sitesi, Kuzu Haşlama, Kır Bahçeleri)
+        new("Akyurt Merkez Esnaf Lokantası", "evyemegi", 1, 220, 4.6, 2400, "Beyazıt Mah. Çankırı Bulv. No: 14, Akyurt", 40.1308, 33.0872),
+        new("Akyurt Sanayi Sitesi Köftecisi & Çorbacısı", "sanayi,kebap", 1, 210, 4.7, 2800, "Akyurt Sanayi Sitesi No: 22, Akyurt", 40.1280, 33.0820),
+        new("Tarihi Akyurt Taş Fırın Pide & Lahmacun", "pide", 1, 180, 4.6, 2100, "Cumhuriyet Meydanı No: 6, Akyurt", 40.1315, 33.0885),
+        new("Akyurt Kır Bahçesi & Izgara", "tavuk,kebap", 2, 260, 4.5, 1700, "Büğdüz Mah. Havaalanı Yolu No: 45, Akyurt", 40.1180, 33.0650),
+        new("Akyurt Lezzet Sofrası & Döner", "kebap", 1, 230, 4.5, 1900, "Kızık Cad. No: 9, Akyurt", 40.1295, 33.0850),
+        new("Akyurt Sultan Sofrası", "evyemegi", 1, 200, 4.6, 1400, "Ankara Cad. No: 31, Akyurt", 40.1300, 33.0860),
+
+        // POLATLI (Soğanlı Kuzu Tandır, İstasyon Gar Lokantası, Duatepe Kebap)
+        new("Meşhur Polatlı Soğanlı Kuzu Tandır", "kebap", 2, 320, 4.8, 4800, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı", 39.5855, 32.1465),
+        new("Polatlı Tarihi Duatepe Kebapçısı", "kebap", 2, 280, 4.7, 3600, "İnönü Cad. No: 18, Polatlı", 39.5840, 32.1440),
+        new("Polatlı İstasyon Gar Lokantası", "evyemegi", 1, 240, 4.6, 2900, "İstasyon Mah. Gar Yanı No: 4, Polatlı", 39.5820, 32.1410),
+        new("Polatlı Taş Fırın Güveç & Pide", "pide", 1, 210, 4.6, 2400, "Sivrihisar Cad. No: 42, Polatlı", 39.5870, 32.1490),
+        new("Polatlı Sanayi Sitesi Kavurmacısı", "sanayi,kebap", 1, 250, 4.7, 3100, "Yeni Sanayi Sitesi 12. Blok No: 5, Polatlı", 39.5790, 32.1350),
+
+        // KIZILCAHAMAM (Meşhur Bazlama, Taş Fırın Güveç, Kaplıca & Milli Park)
+        new("Kızılcahamam Meşhur Bazlamacısı & Gözleme Konağı", "kahvalti", 1, 210, 4.8, 6200, "Kazım Karabekir Cad. No: 16, Kızılcahamam", 40.4700, 32.6500),
+        new("Kızılcahamam Taş Fırın Güveç & Kuzu Kebap", "kebap", 2, 330, 4.7, 4400, "Kaplıca Cad. No: 24, Kızılcahamam", 40.4715, 32.6520),
+        new("Soğuksu Milli Parkı Mangal & Alabalık", "balik,tavuk", 2, 310, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4620, 32.6410),
+        new("Kızılcahamam Esnaf Lokantası", "evyemegi", 1, 240, 4.6, 2600, "Cumhuriyet Meydanı No: 8, Kızılcahamam", 40.4690, 32.6490),
+
+        // KAHRAMANKAZAN (Saray Sanayi, Kavurmacı, Esnaf Mutfağı)
+        new("Kahramankazan Kavurmacısı Mehmet Usta", "sanayi,kebap", 2, 290, 4.8, 3800, "Fatih Mah. Ankara Bulv. No: 88, Kahramankazan", 40.1983, 32.6842),
+        new("Kazan Saray Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.7, 3100, "Saray Sanayi Sitesi 5. Sk. No: 12, Kahramankazan", 40.1850, 32.6710),
+        new("Kahramankazan Esnaf Mutfağı", "evyemegi", 1, 230, 4.6, 2100, "Cumhuriyet Cad. No: 14, Kahramankazan", 40.1995, 32.6860),
+        new("Kazan Taş Fırın Pide & Lahmacun", "pide", 1, 180, 4.6, 1850, "Termal Cad. No: 7, Kahramankazan", 40.1970, 32.6820)
+    ];
+
     public class BuyukIlEntry
     {
         [JsonPropertyName("name")] public string Name { get; set; } = "";
@@ -221,6 +274,39 @@ public static class DemoSeeder
         }
     }
 
+    public static string DetectDistrictOrArea(double lat, double lng)
+    {
+        var districtCenters = new Dictionary<string, (double Lat, double Lng, double MaxDistMeters)>
+        {
+            ["Beypazarı"] = (40.1677, 31.9211, 25_000),
+            ["Çubuk"] = (40.2386, 33.0322, 22_000),
+            ["Akyurt"] = (40.1308, 33.0872, 18_000),
+            ["Polatlı"] = (39.5855, 32.1465, 25_000),
+            ["Kızılcahamam"] = (40.4700, 32.6500, 25_000),
+            ["Kahramankazan"] = (40.1983, 32.6842, 20_000),
+            ["Elmadağ"] = (39.9200, 33.2300, 20_000),
+            ["Haymana"] = (39.4300, 32.5000, 22_000),
+            ["Nallıhan"] = (40.1800, 31.3500, 25_000),
+            ["Şereflikoçhisar"] = (38.9400, 33.5400, 25_000),
+            ["Gölbaşı"] = (39.7900, 32.8100, 15_000),
+            ["Batıkent"] = (39.9720, 32.7310, 8_000),
+            ["Çakırlar"] = (39.9920, 32.7050, 7_000),
+            ["Eryaman"] = (39.9800, 32.6300, 8_000),
+            ["Sincan"] = (39.9600, 32.5800, 10_000),
+            ["Etimesgut"] = (39.9500, 32.6800, 10_000),
+        };
+
+        foreach (var (name, info) in districtCenters)
+        {
+            if (Geo.DistanceMeters(lat, lng, info.Lat, info.Lng) <= info.MaxDistMeters)
+            {
+                return name;
+            }
+        }
+
+        return "Merkez";
+    }
+
     public static (string CityName, List<BuyukIlEntry> Venues) GetCityVenuesForLocation(double lat, double lng)
     {
         var data = GetBuyukIlData();
@@ -266,7 +352,8 @@ public static class DemoSeeder
         var rnd = new Random();
 
         // 1. Önce sabit koordinatlı tüm gerçek Ankara ve bölge mekanlarını DB'ye ekle/güncelle
-        foreach (var v in AnkaraVenues)
+        var allPresets = AnkaraVenues.Concat(DistrictVenues);
+        foreach (var v in allPresets)
         {
             var key = v.Name.Trim().ToLower();
             if (existingDict.TryGetValue(key, out var existing))
@@ -349,10 +436,8 @@ public static class DemoSeeder
             }
         }
 
-        // 3. Konuma uygun buyukil mekanlarını belirle ve kullanıcının 5 km yarıçapına rastgele dahil et
-        // Kullanıcı nerede olursa olsun (Çakırlar, Teknokent, Kadıköy, Seyhan, vb.),
-        // o şehre uygun büyükil restoranlarından rastgele seçilerek 5 km yarıçap içine yerleştirilir.
-        var (cityName, cityVenues) = GetCityVenuesForLocation(lat, lng);
+        // 3. Kullanıcının bulunduğu ilçe veya bölgeyi tespit et (Beypazarı, Çubuk, Akyurt, vb.)
+        var districtName = DetectDistrictOrArea(lat, lng);
         var allCurrent = remainingList.Concat(toAdd).ToList();
 
         var existingNearbyNames = allCurrent
@@ -360,89 +445,66 @@ public static class DemoSeeder
             .Select(r => r.Name.Trim().ToLower())
             .ToHashSet();
 
-        if (cityVenues.Count > 0)
-        {
-            var shuffledCity = cityVenues.OrderBy(_ => rnd.Next()).ToList();
-            int injectedCount = 0;
+        // 4. Eğer kullanıcının 5 km çevresinde 18'den az restoran varsa:
+        // O ilçeye/konuma tam uyan gerçekçi yöresel esnaf, taş fırın ve sanayi lezzetlerini dinamik olarak 5 km içine yerleştir
+        var nearbyCount = existingNearbyNames.Count;
 
-            foreach (var b in shuffledCity)
-            {
-                var cleanName = b.Name;
-                var key = cleanName.Trim().ToLower();
-
-                // Eğer bu mekan veya ismi zaten kullanıcının 5 km içinde varsa tekrar ekleme
-                if (existingNearbyNames.Contains(key)) continue;
-
-                // 400m - 4.5km arasında rastgele açı ve mesafeyle konuma yerleştir
-                var angle = rnd.NextDouble() * Math.PI * 2;
-                var dist = 400 + rnd.NextDouble() * 3800; // 400m - 4.2km
-                var dLat = dist * Math.Cos(angle) / 111_000.0;
-                var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
-
-                int priceLevel = b.PriceLevel >= 400 ? 3 : (b.PriceLevel >= 250 ? 2 : 1);
-                var r = new Restaurant
-                {
-                    GooglePlaceId = $"buyukil_{b.CityId}_{b.Name.GetHashCode():x8}_{lat:F3}_{lng:F3}_{injectedCount}",
-                    Name = cleanName,
-                    Cuisines = b.Category,
-                    MealCards = "multinet,setcard,sodexo,ticket",
-                    PriceLevel = priceLevel,
-                    AvgPriceTl = b.PriceLevel,
-                    GoogleRating = b.Rating,
-                    GoogleRatingCount = b.Reviews,
-                    Lat = Math.Round(lat + dLat, 6),
-                    Lng = Math.Round(lng + dLng, 6),
-                    Address = $"{b.Name} ({b.Address})",
-                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
-                };
-                toAdd.Add(r);
-                existingNearbyNames.Add(key);
-                injectedCount++;
-
-                // Her seferinde konuma uygun en az 6-8 adet büyükil mekanını garanti et
-                if (injectedCount >= 8) break;
-            }
-        }
-
-        // 4. Şimdi kullanıcının tam koordinatının 5 km yarıçapındaki toplam mekan sayısına bak
-        var allUpdated = allCurrent.Concat(toAdd).ToList();
-        var nearbyCount = allUpdated.Count(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000);
-
-        // Eğer hala 18'den azsa, Ankara / Sanayi havuzundan da ekle (toplam en az 20-25 olsun)
         if (nearbyCount < 18)
         {
-            int addedCount = 0;
-            var pool = AnkaraVenues.OrderBy(_ => rnd.Next()).ToList();
-            foreach (var v in pool)
+            var districtTemplates = new[]
             {
-                if (nearbyCount + addedCount >= 25) break;
+                (Name: $"{districtName} Esnaf Lokantası", Cuisines: "evyemegi", Price: 220, Rating: 4.7, Type: "evyemegi"),
+                (Name: $"{districtName} Meşhur Taş Fırın Pide & Kebap", Cuisines: "pide,kebap", Price: 210, Rating: 4.6, Type: "pide"),
+                (Name: $"{districtName} Sanayi Köftecisi", Cuisines: "sanayi,kebap", Price: 230, Rating: 4.8, Type: "sanayi"),
+                (Name: $"{districtName} Sanayi Tostçusu & Çay Ocağı", Cuisines: "sanayi,kahvalti", Price: 150, Rating: 4.7, Type: "sanayi"),
+                (Name: $"{districtName} Kelle Paça & Çorba Salonu", Cuisines: "evyemegi", Price: 190, Rating: 4.6, Type: "evyemegi"),
+                (Name: $"{districtName} Yayla Tandır & Güveç Konağı", Cuisines: "kebap,evyemegi", Price: 290, Rating: 4.8, Type: "kebap"),
+                (Name: $"{districtName} Tarihi Çarşı Dönercisi", Cuisines: "kebap", Price: 230, Rating: 4.6, Type: "kebap"),
+                (Name: $"{districtName} Kır Bahçesi & Mangal", Cuisines: "tavuk,kebap", Price: 270, Rating: 4.5, Type: "tavuk"),
+                (Name: $"{districtName} Yöresel Anne Eli Mantı & Gözleme", Cuisines: "kahvalti,evyemegi", Price: 200, Rating: 4.7, Type: "kahvalti"),
+                (Name: $"{districtName} Sanayi Sac Kavurmacısı", Cuisines: "sanayi,kebap,evyemegi", Price: 280, Rating: 4.7, Type: "sanayi"),
+                (Name: $"{districtName} Çıtır Lahmacun & Pide Salonu", Cuisines: "pide", Price: 180, Rating: 4.6, Type: "pide"),
+                (Name: $"{districtName} Köfteci Dayı", Cuisines: "kebap", Price: 210, Rating: 4.5, Type: "kebap"),
+                (Name: $"{districtName} Karadeniz Pide & Balık", Cuisines: "pide,balik", Price: 260, Rating: 4.6, Type: "balik"),
+                (Name: $"{districtName} Sultan Sofrası", Cuisines: "evyemegi", Price: 210, Rating: 4.6, Type: "evyemegi"),
+            };
 
-                var cleanName = v.Name.Replace(" Batıkent", "").Replace(" Çayyolu", "").Replace(" Tunalı", "").Replace(" Bilkent", "");
-                var key = cleanName.Trim().ToLower();
+            int addedCount = 0;
+            foreach (var t in districtTemplates)
+            {
+                var key = t.Name.Trim().ToLower();
                 if (existingNearbyNames.Contains(key)) continue;
 
+                // 350m - 4.2km arasında rastgele yerleşim
                 var angle = rnd.NextDouble() * Math.PI * 2;
-                var dist = 350 + rnd.NextDouble() * 4200;
+                var dist = 350 + rnd.NextDouble() * 3800;
                 var dLat = dist * Math.Cos(angle) / 111_000.0;
                 var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
+
+                int priceLevel = t.Price >= 400 ? 3 : (t.Price >= 250 ? 2 : 1);
+                var address = t.Cuisines.Contains("sanayi")
+                    ? $"{districtName} Sanayi Sitesi {rnd.Next(1, 8)}. Blok No: {rnd.Next(1, 30)}, {districtName}"
+                    : $"{districtName} Merkez Mah. Atatürk Cad. No: {rnd.Next(1, 60)}, {districtName}";
 
                 toAdd.Add(new Restaurant
                 {
-                    GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}_{lat:F3}_{lng:F3}_{addedCount}",
-                    Name = cleanName,
-                    Cuisines = v.Cuisines,
-                    MealCards = v.MealCards ?? "multinet,setcard,sodexo,ticket",
-                    PriceLevel = v.PriceLevel,
-                    AvgPriceTl = v.PriceTl,
-                    GoogleRating = v.Rating,
-                    GoogleRatingCount = v.RatingCount > 0 ? v.RatingCount : rnd.Next(200, 2000),
+                    GooglePlaceId = $"district_{districtName.GetHashCode():x8}_{lat:F3}_{lng:F3}_{addedCount}",
+                    Name = t.Name,
+                    Cuisines = t.Cuisines,
+                    MealCards = "multinet,setcard,sodexo,ticket",
+                    PriceLevel = priceLevel,
+                    AvgPriceTl = t.Price,
+                    GoogleRating = t.Rating,
+                    GoogleRatingCount = rnd.Next(350, 3200),
                     Lat = Math.Round(lat + dLat, 6),
                     Lng = Math.Round(lng + dLng, 6),
-                    Address = $"{cleanName} (Merkez Mah. Cad. No: {rnd.Next(1, 110)})",
+                    Address = address,
                     MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
                 });
                 existingNearbyNames.Add(key);
                 addedCount++;
+
+                if (nearbyCount + addedCount >= 22) break;
             }
         }
 

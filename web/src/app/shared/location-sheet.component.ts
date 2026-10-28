@@ -27,6 +27,12 @@ const POPULAR_LOCATIONS: QuickCity[] = [
       { name: 'Tunalı Hilmi', query: 'Tunalı Hilmi Çankaya Ankara', lat: 39.9042, lng: 32.8606 },
       { name: 'Çukurambar', query: 'Çukurambar Çankaya Ankara', lat: 39.9022, lng: 32.8089 },
       { name: 'Yenimahalle (Batıkent)', query: 'Batıkent Yenimahalle Ankara', lat: 39.9723, lng: 32.7489 },
+      { name: 'Çakırlar', query: 'Çakırlar Yenimahalle Ankara', lat: 39.9920, lng: 32.7050 },
+      { name: 'Çubuk', query: 'Çubuk Ankara', lat: 40.2386, lng: 33.0322 },
+      { name: 'Akyurt', query: 'Akyurt Ankara', lat: 40.1308, lng: 33.0872 },
+      { name: 'Beypazarı', query: 'Beypazarı Ankara', lat: 40.1677, lng: 31.9211 },
+      { name: 'Polatlı', query: 'Polatlı Ankara', lat: 39.5855, lng: 32.1465 },
+      { name: 'Kızılcahamam', query: 'Kızılcahamam Ankara', lat: 40.4700, lng: 32.6500 },
     ]
   },
   {
