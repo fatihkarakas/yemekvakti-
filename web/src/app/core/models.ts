@@ -43,6 +43,10 @@ export interface CandidateQuery {
   avoidDays?: number;
   limit?: number;
   sanayiOnly?: boolean;
+  userPrompt?: string | null;
+  friendPrompt?: string | null;
+  mood?: string | null;
+  surpriseMe?: boolean;
 }
 
 export interface Candidate {

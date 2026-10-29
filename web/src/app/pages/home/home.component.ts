@@ -85,6 +85,114 @@ import { burstConfetti } from '../../shared/confetti';
 
       <!-- ================= MOD 1: AKILLI ÖNERİ ================= -->
       @if (mode() === 'suggest') {
+        <!-- Beyaz Yakalı Öğle Yemeği Karar Asistanı (Sen + Arkadaşın + Şans) -->
+        <section class="ai-assistant-card glass">
+          <div class="ai-head">
+            <div class="ai-title-row">
+              <span class="ai-badge">🤖 AI Karar Koçu</span>
+              <h2>Öğlen Nereye Gidiyoruz?</h2>
+            </div>
+            <p class="muted ai-sub">
+              Aklından geçeni yaz, arkadaşının farklı isteğini ekle ortak noktayı bulalım; ya da hiç karar yoksa işi şansa bırak!
+            </p>
+          </div>
+
+          <div class="ai-inputs">
+            <!-- 1. Senin Aklından Geçen -->
+            <div class="ai-field">
+              <label for="user-craving-input">💭 Senin aklından ne geçiyor?</label>
+              <div class="ai-input-wrap">
+                <input
+                  id="user-craving-input"
+                  type="text"
+                  [value]="userPrompt()"
+                  (input)="userPrompt.set($any($event.target).value)"
+                  (keydown.enter)="applyAiDecision()"
+                  placeholder="Örn: Canım iyi bir döner, sulu yemek veya çorba çekiyor..."
+                />
+                @if (userPrompt()) {
+                  <button type="button" class="clear-inline-btn" (click)="userPrompt.set('')" title="Temizle">✕</button>
+                }
+              </div>
+              <div class="quick-chips">
+                <button type="button" class="q-chip" [class.active]="userPrompt().includes('döner')" (click)="setQuickUserPrompt('İyi bir döner veya kebap gömelim')">🥙 Döner / Kebap</button>
+                <button type="button" class="q-chip" [class.active]="userPrompt().includes('sulu')" (click)="setQuickUserPrompt('Sıcak çorba ve sulu ev yemeği olsun')">🍲 Sulu Ev Yemeği</button>
+                <button type="button" class="q-chip" [class.active]="userPrompt().includes('hafif')" (click)="setQuickUserPrompt('Bugün hafif, sağlıklı salata veya ızgara tavuk olsun')">🥗 Hafif & Sağlıklı</button>
+                <button type="button" class="q-chip" [class.active]="userPrompt().includes('pide')" (click)="setQuickUserPrompt('Çıtır pide veya lahmacun çekiyor canım')">🫓 Pide / Lahmacun</button>
+                <button type="button" class="q-chip" [class.active]="userPrompt().includes('burger')" (click)="setQuickUserPrompt('Güzel bir burger veya sokak lezzeti olsun')">🍔 Burger</button>
+              </div>
+            </div>
+
+            <!-- 2. Arkadaşının / Ekibin İsteği (Toggle veya Açık) -->
+            @if (!showFriendInput() && !friendPrompt()) {
+              <button id="add-friend-thought-btn" type="button" class="friend-toggle-btn" (click)="showFriendInput.set(true)">
+                🤝 Arkadaşın farklı bir şey mi istiyor? <span>+ Onun da fikrini ekle, uzlaştıralım</span>
+              </button>
+            } @else {
+              <div class="ai-field friend-field pop-in">
+                <div class="friend-label-row">
+                  <label for="friend-craving-input">👥 Arkadaşının / ekibin aklında ne var?</label>
+                  <button type="button" class="remove-friend-btn" (click)="clearFriendPrompt()">Kaldır ✕</button>
+                </div>
+                <div class="ai-input-wrap">
+                  <input
+                    id="friend-craving-input"
+                    type="text"
+                    [value]="friendPrompt()"
+                    (input)="friendPrompt.set($any($event.target).value)"
+                    (keydown.enter)="applyAiDecision()"
+                    placeholder="Örn: O hafif salata/tavuk istiyor, ya da sulu ev yemeği diyor..."
+                  />
+                </div>
+                <div class="quick-chips">
+                  <button type="button" class="q-chip" [class.active]="friendPrompt().includes('hafif')" (click)="friendPrompt.set('O hafif bir şey, salata veya zeytinyağlı istiyor')">🥗 O hafif/salata diyor</button>
+                  <button type="button" class="q-chip" [class.active]="friendPrompt().includes('ev yemeği')" (click)="friendPrompt.set('O çorba veya sulu ev yemeği istiyor')">🍲 O ev yemeği/çorba diyor</button>
+                  <button type="button" class="q-chip" [class.active]="friendPrompt().includes('kebap')" (click)="friendPrompt.set('O et, kebap veya döner yemek istiyor')">🥙 O kebap/döner diyor</button>
+                  <button type="button" class="q-chip" [class.active]="friendPrompt().includes('tavuk')" (click)="friendPrompt.set('O tavuk veya ızgara köfte istiyor')">🍗 O tavuk/köfte diyor</button>
+                </div>
+              </div>
+            }
+
+            <!-- 3. Beyaz Yakalı Öğle Molası Modu -->
+            <div class="mood-row">
+              <span class="mood-label">Öğle Molası Modu:</span>
+              <div class="mood-pills">
+                <button type="button" class="mood-pill" [class.active]="selectedMood() === 'hizli'" (click)="toggleMood('hizli')">
+                  ⚡ Hızlı & Yakın (Toplantı Var)
+                </button>
+                <button type="button" class="mood-pill" [class.active]="selectedMood() === 'ekonomik'" (click)="toggleMood('ekonomik')">
+                  💳 Ekonomik / Kart Geçsin
+                </button>
+                <button type="button" class="mood-pill" [class.active]="selectedMood() === 'ortak'" (click)="toggleMood('ortak')">
+                  🤝 Ekipçe Herkese Uysun
+                </button>
+                <button type="button" class="mood-pill" [class.active]="selectedMood() === 'hafif'" (click)="toggleMood('hafif')">
+                  🌿 Ağırlık Çökmesin
+                </button>
+                <button type="button" class="mood-pill" [class.active]="selectedMood() === 'doyurucu'" (click)="toggleMood('doyurucu')">
+                  🔥 Sağlam Doyursun
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Karar Aksiyonları: AI Önerisi vs Tamamen Şansa Bırak -->
+          <div class="ai-actions">
+            <button id="ai-decide-btn" type="button" class="btn btn-primary ai-submit-btn" [disabled]="loading()" (click)="applyAiDecision()">
+              @if (userPrompt() && friendPrompt()) {
+                🤝 İkimizi Uzlaştır & Ortak Mekan Bul
+              } @else if (userPrompt() || friendPrompt() || selectedMood()) {
+                ✨ Aklımdakine Göre En İyi Yeri Bul
+              } @else {
+                ✨ Yapay Zeka ile Öğle Yemeği Öner
+              }
+            </button>
+            <button id="ai-chance-btn" type="button" class="btn chance-btn" [disabled]="loading()" (click)="leaveItToChance()" title="Hiç fikriniz yoksa şansınıza güvenin!">
+              🎲 Karar Yok, Şansa Bırak!
+            </button>
+          </div>
+        </section>
+
         @if (loading()) {
           <div class="loading-box glass">
             <div class="spinner">🍳</div>
@@ -522,6 +630,212 @@ import { burstConfetti } from '../../shared/confetti';
       text-align: center;
       p { margin-bottom: 16px; }
     }
+    .ai-assistant-card {
+      padding: 18px;
+      margin-bottom: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 122, 24, 0.25);
+      background: linear-gradient(155deg, rgba(255, 122, 24, 0.09), rgba(241, 65, 124, 0.06), rgba(255, 255, 255, 0.03));
+    }
+    .ai-head {
+      margin-bottom: 14px;
+    }
+    .ai-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      h2 { font-size: 18px; font-weight: 700; margin: 0; }
+    }
+    .ai-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px -2px rgba(241, 65, 124, 0.5);
+    }
+    .ai-sub {
+      font-size: 12.5px;
+      margin: 5px 0 0;
+      line-height: 1.4;
+    }
+    .ai-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ai-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+      }
+    }
+    .ai-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      input {
+        width: 100%;
+        padding: 10px 34px 10px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(18, 15, 26, 0.65);
+        color: var(--text);
+        font-size: 13.5px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        &:focus {
+          border-color: var(--accent-1);
+          box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.15);
+        }
+      }
+    }
+    .clear-inline-btn {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 6px;
+      &:hover { color: var(--text); }
+    }
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .q-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s;
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text);
+      }
+      &.active {
+        background: rgba(255, 122, 24, 0.18);
+        border-color: rgba(255, 122, 24, 0.5);
+        color: #ffb074;
+        font-weight: 600;
+      }
+    }
+    .friend-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      span {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--accent-1);
+      }
+      &:hover {
+        border-color: var(--accent-1);
+        background: rgba(255, 122, 24, 0.08);
+      }
+    }
+    .friend-field {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .friend-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .remove-friend-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 11.5px;
+      cursor: pointer;
+      &:hover { color: var(--danger); }
+    }
+    .mood-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .mood-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .mood-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .mood-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s;
+      &:hover { background: rgba(255, 255, 255, 0.11); }
+      &.active {
+        background: var(--accent);
+        border-color: transparent;
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 3px 10px -2px rgba(241, 65, 124, 0.5);
+      }
+    }
+    .ai-actions {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+      @media (max-width: 560px) {
+        grid-template-columns: 1fr;
+      }
+    }
+    .ai-submit-btn {
+      font-weight: 700;
+      padding: 11px 16px;
+    }
+    .chance-btn {
+      background: rgba(139, 92, 246, 0.16);
+      border: 1px solid rgba(139, 92, 246, 0.45);
+      color: #ddd6fe;
+      font-weight: 700;
+      padding: 11px 14px;
+      &:hover {
+        background: rgba(139, 92, 246, 0.28);
+      }
+    }
   `
 })
 export class HomeComponent implements OnInit {
@@ -541,11 +855,44 @@ export class HomeComponent implements OnInit {
   readonly wheelWinner = signal<Candidate | null>(null);
   readonly wheelSource = signal<'candidates' | 'favorites' | 'sanayi'>('candidates');
 
+  readonly userPrompt = signal('');
+  readonly friendPrompt = signal('');
+  readonly showFriendInput = signal(false);
+  readonly selectedMood = signal<string | null>(null);
+
   readonly showCuisineSheet = signal(false);
   readonly showLocationSheet = signal(false);
   readonly showAddSheet = signal(false);
   readonly showFavoritesSheet = signal(false);
   readonly activeRateVisit = signal<Visit | null>(null);
+  private seenSuggestionIds: number[] = [];
+
+  setQuickUserPrompt(text: string) {
+    if (this.userPrompt() === text) {
+      this.userPrompt.set('');
+    } else {
+      this.userPrompt.set(text);
+    }
+  }
+
+  clearFriendPrompt() {
+    this.friendPrompt.set('');
+    this.showFriendInput.set(false);
+  }
+
+  toggleMood(mood: string) {
+    this.selectedMood.set(this.selectedMood() === mood ? null : mood);
+  }
+
+  applyAiDecision() {
+    this.seenSuggestionIds = [];
+    this.loadSuggestion(false, false);
+  }
+
+  leaveItToChance() {
+    this.seenSuggestionIds = [];
+    this.loadSuggestion(true, true);
+  }
 
   async ngOnInit() {
     await this.fs.load();
@@ -625,6 +972,9 @@ export class HomeComponent implements OnInit {
 
   onLocationChanged() {
     this.showLocationSheet.set(false);
+    this.seenSuggestionIds = [];
+    this.sanayiCandidates.set([]);
+    this.candidates.set([]);
     if (this.mode() === 'suggest') {
       this.loadSuggestion();
     } else {
@@ -678,12 +1028,23 @@ export class HomeComponent implements OnInit {
     return c;
   }
 
-  async loadSuggestion(forceNext = false) {
+  async loadSuggestion(forceNext = false, surpriseMe = false) {
     this.loading.set(true);
     try {
       const coords = await this.loc.locate();
       const currentFilters = this.fs.filters();
-      const excludeIds = forceNext && this.suggestion()?.restaurant?.id ? [this.suggestion()!.restaurant!.id] : [];
+      if (!forceNext) {
+        this.seenSuggestionIds = [];
+      } else if (this.suggestion()?.restaurant?.id) {
+        const curId = this.suggestion()!.restaurant!.id;
+        if (!this.seenSuggestionIds.includes(curId)) {
+          this.seenSuggestionIds.push(curId);
+        }
+        if (this.seenSuggestionIds.length > 8) {
+          this.seenSuggestionIds.shift();
+        }
+      }
+      const excludeIds = forceNext ? [...this.seenSuggestionIds] : [];
 
       const res = await this.api.suggest({
         lat: coords.lat,
@@ -696,12 +1057,19 @@ export class HomeComponent implements OnInit {
         maxPrice: currentFilters.maxPrice,
         avoidDays: currentFilters.avoidDays,
         limit: 15,
-        excludeIds
+        excludeIds,
+        userPrompt: this.userPrompt().trim() || null,
+        friendPrompt: this.friendPrompt().trim() || null,
+        mood: surpriseMe ? 'sans' : this.selectedMood(),
+        surpriseMe
       });
 
       this.suggestion.set(res);
       if (res.restaurant) {
-        burstConfetti(25);
+        burstConfetti(surpriseMe ? 65 : 25);
+        if (surpriseMe) {
+          this.toast.success(`🎲 Şans zarları atıldı: ${res.restaurant.name}!`);
+        }
       }
     } catch {
       this.toast.error('Öneriler yüklenirken bir problem oluştu.');
@@ -724,7 +1092,10 @@ export class HomeComponent implements OnInit {
         maxPriceTl: currentFilters.maxPriceTl,
         maxPrice: currentFilters.maxPrice,
         avoidDays: currentFilters.avoidDays,
-        limit: 15
+        limit: 15,
+        userPrompt: this.userPrompt().trim() || null,
+        friendPrompt: this.friendPrompt().trim() || null,
+        mood: this.selectedMood()
       });
       this.candidates.set(list);
       if (this.wheelSource() === 'candidates') {
@@ -808,11 +1179,14 @@ export class HomeComponent implements OnInit {
 
   getDirectionsUrl(c: Candidate | null): string {
     if (!c) return '#';
+    if (c.address && c.address.trim()) {
+      const dest = `${c.name}, ${c.address.trim()}`;
+      return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+    }
     if (c.lat && c.lng) {
       return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
     }
-    const dest = (c.address && c.address.trim()) ? `${c.name}, ${c.address.trim()}` : (c.name || '');
-    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(c.name || '')}`;
   }
 
   async acceptLunch(r: Candidate, source: 'suggestion' | 'wheel' = 'suggestion') {
@@ -837,6 +1211,7 @@ export class HomeComponent implements OnInit {
 
   onFiltersApplied() {
     this.showCuisineSheet.set(false);
+    this.seenSuggestionIds = [];
     if (this.mode() === 'suggest') {
       this.loadSuggestion();
     } else {
@@ -847,7 +1222,12 @@ export class HomeComponent implements OnInit {
   }
 
   resetFiltersAndRetry() {
-    this.fs.set({ cuisines: [], maxPrice: null, radius: 5000 });
+    this.seenSuggestionIds = [];
+    this.userPrompt.set('');
+    this.friendPrompt.set('');
+    this.showFriendInput.set(false);
+    this.selectedMood.set(null);
+    this.fs.set({ cuisines: [], mealCards: [], minPriceTl: null, maxPriceTl: null, maxPrice: null, radius: 5000 });
     this.loadSuggestion();
   }
 

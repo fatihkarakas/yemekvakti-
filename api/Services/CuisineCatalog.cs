@@ -2,22 +2,22 @@ namespace YemekVakti.Api.Services;
 
 public record CuisineDef(string Code, string Label, string Emoji, string[] PlaceTypes, string[] Keywords);
 
-/// <summary>Uygulamadaki yemek tarzları ve Google Places tiplerine eşlemesi.</summary>
+/// <summary>Uygulamadaki yemek tarzları ve Google Places / OSM tiplerine eşlemesi.</summary>
 public static class CuisineCatalog
 {
     public static readonly CuisineDef[] All =
     [
-        new("kebap", "Döner / Kebap", "🥙", ["kebab_shop", "turkish_restaurant", "middle_eastern_restaurant"], ["döner", "doner", "kebap", "kebab", "dürüm", "iskender", "ocakbaşı", "köfte"]),
-        new("evyemegi", "Ev Yemeği / Esnaf", "🍲", ["turkish_restaurant"], ["lokanta", "ev yemek", "esnaf", "sulu yemek", "tencere", "çorba"]),
-        new("burger", "Burger / Fast Food", "🍔", ["hamburger_restaurant", "fast_food_restaurant"], ["burger", "mcdonald", "kfc", "popeyes", "wendy"]),
-        new("pide", "Pide / Lahmacun", "🫓", [], ["pide", "lahmacun", "karadeniz", "fırın"]),
-        new("saglikli", "Salata / Sağlıklı", "🥗", ["vegan_restaurant", "vegetarian_restaurant", "salad_shop", "health_food_restaurant"], ["salata", "salad", "bowl", "vegan", "fit"]),
-        new("uzakdogu", "Uzak Doğu", "🍜", ["asian_restaurant", "chinese_restaurant", "japanese_restaurant", "sushi_restaurant", "thai_restaurant", "korean_restaurant", "ramen_restaurant", "vietnamese_restaurant"], ["sushi", "noodle", "wok", "çin", "japon", "ramen", "asya"]),
-        new("pizza", "Pizza / İtalyan", "🍕", ["pizza_restaurant", "italian_restaurant"], ["pizza", "pasta", "makarna", "italian"]),
-        new("balik", "Balık", "🐟", ["seafood_restaurant"], ["balık", "balik", "fish", "midye"]),
-        new("kahvalti", "Kahvaltı / Tost / Kafe", "🥪", ["breakfast_restaurant", "brunch_restaurant", "cafe", "sandwich_shop", "bakery", "coffee_shop"], ["kahvaltı", "tost", "sandviç", "kafe", "cafe", "börek", "simit"]),
-        new("tavuk", "Tavuk / Izgara", "🍗", ["barbecue_restaurant", "steak_house"], ["tavuk", "piliç", "chicken", "ızgara", "et", "steak"]),
-        new("sanayi", "Sanayi Lezzetleri", "🔧", ["turkish_restaurant"], ["sanayi", "kavurma", "tostçu", "sanayi tostu", "sanayi köfte", "esnaf", "ostim", "şaşmaz", "sasmaz", "ivedik", "siteler", "gersan"]),
+        new("kebap", "Döner / Kebap", "🥙", ["kebab_shop", "middle_eastern_restaurant"], ["döner", "doner", "kebap", "kebab", "dürüm", "iskender", "ocakbaşı", "köfte", "tantuni", "ciğer", "cağ", "aspava", "tandır", "kokoreç"]),
+        new("evyemegi", "Ev Yemeği / Esnaf", "🍲", ["turkish_restaurant"], ["lokanta", "ev yemek", "esnaf", "sulu yemek", "tencere", "çorba", "pilav", "mantı", "sofra", "işkembe", "paça", "güveç", "mutfak", "kurufasulye"]),
+        new("burger", "Burger / Fast Food", "🍔", ["hamburger_restaurant", "fast_food_restaurant"], ["burger", "hmbrgr", "mcdonald", "kfc", "popeyes", "wendy", "angus", "street food"]),
+        new("pide", "Pide / Lahmacun", "🫓", [], ["pide", "lahmacun", "karadeniz", "taş fırın", "taşfırın", "etli ekmek", "etliekmek", "cantık"]),
+        new("saglikli", "Salata / Sağlıklı", "🥗", ["vegan_restaurant", "vegetarian_restaurant", "salad_shop", "health_food_restaurant"], ["salata", "salad", "bowl", "vegan", "fit", "sağlıklı", "saglikli"]),
+        new("uzakdogu", "Uzak Doğu", "🍜", ["asian_restaurant", "chinese_restaurant", "japanese_restaurant", "sushi_restaurant", "thai_restaurant", "korean_restaurant", "ramen_restaurant", "vietnamese_restaurant"], ["sushi", "noodle", "wok", "çin", "china", "japon", "ramen", "asya"]),
+        new("pizza", "Pizza / İtalyan", "🍕", ["pizza_restaurant", "italian_restaurant"], ["pizza", "pasta", "makarna", "italian", "forno", "napoli"]),
+        new("balik", "Balık", "🐟", ["seafood_restaurant"], ["balık", "balik", "fish", "midye", "alabalık", "deniz"]),
+        new("kahvalti", "Kahvaltı / Tost / Kafe", "🥪", ["breakfast_restaurant", "brunch_restaurant", "cafe", "sandwich_shop", "bakery", "coffee_shop"], ["kahvaltı", "tost", "sandviç", "kafe", "cafe", "börek", "simit", "gözleme", "bazlama"]),
+        new("tavuk", "Tavuk / Izgara", "🍗", ["barbecue_restaurant", "steak_house"], ["tavuk", "piliç", "chicken", "ızgara", "mangal", "steak", "kanat"]),
+        new("sanayi", "Sanayi Lezzetleri", "🔧", [], ["sanayi", "oto sanayi", "ostim", "şaşmaz", "sasmaz", "ivedik", "siteler", "gersan", "iskitler"]),
     ];
 
     public static readonly HashSet<string> Codes = All.Select(c => c.Code).ToHashSet();
@@ -27,10 +27,24 @@ public static class CuisineCatalog
         var types = placeTypes?.ToHashSet() ?? [];
         var lower = name.ToLower(new System.Globalization.CultureInfo("tr-TR"));
         var codes = All
-            .Where(c => c.Keywords.Any(lower.Contains) || c.PlaceTypes.Any(types.Contains))
+            .Where(c => c.Keywords.Any(lower.Contains))
             .Select(c => c.Code)
             .ToList();
-        // "turkish_restaurant" hem kebap hem ev yemeği eşleşir; anahtar kelime yoksa ikisini de bırak
+
+        if (codes.Count == 0)
+        {
+            codes = All
+                .Where(c => c.PlaceTypes.Any(types.Contains))
+                .Select(c => c.Code)
+                .ToList();
+        }
+
+        if (codes.Count == 0)
+        {
+            codes.Add("evyemegi");
+            codes.Add("kebap");
+        }
+
         return string.Join(',', codes.Distinct());
     }
 

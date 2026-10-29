@@ -219,11 +219,14 @@ export class RestaurantCardComponent {
   readonly directionsUrl = computed(() => {
     const c = this.r();
     if (!c) return '#';
+    if (c.address && c.address.trim()) {
+      const dest = `${c.name}, ${c.address.trim()}`;
+      return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+    }
     if (c.lat && c.lng) {
       return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
     }
-    const dest = (c.address && c.address.trim()) ? `${c.name}, ${c.address.trim()}` : c.name;
-    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(c.name)}`;
   });
 
   async toggleFav(e: MouseEvent) {

@@ -23,6 +23,10 @@ public class CandidateQuery
     public int AvoidDays { get; set; } = 5;
     public int Limit { get; set; } = 15;
     public bool SanayiOnly { get; set; } = false;
+    public string? UserPrompt { get; set; }
+    public string? FriendPrompt { get; set; }
+    public string? Mood { get; set; }
+    public bool SurpriseMe { get; set; } = false;
 }
 
 public record CandidateDto(

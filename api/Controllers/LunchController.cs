@@ -229,32 +229,42 @@ public class LunchController(AppDbContext db, RecommendationService rec, PlacesS
         var userLat = lat ?? 39.869;
         var userLng = lng ?? 32.748;
 
-        // 1. Google Places Text Search (API etkinse yeni restoranları çeker)
-        if (places.Enabled)
-        {
-            try
-            {
-                await places.SearchTextAndCacheAsync(query, userLat, userLng, ct);
-            }
-            catch {}
-        }
-
-        // 2. Veritabanında SADECE restoran adına göre ara
+        // 1. Veritabanında restoran adına göre ara
         var dbList = await db.Restaurants
             .Where(r => EF.Functions.Like(r.Name, $"%{query}%"))
             .ToListAsync(ct);
 
-        // Kelime kelime ara (örn: "kebapçı salih" -> "salih")
-        var words = query.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // 2. Sonuç azsa Places / OpenStreetMap üzerinden canlı ara ve önbelleğe yaz
+        if (dbList.Count < 3 && query.Length >= 3)
+        {
+            try
+            {
+                var fetched = await places.SearchTextAndCacheAsync(query, userLat, userLng, ct);
+                foreach (var f in fetched)
+                {
+                    if (dbList.All(x => x.Id != f.Id)) dbList.Add(f);
+                }
+            }
+            catch { }
+        }
+
+        // 3. Kelime kelime ara (örn: "kebapçı salih" -> "salih")
+        var words = query.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(w => w.Length >= 3)
+            .ToArray();
         if (dbList.Count < 3 && words.Length > 1)
         {
-            var extra = await db.Restaurants
-                .Where(r => words.Any(w => EF.Functions.Like(r.Name, $"%{w}%")))
-                .ToListAsync(ct);
-
-            foreach (var ex in extra)
+            foreach (var w in words)
             {
-                if (dbList.All(x => x.Id != ex.Id)) dbList.Add(ex);
+                var extra = await db.Restaurants
+                    .Where(r => EF.Functions.Like(r.Name, $"%{w}%"))
+                    .Take(15)
+                    .ToListAsync(ct);
+
+                foreach (var ex in extra)
+                {
+                    if (dbList.All(x => x.Id != ex.Id)) dbList.Add(ex);
+                }
             }
         }
 

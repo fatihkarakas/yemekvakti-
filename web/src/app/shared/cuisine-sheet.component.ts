@@ -229,7 +229,7 @@ export class CuisineSheetComponent {
   }
 
   clearFilters() {
-    this.patch({ cuisines: [], mealCards: [], minPriceTl: null, maxPriceTl: null, maxPrice: null, radius: 2500 });
+    this.patch({ cuisines: [], mealCards: [], minPriceTl: null, maxPriceTl: null, maxPrice: null, radius: 5000 });
   }
 
   apply() {

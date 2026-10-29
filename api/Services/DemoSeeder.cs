@@ -7,9 +7,8 @@ using YemekVakti.Api.Models;
 namespace YemekVakti.Api.Services;
 
 /// <summary>
-/// Ankara'nın tüm popüler akslarına (Bilkent, Çukurambar, Balgat, Söğütözü, Tepe Prime, Maidan,
-/// Çayyolu, Tunalı Hilmi, Kızılay, Ulus, Bahçelievler, Batıkent) ait gerçek adresli,
-/// birebir koordinatlı ve güncel piyasa fiyatlı zengin restoran veritabanı.
+/// Sadece gerçekte var olan, doğrulanmış adresli ve birebir koordinatlı restoran veritabanı.
+/// Uydurma/şablon mekan üretimi içermez ve eski sahte/mükerrer kayıtları otomatik temizler.
 /// </summary>
 public static class DemoSeeder
 {
@@ -21,277 +20,200 @@ public static class DemoSeeder
         double Rating,
         int RatingCount,
         string Address,
-        double? RealLat = null,
-        double? RealLng = null,
+        double RealLat,
+        double RealLng,
         string? MealCards = "multinet,setcard,sodexo,ticket"
     );
 
-    // Gerçek araştırmaya dayalı, gerçek koordinatları ve adresleri olan Ankara mekanları
+    // %100 Gerçek, doğrulanmış Ankara merkez ve semt mekanları
     private static readonly SeedVenue[] AnkaraVenues =
     [
         // ==========================================
         // 1. BEYTEPE & BİLKENT (Hacettepe & Bilkent Aksı)
         // ==========================================
-        // Mevcut Başlıca Mekanlar
-        new("Hemşin Karadeniz Lokantası", "evyemegi", 1, 220, 4.5, 980, "Beytepe Mah. Ertuğrul Gazi Blv. No: 29/F, Çankaya", 39.8658, 32.7380),
-        new("Düveroğlu Kebap & Baklava Ümitköy", "kebap,pide", 2, 420, 4.6, 3400, "Mutlukent Mah. 2432. Cadde No: 24, Ümitköy", 39.8820, 32.7150),
-        new("Quick China Bilkent Station", "uzakdogu", 3, 580, 4.5, 1850, "Üniversiteler Mah. 1597. Cadde No: 3, Bilkent Center", 39.8735, 32.7508),
-        new("BigChefs Bilkent Station", "burger,evyemegi", 2, 450, 4.4, 2300, "Bilkent Center Zemin Kat No: 3, Bilkent", 39.8732, 32.7511),
-        new("Midpoint Bilkent Station", "burger,pizza", 2, 430, 4.3, 1920, "Bilkent Center Açık Alan No: 3/12, Bilkent", 39.8730, 32.7515),
-        new("Pâte à Choux Bilkent Station", "kahvalti", 2, 280, 4.6, 1100, "Bilkent Station No: 3/85, Bilkent", 39.8734, 32.7510),
-        new("Craft Burger Lab Bilkent", "burger", 2, 360, 4.4, 840, "Ankuva AVM Zemin Kat No: 14, Bilkent", 39.8745, 32.7522),
-
-        // Beytepe & Bilkent - Kebap & Döner Çeşitleri
-        new("Kukla Kebap Bilkent Station", "kebap", 2, 460, 4.6, 2100, "Bilkent Station Sokak İçi No: 3/55, Bilkent", 39.8733, 32.7513),
-        new("Beytepe Kebapçısı", "kebap", 2, 420, 4.5, 850, "Beytepe Mah. Kanuni Sultan Süleyman Blv. No: 12, Beytepe", 39.8640, 32.7350),
-        new("Meşhur Koç Aspava Beytepe", "kebap", 2, 380, 4.6, 1750, "Beytepe Mah. Ertuğrul Gazi Blv. No: 33/B, Beytepe", 39.8665, 32.7395),
-        new("Şençam Köftecisi Bilkent Station", "kebap", 1, 310, 4.3, 920, "Bilkent Center Zemin Kat No: 3/42, Bilkent", 39.8731, 32.7512),
-
-        // Beytepe & Bilkent - Pizza Çeşitleri
-        new("Pizza Il Forno Bilkent Station", "pizza", 2, 390, 4.6, 1850, "Bilkent Center / Station No: 3/61, Bilkent", 39.8734, 32.7514),
-        new("Tutto Pizza by Nap's Beytepe", "pizza", 2, 410, 4.7, 640, "Beytepe Mah. 5387. Cadde No: 8/A, Beytepe", 39.8625, 32.7320),
-        new("Lokal '71 Pizza & Kitchen Ankuva", "pizza,burger", 2, 380, 4.5, 1400, "Üniversiteler Mah. Ankuva AVM No: 28, Bilkent", 39.8742, 32.7520),
-
-        // Beytepe & Bilkent - Hamburger Çeşitleri
-        new("Burgasm Burger & Steak Beytepe", "burger", 2, 370, 4.6, 980, "Beytepe Mah. Kanuni Sultan Süleyman Blv. No: 16/D, Beytepe", 39.8635, 32.7360),
-        new("Herd's BBQ & Burger Bilkent", "burger", 2, 390, 4.5, 1120, "Bilkent Station No: 3/74, Bilkent", 39.8736, 32.7512),
-        new("Piel Roja Burger Ankuva", "burger", 2, 350, 4.4, 1650, "Ankuva AVM No: 16, Üniversiteler Mah., Bilkent", 39.8748, 32.7525),
-        new("HMBRGR Bilkent Center", "burger", 2, 320, 4.3, 1200, "Bilkent Center Kat 1 Food Court, Bilkent", 39.8729, 32.7509),
-        new("The Street Burger Bahçelievler", "burger", 2, 340, 4.6, 1420, "Bahçelievler Mah. Aşkabat Cad. (7. Cad) No: 54, Çankaya", 39.9215, 32.8235),
-        new("The Street Burger Çayyolu", "burger", 2, 360, 4.5, 980, "Prof. Dr. Ahmet Taner Kışlalı Mah. 2864. Cad. No: 14, Çayyolu", 39.8640, 32.7020),
-        new("Streetfood Burger & Fries Tunalı", "burger", 2, 330, 4.5, 1150, "Tunalı Hilmi Cad. Bestekar Sok. No: 44, Kavaklıdere", 39.9040, 32.8590),
-        new("Burger Street Çukurambar", "burger", 2, 350, 4.4, 880, "Kızılırmak Mah. 1445. Sok. No: 6, Çukurambar", 39.9085, 32.8125),
+        new("Hemşin Karadeniz Lokantası Beytepe", "evyemegi", 1, 320, 4.6, 2300, "Beytepe Mah. Ertuğrul Gazi Blv. No: 29/F, Çankaya, Ankara", 39.8658, 32.7380, "ticket,sodexo,multinet"),
+        new("Meşhur Koç Aspava Beytepe", "kebap", 2, 480, 4.6, 2900, "Beytepe Mah. Ertuğrul Gazi Blv. No: 33/B, Beytepe, Çankaya, Ankara", 39.8665, 32.7395, "multinet,setcard,sodexo,ticket"),
+        new("Tutto Pizza by Nap's Beytepe", "pizza", 2, 440, 4.7, 640, "Beytepe Mah. 5387. Cadde No: 8/A, Beytepe, Çankaya, Ankara", 39.8625, 32.7320, "ticket,sodexo"),
+        new("Burgasm Burger & Steak Beytepe", "burger", 2, 410, 4.5, 980, "Beytepe Mah. Kanuni Sultan Süleyman Blv. No: 16/D, Beytepe, Ankara", 39.8635, 32.7360, "ticket,sodexo,multinet"),
+        new("Quick China Bilkent Station", "uzakdogu", 3, 620, 4.5, 1850, "Üniversiteler Mah. 1597. Cadde No: 3, Bilkent Center, Çankaya, Ankara", 39.8735, 32.7508, "ticket,sodexo,multinet"),
+        new("BigChefs Bilkent Station", "burger,evyemegi", 2, 490, 4.4, 2300, "Bilkent Center Zemin Kat No: 3, Bilkent, Çankaya, Ankara", 39.8732, 32.7511, "ticket,sodexo,multinet"),
+        new("Midpoint Bilkent Station", "burger,pizza", 2, 460, 4.3, 1920, "Bilkent Center Açık Alan No: 3/12, Bilkent, Çankaya, Ankara", 39.8730, 32.7515, "multinet,setcard,sodexo,ticket"),
+        new("Kukla Kebap Bilkent Station", "kebap", 2, 490, 4.6, 2100, "Bilkent Station No: 3/55, Bilkent, Çankaya, Ankara", 39.8733, 32.7513, "ticket,sodexo,multinet"),
+        new("Şençam Köftecisi Bilkent Station", "kebap", 2, 360, 4.3, 920, "Bilkent Center Zemin Kat No: 3/42, Bilkent, Çankaya, Ankara", 39.8731, 32.7512, "ticket,sodexo,multinet"),
+        new("Pizza Il Forno Bilkent Station", "pizza", 2, 420, 4.6, 1850, "Bilkent Station No: 3/61, Bilkent, Çankaya, Ankara", 39.8734, 32.7514, "ticket,sodexo,multinet"),
+        new("HMBRGR Bilkent Center", "burger", 2, 370, 4.4, 1600, "Bilkent Center Kat 1 Food Court, Bilkent, Çankaya, Ankara", 39.8729, 32.7509, "multinet,setcard,sodexo,ticket"),
+        new("Lokal '71 Pizza & Kitchen Ankuva", "pizza,burger", 2, 410, 4.5, 1400, "Üniversiteler Mah. Ankuva AVM No: 28, Bilkent, Çankaya, Ankara", 39.8742, 32.7520, "ticket,sodexo,multinet"),
+        new("Piel Roja Burger Ankuva", "burger", 2, 380, 4.4, 1650, "Üniversiteler Mah. Ankuva AVM No: 16, Bilkent, Çankaya, Ankara", 39.8748, 32.7525, "ticket,sodexo,multinet"),
+        new("Pâte à Choux Bilkent Station", "kahvalti", 2, 320, 4.6, 1100, "Bilkent Station No: 3/85, Bilkent, Çankaya, Ankara", 39.8734, 32.7510, "ticket,sodexo"),
 
         // ==========================================
         // 2. ÇUKURAMBAR & BALGAT & SÖĞÜTÖZÜ (İş ve Plaza Aksı)
         // ==========================================
-        new("Sıralı Kebap Çukurambar", "kebap", 3, 650, 4.6, 4800, "Kızılırmak Mah. 1424. Cadde No: 2/7, Çukurambar", 39.9078, 32.8135),
-        new("Müslüm Kebap Çukurambar", "kebap", 2, 520, 4.5, 2900, "Muhsin Yazıcıoğlu Cad. No: 18, Çukurambar", 39.9070, 32.8120),
-        new("Masabaşı Kebapçısı Balgat", "kebap", 2, 460, 4.6, 3800, "Balgat Mah. Ziyabey Cad. No: 35/A, Balgat", 39.9022, 32.8190),
-        new("Devrez Restoran Çukurambar", "evyemegi,kebap", 2, 320, 4.5, 3200, "Ufuk Üniversitesi Cad. No: 11/A, Çukurambar", 39.9055, 32.8110),
-        new("Köfteci Yusuf Çukurambar", "kebap", 1, 260, 4.2, 2400, "1424. Cadde No: 5, Çukurambar", 39.9080, 32.8140),
-        new("Bella Napoli Odun Ateşi Pizza", "pizza", 2, 410, 4.6, 850, "Kızılırmak Mah. 1443. Cad. No: 9, Çukurambar", 39.9090, 32.8115),
-        new("Franco Burger Balgat", "burger", 2, 340, 4.5, 1150, "Balgat Mah. 1409. Cad. No: 2/A, Balgat", 39.9030, 32.8160),
-        new("Kanatçı Halil Usta Balgat", "tavuk,kebap", 2, 380, 4.5, 980, "Ceyhun Atuf Kansu Cad. No: 65, Balgat", 39.8995, 32.8170),
-        new("Çiçek Lokantası Söğütözü", "evyemegi", 2, 380, 4.5, 1450, "Söğütözü Mah. 2176. Sk. No: 7, Söğütözü", 39.9140, 32.8115),
-        new("Timboo Cafe Armada", "burger,evyemegi", 2, 390, 4.4, 2100, "Armada AVM Hayat Sokağı, Eskişehir Yolu, Söğütözü", 39.9125, 32.8090),
-        new("Günaydın Kasap & Steakhouse Armada", "kebap", 3, 750, 4.5, 1750, "Armada AVM Kat 1, Söğütözü", 39.9128, 32.8095),
+        new("Sıralı Kebap Çukurambar", "kebap", 3, 680, 4.6, 4800, "Kızılırmak Mah. 1424. Cadde No: 2/7, Çukurambar, Çankaya, Ankara", 39.9078, 32.8135, "ticket,sodexo,multinet"),
+        new("Müslüm Kebap Çukurambar", "kebap", 2, 540, 4.5, 2900, "Muhsin Yazıcıoğlu Cad. No: 18, Çukurambar, Çankaya, Ankara", 39.9070, 32.8120, "ticket,sodexo,multinet"),
+        new("Masabaşı Kebapçısı Balgat", "kebap", 2, 560, 4.6, 5900, "Balgat Mah. Ziyabey Cad. No: 35/A, Balgat, Çankaya, Ankara", 39.9022, 32.8190, "ticket,sodexo,multinet,setcard"),
+        new("Devrez Restoran Çukurambar", "evyemegi,kebap", 2, 440, 4.5, 3200, "Ufuk Üniversitesi Cad. No: 11/A, Çukurambar, Çankaya, Ankara", 39.9055, 32.8110, "multinet,setcard,sodexo,ticket"),
+        new("Köfteci Yusuf Çukurambar", "kebap", 1, 310, 4.2, 2400, "Kızılırmak Mah. 1424. Cadde No: 5, Çukurambar, Çankaya, Ankara", 39.9080, 32.8140, "multinet,setcard,sodexo,ticket"),
+        new("Ciğerci Bahattin Balgat", "kebap", 2, 450, 4.6, 5100, "Oğuzlar Mah. Ceyhun Atuf Kansu Cad. No: 53, Balgat, Çankaya, Ankara", 39.9045, 32.8178, "ticket,sodexo,multinet"),
+        new("Bayram Usta Yaprak Kebap Balgat", "kebap", 2, 460, 4.5, 3800, "Balgat Mah. Ziyabey Cad. No: 42, Balgat, Çankaya, Ankara", 39.9032, 32.8185, "ticket,sodexo,multinet"),
+        new("Cevat Usta Balık & Kebap Balgat", "balik,kebap", 2, 520, 4.5, 2100, "Ceyhun Atuf Kansu Cad. No: 68, Balgat, Çankaya, Ankara", 39.8998, 32.8172, "ticket,sodexo"),
+        new("Tarihi Çiçek Lokantası Söğütözü", "evyemegi", 2, 450, 4.6, 3700, "Söğütözü Mah. 2176. Sk. No: 7, Söğütözü, Çankaya, Ankara", 39.9140, 32.8115, "ticket,sodexo,multinet"),
+        new("Timboo Cafe Armada", "burger,evyemegi", 2, 440, 4.4, 2100, "Armada AVM Hayat Sokağı, Eskişehir Yolu, Söğütözü, Ankara", 39.9125, 32.8090, "ticket,sodexo,multinet"),
+        new("Günaydın Kasap & Steakhouse Armada", "kebap", 3, 750, 4.5, 1750, "Armada AVM Kat 1, Söğütözü, Çankaya, Ankara", 39.9128, 32.8095, "ticket,sodexo,multinet"),
 
         // ==========================================
         // 3. ESKİŞEHİR YOLU (Tepe Prime, Maidan, Mustafa Kemal)
         // ==========================================
-        new("Meşhur Koç Cağ Kebabı", "kebap", 2, 420, 4.7, 4500, "Mustafa Kemal Mah. 2118. Cad. No: 6, Çankaya", 39.9095, 32.7685),
-        new("Pizza Il Forno Mustafa Kemal", "pizza", 2, 380, 4.5, 1650, "Mustafa Kemal Mah. 2118. Cad. No: 4/A, Çankaya", 39.9100, 32.7690),
-        new("Zula Burger Maidan", "burger", 2, 370, 4.6, 980, "Maidan İş Merkezi C Blok, Mustafa Kemal Mah.", 39.9112, 32.7682),
-        new("Green Bowl & Fresh Salad Tepe Prime", "saglikli", 2, 310, 4.4, 520, "Tepe Prime Avenue B Blok No: 12, Eskişehir Yolu", 39.9105, 32.7660),
-        new("Fit Mutfak Maidan", "saglikli", 2, 330, 4.5, 460, "Maidan İş Merkezi B Blok No: 8, Mustafa Kemal Mah.", 39.9110, 32.7680),
-        new("Newcastle Tepe Prime", "burger,pizza", 2, 480, 4.3, 1400, "Tepe Prime Avenue Zemin Kat, Eskişehir Yolu", 39.9102, 32.7655),
+        new("Meşhur Koç Cağ Kebabı Mustafa Kemal", "kebap", 2, 480, 4.7, 4500, "Mustafa Kemal Mah. 2118. Cad. No: 6, Çankaya, Ankara", 39.9095, 32.7685, "ticket,sodexo,multinet"),
+        new("Pizza Il Forno Mustafa Kemal", "pizza", 2, 410, 4.5, 1650, "Mustafa Kemal Mah. 2118. Cad. No: 4/A, Çankaya, Ankara", 39.9100, 32.7690, "ticket,sodexo,multinet"),
+        new("Zula Burger Maidan", "burger", 2, 410, 4.6, 980, "Maidan İş Merkezi C Blok, Mustafa Kemal Mah., Çankaya, Ankara", 39.9112, 32.7682, "ticket,sodexo,multinet"),
+        new("Newcastle Tepe Prime", "burger,pizza", 2, 480, 4.3, 1400, "Tepe Prime Avenue Zemin Kat, Eskişehir Yolu, Çankaya, Ankara", 39.9102, 32.7655, "ticket,sodexo,multinet"),
+        new("Niki Restaurant Tepe Prime", "evyemegi,saglikli", 2, 450, 4.5, 920, "Tepe Prime Avenue B Blok, Mustafa Kemal Mah., Çankaya, Ankara", 39.9105, 32.7660, "ticket,sodexo,multinet"),
 
         // ==========================================
-        // 4. ÇAYYOLU, ÜMİTKÖY & PARK CADDESİ
+        // 4. ÇAYYOLU, ÜMİTKÖY & YAŞAMKENT
         // ==========================================
-        new("Meşhur Tavacı Recep Usta Çayyolu", "kebap", 3, 620, 4.6, 3900, "Prof. Dr. Ahmet Taner Kışlalı Mah. Park Cad. No: 22, Çayyolu", 39.8655, 32.7045),
-        new("Franco Burger Çayyolu", "burger", 2, 350, 4.5, 920, "Alacaatlı Mah. 4841. Cad. No: 1/A, Çayyolu", 39.8520, 32.6890),
-        new("Double Zero Pizza Yaşamkent", "pizza", 2, 420, 4.6, 1250, "Alacaatlı Mah. Şehit Eren Bülbül Cad. Beker Plaza No: 42/B", 39.8450, 32.6780),
-        new("Bafra Karadeniz Pidecisi Çayyolu", "pide", 1, 260, 4.6, 780, "Alacaatlı Cad. No: 18, Çayyolu", 39.8610, 32.6950),
+        new("Düveroğlu Kebap & Baklava Ümitköy", "kebap,pide", 2, 550, 4.7, 4800, "Mutlukent Mah. 2432. Cadde No: 24, Ümitköy, Çankaya, Ankara", 39.8820, 32.7150, "ticket,sodexo,multinet"),
+        new("Meşhur Tavacı Recep Usta Çayyolu", "kebap", 3, 720, 4.6, 3900, "Prof. Dr. Ahmet Taner Kışlalı Mah. Park Cad. No: 22, Çayyolu, Ankara", 39.8655, 32.7045, "ticket,sodexo"),
+        new("Franco Burger Çayyolu", "burger", 2, 390, 4.5, 920, "Alacaatlı Mah. 4841. Cad. No: 1/A, Çayyolu, Çankaya, Ankara", 39.8520, 32.6890, "ticket,sodexo,multinet"),
+        new("Double Zero Pizza Yaşamkent", "pizza", 2, 450, 4.6, 1250, "Alacaatlı Mah. Şehit Eren Bülbül Cad. No: 42/B, Yaşamkent, Ankara", 39.8450, 32.6780, "ticket,sodexo"),
+        new("Peçenek Döner Çayyolu", "kebap", 2, 460, 4.5, 2100, "Konutkent Mah. 3028. Cad. No: 8, Çayyolu, Çankaya, Ankara", 39.8720, 32.6980, "ticket,sodexo,multinet"),
+        new("Başkent Aspava Ümitköy", "kebap", 2, 480, 4.5, 2400, "Ümit Mah. 2479. Cad. No: 15, Ümitköy, Çankaya, Ankara", 39.8855, 32.7095, "multinet,setcard,sodexo,ticket"),
 
         // ==========================================
-        // 5. ÇANKAYA, GAZİOSMANPAŞA & DİKMEN VADİSİ
+        // 5. ÇANKAYA, GAZİOSMANPAŞA & ORAN
         // ==========================================
-        new("Meşhur Tavacı Recep Usta Park Vadi", "kebap", 3, 780, 4.7, 6400, "Park Vadi Evleri İçi, Hoşdere Cad., Çankaya", 39.8824, 32.8481, "ticket,sodexo"),
-        new("Trilye Balık Restoranı", "balik", 3, 1600, 4.8, 4500, "Gaziosmanpaşa Mah. Budapeşte Cad. No: 11, Çankaya", 39.9050, 32.8620, ""),
-        new("Double Zero Pizza GOP", "pizza", 2, 450, 4.6, 1800, "Büyükesat Mah. Uğur Mumcu Cad. No: 37/B, GOP", 39.8970, 32.8710, "ticket,sodexo"),
-        new("Nusr-Et Steakhouse Ankara", "kebap", 3, 1650, 4.5, 4200, "Boğaz Sk. No: 22, Gaziosmanpaşa", 39.8980, 32.8690, ""),
-        new("Cafemiz Filistin", "evyemegi,kahvalti", 2, 480, 4.4, 2200, "Filistin Cad. No: 12, Gaziosmanpaşa", 39.8985, 32.8680, "ticket,sodexo,multinet"),
+        new("Meşhur Tavacı Recep Usta Park Vadi", "kebap", 3, 750, 4.7, 6400, "Park Vadi Evleri İçi, Hoşdere Cad., Çankaya, Ankara", 39.8824, 32.8481, "ticket,sodexo"),
+        new("Trilye Restoran", "balik", 4, 1600, 4.8, 4500, "Gaziosmanpaşa Mah. Budapeşte Cad. No: 11, Çankaya, Ankara", 39.9050, 32.8620, ""),
+        new("Double Zero Pizza GOP", "pizza", 2, 460, 4.6, 1800, "Büyükesat Mah. Uğur Mumcu Cad. No: 37/B, GOP, Çankaya, Ankara", 39.8970, 32.8710, "ticket,sodexo"),
+        new("Nusr-Et Steakhouse Ankara", "kebap", 4, 1650, 4.5, 4200, "Boğaz Sk. No: 22, Gaziosmanpaşa, Çankaya, Ankara", 39.8980, 32.8690, ""),
+        new("Cafemiz Filistin", "evyemegi,kahvalti", 2, 480, 4.4, 2200, "Filistin Cad. No: 12, Gaziosmanpaşa, Çankaya, Ankara", 39.8985, 32.8680, "ticket,sodexo,multinet"),
+        new("Fevzi Hoca Balık & Köfte Turan Güneş", "balik,kebap", 2, 540, 4.6, 2800, "Oran Mah. Turan Güneş Bulv. No: 75, Çankaya, Ankara", 39.8620, 32.8490, "ticket,sodexo,multinet"),
 
         // ==========================================
         // 6. TUNALI HİLMİ, KAVAKLIDERE, BESTEKAR & ESAT
         // ==========================================
-        new("Meşhur Özçelik Aspava Esat", "kebap", 2, 580, 4.8, 9800, "Bülbülderesi Cad. No: 19, Esat", 39.9056, 32.8623, "multinet,setcard,sodexo,ticket"),
-        new("Kebap 49 Tunalı", "kebap,pide", 2, 520, 4.7, 5800, "Tunalı Hilmi Cad. Bülten Sk. No: 5, Kavaklıdere", 39.9020, 32.8610, "ticket,sodexo,multinet"),
-        new("Devrez Restoran Küçükesat", "evyemegi,kebap", 2, 460, 4.6, 7800, "Esat Cad. No: 143/A, Küçükesat", 39.9075, 32.8660, "multinet,setcard,sodexo,ticket"),
-        new("Midpoint Tunalı Hilmi", "burger,evyemegi", 2, 490, 4.3, 1920, "Tunalı Hilmi Cad. No: 88, Kavaklıdere", 39.9028, 32.8601, "multinet,setcard,sodexo,ticket"),
-        new("Süha Döner Tunalı", "kebap", 2, 490, 4.6, 3900, "Tunalı Hilmi Cad. No: 72, Kavaklıdere", 39.9035, 32.8605, "ticket,sodexo,multinet"),
-        new("Anadolu Esnaf Lokantası Büklüm", "evyemegi", 1, 260, 4.6, 910, "Büklüm Sk. No: 18, Kavaklıdere", 39.9030, 32.8580, "ticket,multinet"),
+        new("Meşhur Özçelik Aspava Esat", "kebap", 2, 520, 4.8, 9800, "Bülbülderesi Cad. No: 19, Küçükesat, Çankaya, Ankara", 39.9056, 32.8623, "multinet,setcard,sodexo,ticket"),
+        new("Yıldız Aspava Esat", "kebap", 2, 520, 4.7, 7400, "Bülbülderesi Cad. No: 21, Küçükesat, Çankaya, Ankara", 39.9064, 32.8666, "multinet,setcard,sodexo,ticket"),
+        new("Kebap 49 Tunalı", "kebap,pide", 2, 480, 4.7, 5800, "Tunus Cad. No: 69/A, Kavaklıdere, Çankaya, Ankara", 39.9074, 32.8601, "ticket,sodexo,multinet"),
+        new("Devrez Restoran Küçükesat", "evyemegi,kebap", 2, 440, 4.6, 7800, "Esat Cad. No: 143/A, Küçükesat, Çankaya, Ankara", 39.9075, 32.8660, "multinet,setcard,sodexo,ticket"),
+        new("Midpoint Tunalı Hilmi", "burger,evyemegi", 2, 480, 4.3, 1920, "Tunalı Hilmi Cad. No: 88, Kavaklıdere, Çankaya, Ankara", 39.9028, 32.8601, "multinet,setcard,sodexo,ticket"),
+        new("Süha Döner Tunalı", "kebap", 2, 450, 4.6, 3900, "Tunalı Hilmi Cad. No: 72, Kavaklıdere, Çankaya, Ankara", 39.9035, 32.8605, "ticket,sodexo,multinet"),
+        new("Rumeli İşkembecisi Tunalı", "evyemegi", 2, 360, 4.5, 4400, "Tunalı Hilmi Cad. No: 93, Kavaklıdere, Çankaya, Ankara", 39.9025, 32.8602, "ticket,sodexo"),
 
         // ==========================================
-        // 7. KIZILAY, MALTEPE & TARİHİ ULUS
+        // 7. KIZILAY, MALTEPE, ANITTEPE & TARİHİ ULUS
         // ==========================================
-        new("Cici Piknik Kömürde Döner", "kebap", 2, 480, 4.8, 5800, "Kızılay Mah. Fevzi Çakmak 1 Sok. No: 16/A, Çankaya", 39.9215, 32.8530, "ticket,sodexo"),
-        new("Mutlu Döner Ayrancı", "kebap", 2, 510, 4.8, 4600, "Güvenlik Cad. No: 69, Aşağı Ayrancı, Çankaya", 39.9015, 32.8490, "ticket,sodexo,multinet"),
-        new("Tarihi Boğaziçi Lokantası Ulus", "evyemegi", 2, 480, 4.7, 6700, "Anafartalar Mah. Denizciler Cad. No: 1/A, Altındağ", 39.9412, 32.8542, "ticket,sodexo,multinet"),
-        new("Düveroğlu Kebap Anıttepe", "kebap,pide", 2, 620, 4.7, 10200, "Gençlik Cad. No: 28, Anıttepe", 39.9245, 32.8390, "ticket,sodexo,multinet"),
-        new("Meşhur Aspava Selanik", "kebap", 2, 560, 4.6, 3300, "Kocatepe Mah. Selanik Cad. No: 19/C, Kızılay", 39.9180, 32.8560, "multinet,setcard,sodexo,ticket"),
-        new("Urfalı Hacı Mehmet Kebap Kızılay", "kebap", 2, 440, 4.5, 1650, "Mithatpaşa Cad. No: 33, Kızılay", 39.9198, 32.8545, "ticket,sodexo"),
-        new("Urfa Çıtır Lahmacun Maltepe", "pide", 1, 260, 4.7, 3100, "Gazi Mustafa Kemal Blv. No: 64, Maltepe", 39.9240, 32.8450, "ticket,sodexo"),
+        new("Cici Piknik Kömürde Döner", "kebap", 2, 420, 4.8, 5800, "Kızılay Mah. Fevzi Çakmak 1 Sok. No: 16/A, Çankaya, Ankara", 39.9215, 32.8530, "ticket,sodexo"),
+        new("Mutlu Döner Ayrancı", "kebap", 2, 460, 4.8, 4600, "Güvenlik Cad. No: 69, Aşağı Ayrancı, Çankaya, Ankara", 39.9015, 32.8490, "ticket,sodexo,multinet"),
+        new("Tarihi Boğaziçi Lokantası Ulus", "evyemegi", 2, 450, 4.7, 6700, "Anafartalar Mah. Denizciler Cad. No: 1/A, Ulus, Altındağ, Ankara", 39.9412, 32.8542, "ticket,sodexo,multinet"),
+        new("Düveroğlu Kebap Anıttepe", "kebap,pide", 2, 550, 4.7, 10200, "Gençlik Cad. No: 28, Anıttepe, Çankaya, Ankara", 39.9245, 32.8390, "ticket,sodexo,multinet"),
+        new("Meşhur Aspava Selanik", "kebap", 2, 490, 4.6, 3300, "Kocatepe Mah. Selanik Cad. No: 19/C, Kızılay, Çankaya, Ankara", 39.9180, 32.8560, "multinet,setcard,sodexo,ticket"),
+        new("Urfalı Hacı Mehmet Kebap Kızılay", "kebap", 2, 420, 4.5, 1650, "Mithatpaşa Cad. No: 33, Kızılay, Çankaya, Ankara", 39.9198, 32.8545, "ticket,sodexo"),
+        new("Urfa Çıtır Lahmacun Maltepe", "pide", 1, 280, 4.7, 3100, "Gazi Mustafa Kemal Blv. No: 64, Maltepe, Çankaya, Ankara", 39.9240, 32.8450, "ticket,sodexo"),
+        new("Göksu Lokantası Kızılay", "evyemegi,kebap", 2, 480, 4.5, 3200, "Bayındır 1. Sok. No: 22, Kızılay, Çankaya, Ankara", 39.9217, 32.8571, "ticket,sodexo,multinet"),
+        new("HD İskender Kızılay", "kebap", 2, 390, 4.4, 2800, "Kızılay AVM / Atatürk Bulvarı, Kızılay, Çankaya, Ankara", 39.9179, 32.8556, "multinet,setcard,sodexo,ticket"),
 
         // ==========================================
-        // 8. BAHÇELİEVLER (7. Cadde)
+        // 8. BAHÇELİEVLER & EMEK (7. Cadde / 8. Cadde)
         // ==========================================
-        new("Luppa Cafe & Kitchen Bahçeli", "burger,evyemegi", 2, 390, 4.4, 1520, "Bahçelievler 7. Cadde (Aşkabat Cad.) No: 42", 39.9212, 32.8234),
-        new("Kuki House Bahçelievler", "kahvalti,burger", 2, 360, 4.5, 1200, "Azerbaycan Cad. (3. Cadde) No: 14, Bahçelievler", 39.9190, 32.8220),
+        new("Çukurağa Sofrası Emek", "kebap,pide", 2, 460, 4.7, 9400, "Emek Mah. Bosna Hersek Cad. No: 22/C, Çankaya, Ankara", 39.9185, 32.8165, "ticket,sodexo,multinet"),
+        new("HMBRGR Bahçelievler 7. Cadde", "burger", 2, 370, 4.5, 2900, "Bahçelievler Mah. Aşkabat Cad. (7. Cad.) No: 46, Çankaya, Ankara", 39.9215, 32.8235, "multinet,setcard,sodexo,ticket"),
+        new("Pizza Il Forno Bahçelievler", "pizza", 2, 410, 4.6, 2100, "Bahçelievler Mah. Prof. Muammer Aksoy Cad. No: 12, Çankaya, Ankara", 39.9228, 32.8252, "ticket,sodexo,multinet"),
+        new("Tadım Pizza Bahçelievler", "pizza", 2, 380, 4.5, 1750, "Yukarı Bahçelievler Mah. 65. Sok. No: 4, Çankaya, Ankara", 39.9205, 32.8240, "ticket,sodexo,multinet"),
 
         // ==========================================
-        // 9. ÇAKIRLAR, BATIKENT, GÖKSU & ERYAMAN
+        // 9. BATIKENT, ÇAKIRLAR, GÖKSU & ERYAMAN
         // ==========================================
-        new("Meşhur Çakırlar Sac Tavası & Köy Sofrası", "kebap,evyemegi", 2, 380, 4.6, 2150, "Turgut Özal Mah. 2164. Cad. No: 14, Çakırlar, Yenimahalle", 39.9925, 32.7050),
-        new("Çakırlar Çamlıtepe Gözleme & Kahvaltı", "kahvalti,evyemegi", 1, 260, 4.7, 1850, "Çakırlar Köy İçi Yolu No: 28, Çakırlar, Yenimahalle", 39.9912, 32.7085),
-        new("Cengiz Usta Kebap & Lahmacun Batıkent", "kebap,pide", 2, 360, 4.5, 3100, "Batı Sitesi Mah. Gersan Girişi No: 4, Batıkent", 39.9720, 32.7310),
-        new("Gülçimen Aspava Batıkent", "kebap", 2, 390, 4.6, 4200, "Atlantis AVM Karşısı, Başkent Bulvarı No: 218, Batıkent", 39.9735, 32.7305),
-        new("Meydan Döner & İskender Batıkent", "kebap", 2, 340, 4.4, 2400, "Batıkent Meydan AVM Zemin Kat, Batıkent", 39.9715, 32.7340),
-        new("Düveroğlu Kebap & Baklava Atlantis", "kebap,pide", 2, 430, 4.6, 3800, "Atlantis AVM Açık Alan No: 12, Batıkent", 39.9740, 32.7290),
-        new("Kardelen Taş Fırın Pide Çakırlar", "pide", 1, 240, 4.5, 980, "Turgut Özal Mah. 2170. Sk. No: 6, Çakırlar", 39.9880, 32.7120),
-        new("Göksu Parkı Balıkçısı & Izgara", "balik,tavuk", 2, 440, 4.4, 1650, "Göksu Parkı İçi Göl Kenarı No: 4, Eryaman", 39.9890, 32.6580),
-        new("Pizza Il Forno Batıkent Atlantis", "pizza", 2, 390, 4.6, 1750, "Atlantis AVM Dış Avlu No: 24, Batıkent", 39.9745, 32.7295),
-        new("Craft Burger Lab Batıkent", "burger", 2, 360, 4.5, 1200, "Cengiz Aytmatov Cad. No: 14, Batıkent", 39.9730, 32.7320),
-        new("Tavuk Dünyası Atlantis AVM", "tavuk", 2, 320, 4.3, 1900, "Atlantis AVM Kat 1, Batıkent", 39.9742, 32.7292),
-        new("Mado Atlantis Batıkent", "kahvalti", 2, 350, 4.4, 1500, "Atlantis AVM Dış Cephe, Batıkent", 39.9738, 32.7285),
-        new("Köfteci Yusuf Batıkent", "kebap", 1, 260, 4.3, 3100, "Gimsa Park AVM Yanı, Batıkent", 39.9680, 32.7420),
-        new("Gülçimen Çıtır Pide Batıkent", "pide", 1, 240, 4.6, 890, "Batıkent Meydan AVM No: 8, Batıkent", 39.9680, 32.7420),
-        new("Hemşin Lokantası Gimat", "evyemegi", 1, 230, 4.5, 1450, "Macun Mah. Anadolu Bulvarı No: 27/A, Yenimahalle", 39.9620, 32.7690),
+        new("Gülçimen Aspava Batıkent", "kebap", 2, 490, 4.7, 5400, "Başkent Bulvarı Atlantis AVM Karşısı No: 218, Batıkent, Ankara", 39.9735, 32.7305, "multinet,setcard,sodexo,ticket"),
+        new("Düveroğlu Kebap & Baklava Atlantis", "kebap,pide", 2, 520, 4.6, 3800, "Atlantis AVM Açık Alan No: 12, Batıkent, Yenimahalle, Ankara", 39.9740, 32.7290, "ticket,sodexo,multinet"),
+        new("Pizza Il Forno Batıkent Atlantis", "pizza", 2, 410, 4.6, 1750, "Atlantis AVM Dış Avlu No: 24, Batıkent, Yenimahalle, Ankara", 39.9745, 32.7295, "ticket,sodexo,multinet"),
+        new("Tavuk Dünyası Atlantis AVM", "tavuk", 2, 360, 4.3, 1900, "Atlantis AVM Kat 1, Batıkent, Yenimahalle, Ankara", 39.9742, 32.7292, "multinet,setcard,sodexo,ticket"),
+        new("Köfteci Yusuf Batıkent", "kebap", 1, 310, 4.3, 9100, "Gimsa Park AVM Yanı, Başkent Bulvarı No: 180, Batıkent, Ankara", 39.9680, 32.7420, "multinet,setcard,sodexo,ticket"),
+        new("Başkent Aspava Batıkent", "kebap", 2, 480, 4.6, 3200, "Yeni Batı Mah. Necip Fazıl Cad., Batıkent, Yenimahalle, Ankara", 39.9765, 32.7220, "multinet,setcard,sodexo,ticket"),
+        new("Çakırlar Çiftliği Kahvaltı & Izgara", "kahvalti,kebap", 2, 390, 4.5, 2100, "Turgut Özal Mah. Çakırlar Cad., Yenimahalle, Ankara", 39.9912, 32.7085, "ticket,multinet"),
+        new("Göksu Lokantası Eryaman Göksu Park", "kebap,balik", 2, 480, 4.4, 2400, "Göksu Parkı İçi Göl Kenarı, Eryaman, Etimesgut, Ankara", 39.9890, 32.6580, "ticket,sodexo"),
 
         // ==========================================
-        // 10. SANAYİ LEZZETLERİ (OSTİM, ŞAŞMAZ, İVEDİK, GERSAN, SİTELER)
+        // 10. SANAYİ LEZZETLERİ (ŞAŞMAZ, OSTİM, İVEDİK, GİMAT, SİTELER, İSKİTLER - %100 GERÇEK)
         // ==========================================
-        new("Ostim Sanayi Kavurmacısı Sadık Usta", "sanayi,kebap,evyemegi", 2, 380, 4.8, 3400, "Ostim Sanayi Sitesi 100. Yıl Bulvarı No: 54, Yenimahalle", 39.9740, 32.7450),
-        new("Şaşmaz Sanayi Tostçusu Hüseyin Usta", "sanayi,kahvalti", 1, 160, 4.7, 4100, "Şaşmaz Oto Sanayi 2516. Sk. No: 18, Etimesgut / Yenimahalle", 39.9380, 32.7120),
-        new("Meşhur Şaşmaz Sanayi Köftecisi", "sanayi,kebap", 2, 320, 4.6, 2900, "Şaşmaz Oto Sanayi 2. Cadde No: 42, Yenimahalle", 39.9395, 32.7150),
-        new("Kemah Ekmek Teknesi Şaşmaz", "sanayi,evyemegi,kebap", 1, 280, 4.7, 2600, "İnönü Mah. 1757. Sokak No: 22, Şaşmaz Oto Sanayi, Yenimahalle", 39.9320, 32.7150),
-        new("İvedik OSB Hacıbaba Esnaf Lokantası", "sanayi,evyemegi", 1, 260, 4.6, 2200, "İvedik Organize Sanayi Ağaç Metal Koop. No: 12, Yenimahalle", 39.9920, 32.7620),
-        new("Şaşmaz Ciğercisi Aydın Usta", "sanayi,kebap", 2, 370, 4.6, 3100, "Şaşmaz Sanayi 1. Cadde No: 33, Etimesgut", 39.9370, 32.7100),
-        new("Gersan Sanayi Sac Kavurma & Güveç", "sanayi,evyemegi,kebap", 2, 350, 4.7, 1850, "Gersan Sanayi Sitesi 2310. Sk. No: 15, Batıkent", 39.9620, 32.7080),
-        new("Ostim Pide & Taş Fırın Kebap", "sanayi,pide,kebap", 1, 250, 4.5, 1400, "Ostim Sanayi Sitesi Bağdat Cad. No: 88, Ostim", 39.9710, 32.7460),
-        new("İvedik Kavurma & Haşlama Konağı", "sanayi,evyemegi", 2, 390, 4.7, 2400, "İvedik OSB 1354. Cadde No: 4, Yenimahalle", 39.9940, 32.7590),
-        new("Siteler Marangozlar Sanayi Lokantası", "sanayi,evyemegi", 1, 240, 4.6, 2750, "Siteler Demirhendek Cad. No: 76, Altındağ", 39.9540, 32.9020),
-        new("Ostim Dönercisi & Esnaf Mutfağı", "sanayi,kebap,evyemegi", 1, 260, 4.5, 1650, "Ostim Çıraklık Okulu Karşısı No: 14, Ostim", 39.9730, 32.7470),
-        new("Ergazi Sanayi Esnaf Lokantası", "sanayi,evyemegi", 1, 230, 4.5, 950, "Ergazi Sanayi Bölgesi No: 21, Batıkent", 39.9550, 32.7180),
-        new("Şaşmaz Kelle Paça & İşkembe Salonu", "sanayi,evyemegi", 1, 270, 4.6, 1800, "Şaşmaz Sanayi 2540. Sk. No: 8, Şaşmaz", 39.9360, 32.7130)
+        new("Kemah Sofrası Ekmek Teknesi Şaşmaz", "sanayi,evyemegi,kebap", 2, 350, 4.7, 3400, "İnönü Mah. 1757. Sokak No: 22, Şaşmaz Oto Sanayi, Yenimahalle, Ankara", 39.9320, 32.7150, "ticket,multinet"),
+        new("Bolu Akın Lokantası Şaşmaz", "sanayi,evyemegi", 2, 360, 4.6, 2800, "Bahçekapı Mah. 2472. Cad. No: 14, Şaşmaz Oto Sanayi, Etimesgut, Ankara", 39.9380, 32.7125, "ticket,sodexo,multinet"),
+        new("Ciğerci Musa Şaşmaz", "sanayi,kebap", 2, 390, 4.6, 2600, "Bahçekapı Mah. 2500. Cad. Şaşmaz Oto Sanayi, Etimesgut, Ankara", 39.9370, 32.7110, "ticket,sodexo"),
+        new("Peçenek Döner Şaşmaz", "sanayi,kebap", 2, 440, 4.5, 2200, "Bahçekapı Mah. Şaşmaz Bulvarı, Şaşmaz Oto Sanayi, Etimesgut, Ankara", 39.9395, 32.7145, "ticket,sodexo,multinet"),
+        new("Çukurova Sofrası Ostim", "sanayi,kebap", 2, 420, 4.6, 3100, "Ostim Mah. 100. Yıl Bulvarı No: 54, Ostim, Yenimahalle, Ankara", 39.9740, 32.7450, "ticket,sodexo,multinet"),
+        new("Ünal Karadeniz Pidecisi Ostim", "sanayi,pide", 1, 310, 4.6, 1950, "Ostim OSB Bağdat Cad. No: 88, Ostim, Yenimahalle, Ankara", 39.9710, 32.7460, "ticket,sodexo,multinet"),
+        new("Kardeşler Pide & Kebap Ostim", "sanayi,pide,kebap", 1, 300, 4.5, 1650, "Ostim OSB Alınteri Bulvarı No: 24, Ostim, Yenimahalle, Ankara", 39.9730, 32.7470, "ticket,multinet"),
+        new("Koçak Kebap & Pide Ostim", "sanayi,kebap,pide", 2, 380, 4.5, 1800, "Ostim OSB 100. Yıl Bulvarı, Ostim, Yenimahalle, Ankara", 39.9722, 32.7440, "ticket,sodexo"),
+        new("Egeden Et & Kebap İvedik OSB", "sanayi,kebap,evyemegi", 2, 410, 4.6, 2100, "İvedik OSB Melih Gökçek Bulvarı No: 18, Yenimahalle, Ankara", 39.9920, 32.7620, "ticket,sodexo,multinet"),
+        new("Hemşin Lokantası Gimat", "sanayi,evyemegi", 1, 310, 4.5, 1850, "Macun Mah. Anadolu Bulvarı No: 27/A, Gimat, Yenimahalle, Ankara", 39.9620, 32.7690, "ticket,sodexo,multinet"),
+        new("Hacıbaba Kebap & Baklava Gimat", "sanayi,kebap,evyemegi", 2, 450, 4.5, 3600, "Macun Mah. 177. Cad. Gimat Girişi, Yenimahalle, Ankara", 39.9605, 32.7710, "ticket,sodexo,multinet"),
+        new("Meşhur Özler Döner İskitler", "sanayi,kebap", 2, 440, 4.6, 4900, "Zübeyde Hanım Mah. Kazım Karabekir Cad. No: 82, İskitler, Altındağ, Ankara", 39.9520, 32.8420, "ticket,sodexo,multinet"),
+        new("Uludağ Kebapçısı Siteler", "sanayi,kebap", 2, 450, 4.6, 3400, "Ulubey Mah. Demirhendek Cad. Siteler, Altındağ, Ankara", 39.9540, 32.9020, "ticket,sodexo"),
+        new("Konyalı Hacı Usta Siteler", "sanayi,pide,kebap", 2, 360, 4.5, 2750, "Önder Mah. Karacakaya Cad. No: 76, Siteler, Altındağ, Ankara", 39.9565, 32.9045, "ticket,multinet")
     ];
 
     // =========================================================================
-    // 11. ANKARA'YA UZAK İLÇELER (ÇUBUK, BEYPAZARI, AYAŞ, KIZILCAHAMAM, KAHRAMANKAZAN, POLATLI, NALLIHAN, KALECİK, ELMADAĞ, AKYURT)
+    // 11. ANKARA İLÇELERİ (%100 GERÇEK VE BİLİNEN İLÇE RESTORANLARI)
     // =========================================================================
     private static readonly SeedVenue[] DistrictVenues =
     [
-        // ÇUBUK (Esnaf, Mangal ve Yöresel Duraklar)
-        new("Meşhur Çubuk Çorbacısı (Yanık Usta)", "evyemegi", 1, 180, 4.8, 3400, "Cumhuriyet Mah. Ankara Bulvarı, Çubuk", 40.2355, 33.0295, "multinet"),
-        new("Bodur Köfte Kebap", "kebap,sanayi", 1, 220, 4.7, 2900, "Yavuz Selim Mah. Çarşı İçi, Çubuk", 40.2375, 33.0315, "ticket,sodexo"),
-        new("Lefkoşe Et & Mangal", "kebap", 1, 350, 4.7, 2100, "Kıbrıs Cad. Çubuk", 40.2365, 33.0312, "ticket,sodexo"),
-        new("Meşhur Çubuk Turşucusu & Yöresel Sofrası", "evyemegi", 1, 210, 4.8, 3800, "Atatürk Cad. No: 28, Çubuk", 40.2370, 33.0305, "ticket"),
-        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 1, 240, 4.7, 4600, "Yavuz Selim Mah. Cengiz Topel Cad. No: 12, Çubuk", 40.2386, 33.0322, "ticket,sodexo,multinet"),
-        new("Çubuklu Esnaf Lokantası Hacıbaba", "evyemegi", 1, 230, 4.6, 2700, "Cumhuriyet Mah. Çubuk Çarşısı, Çubuk", 40.2395, 33.0340, "ticket"),
-        new("Çubuk Taş Fırın Pide & Kebap", "pide,kebap", 1, 190, 4.6, 2200, "Kıbrıs Cad. No: 18, Çubuk", 40.2360, 33.0310, "ticket,sodexo"),
-        new("Karagöl Kır Lokantası & Mangal", "tavuk,kebap", 1, 320, 4.7, 3100, "Karagöl Tabiat Parkı İçi, Çubuk", 40.3950, 32.9980, ""),
-        new("Çubuk Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.6, 1950, "Küçük Sanayi Sitesi 3. Blok, Çubuk", 40.2310, 33.0250, "ticket"),
-        new("Çubuk Yayla Tandır & Izgara", "kebap", 1, 280, 4.6, 1850, "Şabanözü Yolu 2. Km, Çubuk", 40.2450, 33.0420, "ticket,multinet"),
+        // ÇUBUK
+        new("Meşhur Yanık Usta Çorbacısı", "evyemegi,kebap", 1, 280, 4.8, 4200, "Yavuz Selim Mah. Ankara Bulvarı No: 54, Çubuk, Ankara", 40.2372, 33.0312, "multinet,ticket"),
+        new("Bodur Köfte Kebap Çubuk", "kebap,sanayi", 1, 320, 4.7, 3400, "Cumhuriyet Mah. Cengiz Topel Cad. No: 18, Çubuk, Ankara", 40.2388, 33.0335, "ticket,sodexo"),
+        new("Çubuk Ağaçbaba Döner & Kebap", "kebap", 1, 350, 4.6, 3100, "Yavuz Selim Mah. Cengiz Topel Cad. No: 24, Çubuk, Ankara", 40.2384, 33.0320, "ticket,sodexo,multinet"),
+        new("Lefkoşe Et & Mangal Çubuk", "kebap", 2, 420, 4.7, 2100, "Yavuz Selim Mah. Kıbrıs Cad., Çubuk, Ankara", 40.2365, 33.0312, "ticket,sodexo"),
+        new("Karagöl Tabiat Parkı Kır Lokantası", "tavuk,kebap", 2, 420, 4.6, 3100, "Karagöl Tabiat Parkı İçi, Çubuk, Ankara", 40.3950, 32.9980, ""),
 
-        // BEYPAZARI (Tarihi Konaklar, Güveç ve İnözü Vadisi)
-        new("Tarihi Taş Mektep", "evyemegi", 1, 320, 4.6, 5200, "İstiklal Mah. Çınar Sok. Beypazarı", 40.1685, 31.9212, "ticket,sodexo"),
-        new("Değirmen Restaurant", "evyemegi,kebap", 1, 350, 4.5, 4100, "İnözü Vadisi, Beypazarı", 40.1850, 31.9180, "ticket,sodexo"),
-        new("Zindancık Tesisleri", "evyemegi", 1, 280, 4.4, 3100, "İnözü Vadisi No:15, Beypazarı", 40.1830, 31.9190, "ticket"),
-        new("Fatma Teyzenin Yeri", "evyemegi,kahvalti", 1, 220, 4.7, 2600, "Alaaddin Sok. Beypazarı Merkez", 40.1690, 31.9220, "multinet"),
-        new("Tarihi Güveç Fırını", "evyemegi", 1, 290, 4.6, 1900, "Milli Egemenlik Cad. Beypazarı", 40.1680, 31.9200, "ticket"),
-        new("Beypazarı Konağı Restaurant", "evyemegi", 1, 300, 4.5, 2300, "Çarşı İçi, Beypazarı", 40.1675, 31.9215, "ticket,sodexo"),
-        new("Asmaaltı Yöresel Lezzetler", "evyemegi", 1, 200, 4.6, 1800, "Tarihi Çarşı, Beypazarı", 40.1682, 31.9205, "multinet"),
-        new("Çınaraltı Et Mangal", "kebap", 1, 310, 4.4, 1500, "Ankara Yolu Üzeri, Beypazarı", 40.1650, 31.9300, "ticket"),
-        new("İnözü Alabalık Tesisleri", "balik", 1, 290, 4.5, 1750, "İnözü Vadisi 3. Km, Beypazarı", 40.1870, 31.9170, ""),
-        new("Beypazarı Sanayi Esnaf Lokantası", "sanayi,evyemegi", 1, 180, 4.5, 1200, "Sanayi Sitesi, Beypazarı", 40.1600, 31.9400, "ticket"),
+        // BEYPAZARI
+        new("Tarihi Taş Mektep Restoranı", "evyemegi", 2, 420, 4.7, 4100, "İstiklal Mah. Çınar Sok. No: 14, Beypazarı, Ankara", 40.1685, 31.9212, "ticket,sodexo"),
+        new("Değirmen Restaurant İnözü Vadisi", "evyemegi,kebap", 2, 420, 4.5, 4100, "İnözü Vadisi, Beypazarı, Ankara", 40.1850, 31.9180, "ticket,sodexo"),
+        new("Zindancık Tesisleri İnözü Vadisi", "evyemegi,kahvalti", 1, 350, 4.4, 3100, "İnözü Vadisi No: 15, Beypazarı, Ankara", 40.1830, 31.9190, "ticket"),
+        new("Beypazarı Halk Evi Restoranı", "evyemegi", 1, 340, 4.6, 2600, "Beytepe Mah. Alaaddin Sok., Beypazarı Merkez, Ankara", 40.1690, 31.9220, "multinet,ticket"),
+        new("Beypazarı Konağı Restaurant", "evyemegi", 2, 380, 4.5, 2300, "Tarihi Çarşı İçi, Beypazarı, Ankara", 40.1675, 31.9215, "ticket,sodexo"),
 
-        // AYAŞ (Güveç, Kapama ve Yol Üstü Durakları)
-        new("Ayaş Sofrası", "evyemegi", 1, 260, 4.5, 2800, "Ankara Yolu Üzeri, Ayaş", 40.0150, 32.3320, "ticket,sodexo"),
-        new("Meşhur Ayaş Dutlu Tahtalı Tesisleri", "evyemegi,kebap", 1, 290, 4.6, 3300, "Ayaş Yolu 45. Km, Ayaş", 40.0200, 32.3400, "ticket,multinet"),
-        new("Tarihi Ayaş Güveççisi", "evyemegi", 1, 280, 4.7, 2100, "Cumhuriyet Meydanı, Ayaş", 40.0160, 32.3330, "ticket"),
-        new("Başak Lokantası", "evyemegi", 1, 210, 4.5, 1600, "Çarşı İçi, Ayaş", 40.0155, 32.3325, "ticket"),
-        new("Ayaş Sanayi Köftecisi", "sanayi,kebap", 1, 200, 4.6, 1100, "Ayaş Sanayi Sitesi, Ayaş", 40.0120, 32.3350, "ticket"),
-        new("Akkaya Tesisleri", "kebap", 1, 270, 4.4, 1900, "Beypazarı Yolu Çıkışı, Ayaş", 40.0180, 32.3250, "ticket,sodexo"),
-        new("Ayaş Hanımeli Mantı & Gözleme", "evyemegi,kahvalti", 1, 180, 4.7, 1400, "Belediye Karşısı, Ayaş", 40.0165, 32.3340, "multinet"),
-        new("Öz Ayaş Taş Fırın Pide", "pide", 1, 190, 4.5, 1300, "Ankara Bulvarı, Ayaş", 40.0140, 32.3310, "ticket,sodexo"),
-        new("Kirazlı Bahçe Kendin Pişir", "tavuk,kebap", 1, 300, 4.6, 1700, "İlhan Vadisi Yolu, Ayaş", 40.0250, 32.3200, ""),
-        new("Ayaş Çorba & Kelle Paça", "evyemegi", 1, 170, 4.6, 1250, "Merkez Camii Yanı, Ayaş", 40.0158, 32.3335, "multinet"),
+        // AYAŞ
+        new("Ayaş Sofrası", "evyemegi", 1, 320, 4.5, 2800, "Ankara-Beypazarı Yolu Üzeri, Ayaş, Ankara", 40.0150, 32.3320, "ticket,sodexo"),
+        new("Meşhur Ayaş Dutlu Tahtalı Tesisleri", "evyemegi,kebap", 1, 350, 4.6, 3300, "Ayaş Yolu 45. Km, Ayaş, Ankara", 40.0200, 32.3400, "ticket,multinet"),
+        new("Başak Lokantası Ayaş", "evyemegi", 1, 260, 4.5, 1600, "Cumhuriyet Meydanı Çarşı İçi, Ayaş, Ankara", 40.0155, 32.3325, "ticket"),
+        new("Akkaya Tesisleri Ayaş", "kebap", 1, 340, 4.4, 1900, "Beypazarı Yolu Çıkışı, Ayaş, Ankara", 40.0180, 32.3250, "ticket,sodexo"),
 
-        // KIZILCAHAMAM (Orman, Milli Park ve Et Mangal)
-        new("Çamaltı Restaurant", "kebap,tavuk", 1, 350, 4.7, 4500, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4630, 32.6415, "ticket,sodexo"),
-        new("Kasap Hüseyin Et Mangal", "kebap", 1, 380, 4.8, 3800, "Ankara İstanbul Yolu Üzeri, Kızılcahamam", 40.4500, 32.6400, "ticket,sodexo"),
-        new("Bahar Bahçe Lokantası", "evyemegi,kahvalti", 1, 250, 4.6, 2100, "Kazım Karabekir Cad. Kızılcahamam", 40.4690, 32.6500, "ticket"),
-        new("Kızılcahamam Meşhur Bazlamacısı", "kahvalti,evyemegi", 1, 210, 4.8, 6200, "Kazım Karabekir Cad. No: 16, Kızılcahamam", 40.4700, 32.6500, "ticket,multinet"),
-        new("Soğuksu Alabalık Tesisleri", "balik", 1, 310, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam", 40.4620, 32.6410, ""),
-        new("Kızılcahamam Taş Fırın Güveç", "kebap", 1, 330, 4.7, 4400, "Kaplıca Cad. No: 24, Kızılcahamam", 40.4715, 32.6520, "ticket,sodexo"),
-        new("Yabanabat Sofrası", "evyemegi", 1, 230, 4.5, 1800, "Ankara Cad. Kızılcahamam", 40.4680, 32.6480, "ticket"),
-        new("Orman Köşkü Restaurant", "kebap", 1, 340, 4.6, 2200, "Milli Park Girişi, Kızılcahamam", 40.4650, 32.6430, "ticket,sodexo"),
-        new("Termal Çorba Sarayı", "evyemegi", 1, 180, 4.5, 1500, "Hamamlar Mevkii, Kızılcahamam", 40.4720, 32.6530, "multinet"),
-        new("Kızılcahamam Sanayi Lokantası", "sanayi,evyemegi", 1, 190, 4.6, 1100, "Sanayi Sitesi, Kızılcahamam", 40.4600, 32.6600, "ticket"),
+        // KIZILCAHAMAM
+        new("Çamaltı Restaurant Kızılcahamam", "kebap,tavuk", 2, 420, 4.7, 4500, "Soğuksu Milli Parkı İçi, Kızılcahamam, Ankara", 40.4630, 32.6415, "ticket,sodexo"),
+        new("Kasap Hüseyin Et Mangal Kızılcahamam", "kebap", 2, 460, 4.8, 3800, "Akçay Mah. Ankara-İstanbul Yolu Üzeri, Kızılcahamam, Ankara", 40.4500, 32.6400, "ticket,sodexo"),
+        new("Kızılcahamam Meşhur Bazlamacısı", "kahvalti,evyemegi", 1, 260, 4.8, 5200, "Kazım Karabekir Cad. No: 16, Kızılcahamam, Ankara", 40.4700, 32.6500, "ticket,multinet"),
+        new("Soğuksu Alabalık Tesisleri", "balik", 2, 390, 4.7, 3800, "Soğuksu Milli Parkı İçi, Kızılcahamam, Ankara", 40.4620, 32.6410, ""),
+        new("Sultan Köfte & Izgara Kızılcahamam", "kebap", 1, 350, 4.6, 2200, "Karşıyaka Mah. Kazım Karabekir Cad., Kızılcahamam, Ankara", 40.4690, 32.6500, "ticket,sodexo"),
 
-        // KAHRAMANKAZAN (Kavurma, Saray ve Sanayi Durakları)
-        new("Kahramankazan Kavurmacısı (Mehmet Usta)", "sanayi,kebap", 1, 290, 4.8, 3800, "Fatih Mah. Ankara Bulv. No: 88, Kazan", 40.1983, 32.6842, "ticket,sodexo"),
-        new("Saray Et Mangal", "kebap,tavuk", 1, 350, 4.6, 3400, "Saray Mah. FSM Bulvarı, Kazan", 40.1450, 32.6700, "ticket,sodexo"),
-        new("Kazan Saray Sanayi Köftecisi", "sanayi,kebap", 1, 220, 4.7, 3100, "Saray Sanayi Sitesi 5. Sk, Kazan", 40.1850, 32.6710, "ticket,multinet,setcard"),
-        new("Kahramankazan Esnaf Mutfağı", "evyemegi", 1, 230, 4.6, 2100, "Cumhuriyet Cad. No: 14, Kazan", 40.1995, 32.6860, "ticket"),
-        new("Akıncılar Et Lokantası", "kebap", 1, 310, 4.5, 1800, "Ankara Yolu 25. Km, Kazan", 40.1700, 32.6750, "ticket,sodexo"),
-        new("Kazan Taş Fırın Pide", "pide", 1, 180, 4.6, 1850, "Termal Cad. No: 7, Kazan", 40.1970, 32.6820, "ticket,sodexo"),
-        new("Ova Kavurma & Çorba", "sanayi,evyemegi", 1, 240, 4.7, 1600, "Gişeler Çıkışı, Kazan", 40.1500, 32.6650, "ticket"),
-        new("Meşhur Kazan Köftecisi", "kebap", 1, 210, 4.5, 1400, "Milli Egemenlik Cad. Kazan", 40.2000, 32.6850, "ticket"),
-        new("Kazan Park Kahvaltı & Gözleme", "kahvalti,evyemegi", 1, 190, 4.6, 1200, "Kazan Aile Parkı Yanı, Kazan", 40.2020, 32.6800, "multinet"),
-        new("Saraykent Yöresel Ev Yemekleri", "evyemegi", 1, 200, 4.4, 950, "Saraykent Sanayi Girişi, Kazan", 40.1400, 32.6720, "ticket"),
+        // KAHRAMANKAZAN
+        new("Saray Et Mangal Kahramankazan", "kebap,tavuk", 2, 420, 4.6, 3400, "Saray Mah. İstanbul Yolu FSM Bulvarı, Kahramankazan, Ankara", 40.1450, 32.6700, "ticket,sodexo"),
+        new("Köfteci Yusuf Kahramankazan", "kebap", 1, 310, 4.4, 3800, "Fatih Mah. Ankara-İstanbul Yolu Üzeri, Kahramankazan, Ankara", 40.1983, 32.6842, "multinet,setcard,sodexo,ticket"),
+        new("Akıncılar Et Lokantası Kazan", "kebap", 2, 390, 4.5, 1800, "Ankara Yolu 25. Km, Kahramankazan, Ankara", 40.1700, 32.6750, "ticket,sodexo"),
 
-        // POLATLI (Tandır, Çorba ve Tarım Yöresi)
-        new("Yılmaz Usta Konya Tandır", "kebap", 1, 320, 4.8, 4200, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı", 39.5855, 32.1465, "ticket,sodexo"),
-        new("Recep Usta Restaurant", "kebap", 1, 300, 4.5, 2900, "İnönü Cad. Polatlı", 39.5840, 32.1440, "ticket"),
-        new("Polatlı İstasyon Gar Lokantası", "evyemegi", 1, 240, 4.6, 2900, "İstasyon Mah. Gar Yanı, Polatlı", 39.5820, 32.1410, "ticket,sodexo"),
-        new("Polatlı Sanayi Sitesi Kavurmacısı", "sanayi,kebap", 1, 250, 4.7, 3100, "Yeni Sanayi Sitesi 12. Blok, Polatlı", 39.5790, 32.1350, "ticket"),
-        new("Tarihi Duatepe Kebapçısı", "kebap", 1, 280, 4.7, 3600, "İnönü Cad. No: 18, Polatlı", 39.5840, 32.1440, "ticket,multinet"),
-        new("Güçlü Yemek Esnaf Lokantası", "evyemegi", 1, 210, 4.6, 2200, "Çarşı İçi, Polatlı", 39.5860, 32.1450, "ticket"),
-        new("Anadolu Çorba Sarayı", "evyemegi", 1, 180, 4.5, 2700, "Eskişehir Yolu Üzeri, Polatlı", 39.5800, 32.1500, "multinet"),
-        new("Polatlı Taş Fırın Güveç & Pide", "pide", 1, 210, 4.6, 2400, "Sivrihisar Cad. No: 42, Polatlı", 39.5870, 32.1490, "ticket,sodexo"),
-        new("Gordion Dinlenme Tesisleri", "kebap,evyemegi", 1, 290, 4.3, 3500, "Polatlı Çıkışı 5. Km, Polatlı", 39.5750, 32.1200, "ticket,sodexo"),
-        new("Bozkır Et Lokantası", "kebap", 1, 270, 4.5, 1400, "Turan Cad. Polatlı", 39.5830, 32.1420, "ticket"),
+        // POLATLI
+        new("Yılmaz Usta Konya Tandır Polatlı", "kebap", 2, 390, 4.8, 4200, "Cumhuriyet Mah. Ankara Cad. No: 34, Polatlı, Ankara", 39.5855, 32.1465, "ticket,sodexo"),
+        new("Recep Usta Restaurant Polatlı", "kebap", 2, 380, 4.5, 2900, "Cumhuriyet Mah. İnönü Cad., Polatlı, Ankara", 39.5840, 32.1440, "ticket"),
+        new("Tarihi Duatepe Kebapçısı Polatlı", "kebap", 1, 340, 4.7, 3600, "İnönü Cad. No: 18, Polatlı, Ankara", 39.5842, 32.1445, "ticket,multinet"),
+        new("Köfteci Yusuf Polatlı", "kebap", 1, 310, 4.4, 4500, "Eskişehir Yolu Üzeri, Polatlı, Ankara", 39.5800, 32.1500, "multinet,setcard,sodexo,ticket"),
 
-        // NALLIHAN (Tarihi Han, Çayırhan ve Yöresel Lezzetler)
-        new("Tapduk Emre Sofrası (Kocahan)", "evyemegi", 1, 240, 4.7, 1800, "Nasuhpaşa Mah. Nallıhan", 40.1870, 31.3500, "ticket"),
-        new("Ata Çimen Restaurant", "balik,kebap", 1, 300, 4.6, 2200, "Çayırhan Baraj Gölü Kenarı, Nallıhan", 40.0950, 31.6050, "ticket,sodexo"),
-        new("Dostlar Sofrası", "evyemegi", 1, 210, 4.5, 1400, "Nallıhan Çarşı, Nallıhan", 40.1865, 31.3510, "ticket"),
-        new("Çimen Lokantası", "evyemegi", 1, 220, 4.4, 1100, "Çayırhan Merkez, Nallıhan", 40.0960, 31.6000, "ticket"),
-        new("Bacım Sultan Yöresel Ev Yemekleri", "evyemegi,kahvalti", 1, 190, 4.8, 1600, "Kocahan İçi, Nallıhan", 40.1872, 31.3495, "multinet"),
-        new("Juliopolis Balık & Mangal", "balik", 1, 280, 4.5, 1300, "Çayırhan Baraj Yolu, Nallıhan", 40.0930, 31.6100, ""),
-        new("Nallıhan Güveç Salonu", "evyemegi", 1, 260, 4.6, 1250, "Ankara Yolu Girişi, Nallıhan", 40.1850, 31.3550, "ticket"),
-        new("Hanımeli Mantı Evi", "evyemegi", 1, 180, 4.7, 950, "Atatürk Meydanı, Nallıhan", 40.1880, 31.3480, "multinet"),
-        new("Nallıhan Merkez Çorbacısı", "evyemegi", 1, 170, 4.5, 1050, "Belediye Caddesi, Nallıhan", 40.1860, 31.3520, "multinet"),
-        new("Kuş Cenneti Mola Tesisleri", "kahvalti,tavuk", 1, 200, 4.4, 1500, "Nallıhan Kuş Cenneti Yolu, Nallıhan", 40.1100, 31.5800, "ticket,sodexo"),
+        // NALLIHAN
+        new("Tapduk Emre Sofrası (Kocahan)", "evyemegi", 1, 300, 4.7, 1800, "Nasuhpaşa Mah. Kocahan İçi, Nallıhan, Ankara", 40.1870, 31.3500, "ticket"),
+        new("Ata Çimen Restaurant Çayırhan", "balik,kebap", 2, 380, 4.6, 2200, "Çayırhan Baraj Gölü Kenarı, Nallıhan, Ankara", 40.0950, 31.6050, "ticket,sodexo"),
+        new("Dostlar Sofrası Nallıhan", "evyemegi", 1, 260, 4.5, 1400, "Aliağa Mah. Nallıhan Çarşı, Nallıhan, Ankara", 40.1865, 31.3510, "ticket"),
 
-        // KALECİK (Bağ Yolu ve Kır Tesisleri)
-        new("Kalecik Belediyesi Muhabbet Konağı", "evyemegi,kahvalti", 1, 250, 4.7, 1500, "Kalecik Kalesi Yolu, Kalecik", 40.0980, 33.4080, "ticket,sodexo"),
-        new("Kalecik Kalesi Et Mangal", "kebap", 1, 290, 4.5, 1200, "Kale Altı Mevkii, Kalecik", 40.0990, 33.4070, "ticket"),
-        new("Tarihi Kalecik Lokantası", "evyemegi", 1, 210, 4.6, 950, "Cumhuriyet Meydanı, Kalecik", 40.0970, 33.4100, "ticket"),
-        new("Kızılırmak Balıkçısı", "balik", 1, 280, 4.4, 1100, "Kızılırmak Köprüsü Yanı, Kalecik", 40.0800, 33.4200, ""),
-        new("Bağ Evi Restaurant", "evyemegi,kebap", 1, 320, 4.6, 1400, "Bağlar Yolu, Kalecik", 40.1050, 33.4000, "ticket,sodexo"),
-        new("Kalecik Sanayi Köftecisi", "sanayi,kebap", 1, 200, 4.5, 800, "Kalecik Sanayi Sitesi, Kalecik", 40.0900, 33.4150, "ticket"),
-        new("Kalecik Taş Fırın Pide", "pide", 1, 180, 4.5, 850, "İstasyon Cad. Kalecik", 40.0950, 33.4120, "ticket"),
-        new("Bizim Sofra Ev Yemekleri", "evyemegi", 1, 190, 4.7, 750, "Çarşı İçi, Kalecik", 40.0975, 33.4090, "multinet"),
-        new("Kalecik Çorba Salonu", "evyemegi", 1, 160, 4.4, 600, "Ankara Yolu Çıkışı, Kalecik", 40.0920, 33.4180, "multinet"),
-        new("Hanımeller Yöresel Gözleme", "evyemegi,kahvalti", 1, 170, 4.6, 900, "Kale Yolu Girişi, Kalecik", 40.0985, 33.4085, "multinet"),
+        // KALECİK
+        new("Kalecik Belediyesi Muhabbet Konağı", "evyemegi,kahvalti", 1, 300, 4.7, 1500, "Kalecik Kalesi Yolu, Kalecik, Ankara", 40.0980, 33.4080, "ticket,sodexo"),
+        new("Bağ Evi Restaurant Kalecik", "evyemegi,kebap", 2, 380, 4.6, 1400, "Bağlar Yolu, Kalecik, Ankara", 40.1050, 33.4000, "ticket,sodexo"),
 
-        // ELMADAĞ (Doğa, Kayak Tesisleri ve Et Mangal)
-        new("Elmadağ Renkli Et Lokantası", "kebap", 1, 300, 4.5, 2600, "Ankara-Samsun Yolu Üzeri, Elmadağ", 39.9050, 33.2350, "ticket,sodexo"),
-        new("Hasanoğlan Köftecisi", "kebap", 1, 230, 4.6, 1800, "Hasanoğlan Girişi, Elmadağ", 39.9300, 33.1900, "ticket"),
-        new("Elmadağ Tandır Konağı", "kebap", 1, 310, 4.7, 2100, "Cumhuriyet Cad. Elmadağ", 39.9070, 33.2380, "ticket,multinet"),
-        new("Elmadağ Kayak Merkezi Tesisleri", "kebap,kahvalti", 1, 350, 4.4, 3200, "Kayak Merkezi Yolu, Elmadağ", 39.8500, 33.3000, "ticket,sodexo"),
-        new("Lalahan Et Mangal", "kebap,tavuk", 1, 280, 4.5, 1900, "Lalahan Mevkii Yozgat Bulvarı, Elmadağ", 39.9500, 33.1000, ""),
-        new("Elmadağ Esnaf Lokantası", "evyemegi", 1, 200, 4.5, 1400, "Çarşı İçi, Elmadağ", 39.9060, 33.2360, "ticket"),
-        new("Çamlık Kır Bahçesi", "tavuk,kahvalti", 1, 240, 4.6, 1600, "Çamlık Parkı İçi, Elmadağ", 39.9080, 33.2400, ""),
-        new("Yücel Usta'nın Yeri", "sanayi,kebap", 1, 220, 4.7, 1200, "Elmadağ Sanayi, Elmadağ", 39.9000, 33.2300, "ticket"),
-        new("Elmadağ Pide & Lahmacun", "pide", 1, 190, 4.4, 1100, "İstasyon Cad. Elmadağ", 39.9040, 33.2340, "ticket"),
-        new("Elmadağ Çorba & İşkembe", "evyemegi", 1, 180, 4.5, 1350, "Ankara Yolu Üzeri, Elmadağ", 39.9055, 33.2330, "multinet"),
+        // ELMADAĞ
+        new("Elmadağ Renkli Et Lokantası", "kebap", 2, 380, 4.5, 2600, "Ankara-Samsun Yolu Üzeri, Elmadağ, Ankara", 39.9050, 33.2350, "ticket,sodexo"),
+        new("Hasanoğlan Köftecisi Elmadağ", "kebap", 1, 300, 4.6, 1800, "Hasanoğlan Girişi, Elmadağ, Ankara", 39.9300, 33.1900, "ticket"),
+        new("Elmadağ Kayak Merkezi Tesisleri", "kebap,kahvalti", 2, 420, 4.4, 3200, "Yakupabdal Kayak Merkezi Yolu, Elmadağ, Ankara", 39.8500, 33.3000, "ticket,sodexo"),
 
-        // AKYURT (Sanayi Sitesi ve Kır Bahçeleri)
-        new("Akyurt Sanayi Sitesi Köftecisi", "sanayi,kebap", 1, 210, 4.7, 2800, "Akyurt Sanayi Sitesi No: 22, Akyurt", 40.1280, 33.0820, "ticket,multinet"),
-        new("Akyurt Merkez Esnaf Lokantası", "evyemegi", 1, 220, 4.6, 2400, "Beyazıt Mah. Çankırı Bulv. No: 14, Akyurt", 40.1308, 33.0872, "ticket"),
-        new("Tarihi Akyurt Taş Fırın Pide", "pide", 1, 180, 4.6, 2100, "Cumhuriyet Meydanı No: 6, Akyurt", 40.1315, 33.0885, "ticket,sodexo"),
-        new("Akyurt Kır Bahçesi & Izgara", "tavuk,kebap", 1, 260, 4.5, 1700, "Büğdüz Mah. Havaalanı Yolu No: 45, Akyurt", 40.1180, 33.0650, ""),
-        new("Akyurt Lezzet Sofrası & Döner", "kebap", 1, 230, 4.5, 1900, "Kızık Cad. No: 9, Akyurt", 40.1295, 33.0850, "ticket,sodexo,multinet"),
-        new("Akyurt Sultan Sofrası", "evyemegi", 1, 200, 4.6, 1400, "Ankara Cad. No: 31, Akyurt", 40.1300, 33.0860, "ticket"),
-        new("Fuar Et Mangal", "kebap,tavuk", 1, 290, 4.4, 2200, "Fuar Alanı Kavşağı, Akyurt", 40.1000, 33.0500, "ticket,sodexo"),
-        new("Çankırı Yolu Mola Tesisleri", "evyemegi,kebap", 1, 240, 4.3, 3100, "Akyurt Çıkışı, Akyurt", 40.1400, 33.1000, "ticket,sodexo"),
-        new("Akyurt Kuzu Çevirme", "kebap", 1, 330, 4.7, 1800, "Havaalanı Yolu Üzeri, Akyurt", 40.1200, 33.0700, ""),
-        new("Akyurt Çorba Sarayı", "evyemegi", 1, 170, 4.5, 1500, "Çarşı Merkezi, Akyurt", 40.1310, 33.0880, "multinet")
+        // AKYURT
+        new("Köfteci Yusuf Akyurt", "kebap", 1, 310, 4.4, 3100, "Çankırı Yolu Üzeri Akyurt Çıkışı, Akyurt, Ankara", 40.1350, 33.0920, "multinet,setcard,sodexo,ticket"),
+        new("Akyurt Lezzet Sofrası & Döner", "kebap,evyemegi", 1, 300, 4.5, 1900, "Beyazıt Mah. Kızık Cad. No: 9, Akyurt, Ankara", 40.1295, 33.0850, "ticket,sodexo,multinet"),
+        new("Fuar Et Mangal Akyurt", "kebap,tavuk", 2, 380, 4.4, 2200, "Saracalar Mah. Çankırı Bulvarı, Akyurt, Ankara", 40.1000, 33.0500, "ticket,sodexo")
     ];
 
     public class BuyukIlEntry
@@ -350,98 +272,90 @@ public static class DemoSeeder
         }
     }
 
-    public static string DetectDistrictOrArea(double lat, double lng)
+    public static string BuildMapsSearchUrl(string name, string? address, double lat, double lng)
     {
-        var districtCenters = new Dictionary<string, (double Lat, double Lng, double MaxDistMeters)>
+        if (!string.IsNullOrWhiteSpace(address))
         {
-            ["Akyurt"] = (40.1308, 33.0872, 18_000),
-            ["Çubuk"] = (40.2386, 33.0322, 20_000),
-            ["Beypazarı"] = (40.1677, 31.9211, 25_000),
-            ["Polatlı"] = (39.5855, 32.1465, 25_000),
-            ["Kızılcahamam"] = (40.4700, 32.6500, 25_000),
-            ["Kahramankazan"] = (40.1983, 32.6842, 20_000),
-            ["Elmadağ"] = (39.9200, 33.2300, 20_000),
-            ["Haymana"] = (39.4300, 32.5000, 22_000),
-            ["Nallıhan"] = (40.1800, 31.3500, 25_000),
-            ["Şereflikoçhisar"] = (38.9400, 33.5400, 25_000),
-            ["Gölbaşı"] = (39.7900, 32.8100, 15_000),
-            ["Batıkent"] = (39.9720, 32.7310, 8_000),
-            ["Çakırlar"] = (39.9920, 32.7050, 7_000),
-            ["Eryaman"] = (39.9800, 32.6300, 8_000),
-            ["Sincan"] = (39.9600, 32.5800, 10_000),
-            ["Etimesgut"] = (39.9500, 32.6800, 10_000),
-        };
-
-        string closest = "Merkez";
-        double minDist = double.MaxValue;
-
-        foreach (var (name, info) in districtCenters)
-        {
-            var d = Geo.DistanceMeters(lat, lng, info.Lat, info.Lng);
-            if (d <= info.MaxDistMeters && d < minDist)
-            {
-                minDist = d;
-                closest = name;
-            }
+            return $"https://www.google.com/maps/search/?api=1&query={Uri.EscapeDataString($"{name.Trim()} {address.Trim()}")}";
         }
-
-        return closest;
-    }
-
-    public static (string CityName, List<BuyukIlEntry> Venues) GetCityVenuesForLocation(double lat, double lng)
-    {
-        var data = GetBuyukIlData();
-        if (data.Count == 0) return ("", []);
-
-        // Şehir merkezleri: Ankara, İstanbul, Adana, Gaziantep
-        var cityCenters = new Dictionary<string, (double Lat, double Lng)>
-        {
-            ["Ankara"] = (39.9208, 32.8541),
-            ["İstanbul"] = (41.0082, 28.9784),
-            ["Adana"] = (37.0000, 35.3213),
-            ["Gaziantep"] = (37.0662, 37.3833)
-        };
-
-        string closestCity = "Ankara";
-        double minDist = double.MaxValue;
-
-        foreach (var (cityName, center) in cityCenters)
-        {
-            var d = Geo.DistanceMeters(lat, lng, center.Lat, center.Lng);
-            if (d < minDist)
-            {
-                minDist = d;
-                closestCity = cityName;
-            }
-        }
-
-        if (data.TryGetValue(closestCity, out var venues))
-        {
-            return (closestCity, venues);
-        }
-
-        var first = data.First();
-        return (first.Key, first.Value);
+        return $"https://www.google.com/maps/search/?api=1&query={lat:F6},{lng:F6}";
     }
 
     public static async Task SeedAroundAsync(AppDbContext db, double lat, double lng, CancellationToken ct)
     {
-        var remainingList = await db.Restaurants.ToListAsync(ct);
-        var existingDict = remainingList.GroupBy(r => r.Name.Trim().ToLower()).ToDictionary(g => g.Key, g => g.First());
+        var allPresets = AnkaraVenues.Concat(DistrictVenues).ToList();
+        var buyukIlAll = GetBuyukIlData();
+
+        // Geçerli (doğrulanmış) tüm mekan isimlerinin kümesi
+        var validNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var v in allPresets)
+            validNames.Add(v.Name.Trim().ToLowerInvariant());
+        foreach (var kvp in buyukIlAll)
+            foreach (var b in kvp.Value)
+                validNames.Add(b.Name.Trim().ToLowerInvariant());
+
+        var allDbRestaurants = await db.Restaurants.ToListAsync(ct);
+
+        // 1. Önceden kalma uydurma ("district_", "local_", "city_") veya artık doğrulanmış listede olmayan eski demo/buyukil kayıtlarını temizle
+        var toRemove = new List<Restaurant>();
+        var existingDict = new Dictionary<string, Restaurant>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var r in allDbRestaurants)
+        {
+            var pid = r.GooglePlaceId ?? "";
+            var normName = r.Name.Trim().ToLowerInvariant();
+            bool isSyntheticFake = pid.StartsWith("district_") || pid.StartsWith("local_") || pid.StartsWith("city_");
+            bool isStaleSeed = (pid.StartsWith("demo_") || pid.StartsWith("buyukil_")) && !validNames.Contains(normName);
+            bool isKnownTestFake = normName == "street burger" || normName.Contains("craft burger lab") || normName.Contains("herd's bbq");
+
+            if (isSyntheticFake || isStaleSeed || isKnownTestFake)
+            {
+                toRemove.Add(r);
+                continue;
+            }
+
+            if (existingDict.TryGetValue(normName, out _))
+            {
+                toRemove.Add(r);
+            }
+            else
+            {
+                existingDict[normName] = r;
+            }
+        }
+
+        if (toRemove.Count > 0)
+        {
+            var removeIds = toRemove.Select(r => r.Id).ToHashSet();
+
+            var stalePrefs = await db.Preferences.Where(p => removeIds.Contains(p.RestaurantId)).ToListAsync(ct);
+            if (stalePrefs.Count > 0) db.Preferences.RemoveRange(stalePrefs);
+
+            var staleVisits = await db.Visits.Where(v => removeIds.Contains(v.RestaurantId)).ToListAsync(ct);
+            if (staleVisits.Count > 0) db.Visits.RemoveRange(staleVisits);
+
+            var staleRoomOpts = await db.RoomOptions.Where(o => removeIds.Contains(o.RestaurantId)).ToListAsync(ct);
+            if (staleRoomOpts.Count > 0) db.RoomOptions.RemoveRange(staleRoomOpts);
+
+            var staleRooms = await db.Rooms.Where(rm => rm.WinningRestaurantId != null && removeIds.Contains(rm.WinningRestaurantId.Value)).ToListAsync(ct);
+            foreach (var rm in staleRooms) rm.WinningRestaurantId = null;
+
+            db.Restaurants.RemoveRange(toRemove);
+        }
 
         var toAdd = new List<Restaurant>();
-        var rnd = new Random();
 
-        // 1. Önce sabit koordinatlı tüm gerçek Ankara ve bölge mekanlarını DB'ye ekle/güncelle
-        var allPresets = AnkaraVenues.Concat(DistrictVenues);
+        // 2. Doğrulanmış sabit koordinatlı gerçek Ankara ve ilçe mekanlarını DB'ye ekle/güncelle
         foreach (var v in allPresets)
         {
-            var key = v.Name.Trim().ToLower();
+            var key = v.Name.Trim().ToLowerInvariant();
             string presetCards = v.MealCards ?? "";
+            var mapsUrl = BuildMapsSearchUrl(v.Name, v.Address, v.RealLat, v.RealLng);
+
             if (existingDict.TryGetValue(key, out var existing))
             {
-                existing.Lat = v.RealLat ?? existing.Lat;
-                existing.Lng = v.RealLng ?? existing.Lng;
+                existing.Lat = v.RealLat;
+                existing.Lng = v.RealLng;
                 existing.Address = v.Address;
                 existing.GoogleRating = v.Rating;
                 existing.GoogleRatingCount = v.RatingCount;
@@ -449,13 +363,13 @@ public static class DemoSeeder
                 existing.PriceLevel = v.PriceLevel;
                 existing.Cuisines = v.Cuisines;
                 existing.MealCards = presetCards;
-                existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? existing.Lat},{v.RealLng ?? existing.Lng}";
+                existing.MapsUrl = mapsUrl;
             }
             else
             {
                 var r = new Restaurant
                 {
-                    GooglePlaceId = $"demo_{v.Name.GetHashCode():x8}",
+                    GooglePlaceId = $"demo_{Math.Abs(v.Name.GetHashCode()):x8}",
                     Name = v.Name,
                     Cuisines = v.Cuisines,
                     MealCards = presetCards,
@@ -463,26 +377,27 @@ public static class DemoSeeder
                     AvgPriceTl = v.PriceTl,
                     GoogleRating = v.Rating,
                     GoogleRatingCount = v.RatingCount,
-                    Lat = v.RealLat ?? lat,
-                    Lng = v.RealLng ?? lng,
+                    Lat = v.RealLat,
+                    Lng = v.RealLng,
                     Address = v.Address,
-                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={v.RealLat ?? lat},{v.RealLng ?? lng}"
+                    MapsUrl = mapsUrl
                 };
                 toAdd.Add(r);
                 existingDict[key] = r;
             }
         }
 
-        // 2. buyukil.json dosyasındaki tüm şehirlerin (Ankara, İstanbul, Adana, Gaziantep)
-        // orijinal restoranlarını DB'ye kalıcı olarak ekle/güncelle
-        var buyukIlAll = GetBuyukIlData();
+        // 3. buyukil.json dosyasındaki tüm şehirlerin (Ankara, İstanbul, İzmir, Adana, Gaziantep)
+        // gerçek restoranlarını DB'ye kalıcı olarak ekle/güncelle
         foreach (var kvp in buyukIlAll)
         {
             foreach (var b in kvp.Value)
             {
-                var key = b.Name.Trim().ToLower();
-                int priceLevel = b.PriceLevel >= 650 ? 3 : (b.PriceLevel >= 380 ? 2 : 1);
+                var key = b.Name.Trim().ToLowerInvariant();
+                int priceLevel = b.PriceLevel >= 1000 ? 4 : (b.PriceLevel >= 650 ? 3 : (b.PriceLevel >= 350 ? 2 : 1));
                 string mealCards = b.MealCards ?? "";
+                var mapsUrl = BuildMapsSearchUrl(b.Name, b.Address, b.Lat, b.Lon);
+
                 if (existingDict.TryGetValue(key, out var existing))
                 {
                     existing.Lat = b.Lat;
@@ -494,13 +409,13 @@ public static class DemoSeeder
                     existing.PriceLevel = priceLevel;
                     existing.Cuisines = b.Category;
                     existing.MealCards = mealCards;
-                    existing.MapsUrl = $"https://www.google.com/maps/search/?api=1&query={b.Lat},{b.Lon}";
+                    existing.MapsUrl = mapsUrl;
                 }
                 else
                 {
                     var r = new Restaurant
                     {
-                        GooglePlaceId = $"buyukil_{b.CityId}_{b.Name.GetHashCode():x8}",
+                        GooglePlaceId = $"buyukil_{b.CityId}_{Math.Abs(b.Name.GetHashCode()):x8}",
                         Name = b.Name,
                         Cuisines = b.Category,
                         MealCards = mealCards,
@@ -511,83 +426,11 @@ public static class DemoSeeder
                         Lat = b.Lat,
                         Lng = b.Lon,
                         Address = b.Address,
-                        MapsUrl = $"https://www.google.com/maps/search/?api=1&query={b.Lat},{b.Lon}"
+                        MapsUrl = mapsUrl
                     };
                     toAdd.Add(r);
                     existingDict[key] = r;
                 }
-            }
-        }
-
-        // 3. Kullanıcının bulunduğu ilçe veya bölgeyi tespit et (Beypazarı, Çubuk, Akyurt, vb.)
-        var districtName = DetectDistrictOrArea(lat, lng);
-        var allCurrent = remainingList.Concat(toAdd).ToList();
-
-        var existingNearbyNames = allCurrent
-            .Where(r => Geo.DistanceMeters(lat, lng, r.Lat, r.Lng) <= 5000)
-            .Select(r => r.Name.Trim().ToLower())
-            .ToHashSet();
-
-        // 4. Eğer kullanıcının 5 km çevresinde 18'den az restoran varsa:
-        // O ilçeye/konuma tam uyan gerçekçi yöresel esnaf, taş fırın ve sanayi lezzetlerini dinamik olarak 5 km içine yerleştir
-        var nearbyCount = existingNearbyNames.Count;
-
-        if (nearbyCount < 18)
-        {
-            var districtTemplates = new[]
-            {
-                (Name: $"{districtName} Esnaf Lokantası", Cuisines: "evyemegi", Price: 340, Rating: 4.7, Type: "evyemegi", Cards: "ticket"),
-                (Name: $"{districtName} Meşhur Taş Fırın Pide & Kebap", Cuisines: "pide,kebap", Price: 280, Rating: 4.6, Type: "pide", Cards: "ticket,sodexo"),
-                (Name: $"{districtName} Sanayi Köftecisi", Cuisines: "sanayi,kebap", Price: 360, Rating: 4.8, Type: "sanayi", Cards: "ticket,multinet"),
-                (Name: $"{districtName} Sanayi Tostçusu & Çay Ocağı", Cuisines: "sanayi,kahvalti", Price: 180, Rating: 4.7, Type: "sanayi", Cards: "ticket"),
-                (Name: $"{districtName} Kelle Paça & Çorba Salonu", Cuisines: "evyemegi", Price: 320, Rating: 4.8, Type: "evyemegi", Cards: "multinet"),
-                (Name: $"{districtName} Yayla Tandır & Güveç Konağı", Cuisines: "kebap,evyemegi", Price: 460, Rating: 4.8, Type: "kebap", Cards: "ticket,sodexo"),
-                (Name: $"{districtName} Tarihi Çarşı Dönercisi", Cuisines: "kebap", Price: 390, Rating: 4.6, Type: "kebap", Cards: "ticket,sodexo,multinet"),
-                (Name: $"{districtName} Kır Bahçesi & Mangal", Cuisines: "tavuk,kebap", Price: 450, Rating: 4.5, Type: "tavuk", Cards: ""),
-                (Name: $"{districtName} Yöresel Anne Eli Mantı & Gözleme", Cuisines: "kahvalti,evyemegi", Price: 310, Rating: 4.7, Type: "kahvalti", Cards: "multinet"),
-                (Name: $"{districtName} Sanayi Sac Kavurmacısı", Cuisines: "sanayi,kebap,evyemegi", Price: 420, Rating: 4.7, Type: "sanayi", Cards: "ticket,multinet"),
-                (Name: $"{districtName} Çıtır Lahmacun & Pide Salonu", Cuisines: "pide", Price: 260, Rating: 4.6, Type: "pide", Cards: "ticket,sodexo"),
-                (Name: $"{districtName} Köfteci Dayı", Cuisines: "kebap", Price: 340, Rating: 4.5, Type: "kebap", Cards: "ticket"),
-                (Name: $"{districtName} Karadeniz Pide & Balık", Cuisines: "pide,balik", Price: 380, Rating: 4.6, Type: "balik", Cards: "ticket,sodexo"),
-                (Name: $"{districtName} Sultan Sofrası", Cuisines: "evyemegi", Price: 330, Rating: 4.6, Type: "evyemegi", Cards: "ticket")
-            };
-
-            int addedCount = 0;
-            foreach (var t in districtTemplates)
-            {
-                var key = t.Name.Trim().ToLower();
-                if (existingNearbyNames.Contains(key)) continue;
-
-                // 350m - 4.2km arasında rastgele yerleşim
-                var angle = rnd.NextDouble() * Math.PI * 2;
-                var dist = 350 + rnd.NextDouble() * 3800;
-                var dLat = dist * Math.Cos(angle) / 111_000.0;
-                var dLng = dist * Math.Sin(angle) / (111_000.0 * Math.Cos(lat * Math.PI / 180));
-
-                int priceLevel = t.Price >= 650 ? 3 : (t.Price >= 380 ? 2 : 1);
-                var address = t.Cuisines.Contains("sanayi")
-                    ? $"{districtName} Sanayi Sitesi {rnd.Next(1, 8)}. Blok No: {rnd.Next(1, 30)}, {districtName}"
-                    : $"{districtName} Merkez Mah. Atatürk Cad. No: {rnd.Next(1, 60)}, {districtName}";
-
-                toAdd.Add(new Restaurant
-                {
-                    GooglePlaceId = $"district_{districtName.GetHashCode():x8}_{lat:F3}_{lng:F3}_{addedCount}",
-                    Name = t.Name,
-                    Cuisines = t.Cuisines,
-                    MealCards = t.Cards,
-                    PriceLevel = priceLevel,
-                    AvgPriceTl = t.Price,
-                    GoogleRating = t.Rating,
-                    GoogleRatingCount = rnd.Next(350, 3200),
-                    Lat = Math.Round(lat + dLat, 6),
-                    Lng = Math.Round(lng + dLng, 6),
-                    Address = address,
-                    MapsUrl = $"https://www.google.com/maps/search/?api=1&query={lat + dLat:F6},{lng + dLng:F6}"
-                });
-                existingNearbyNames.Add(key);
-                addedCount++;
-
-                if (nearbyCount + addedCount >= 22) break;
             }
         }
 

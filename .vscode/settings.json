@@ -1,0 +1,8 @@
+{
+  "editor.unicodeHighlight.allowedLocales": {
+    "tr": true
+  },
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "dotnet.defaultSolution": "YemekVakti.sln"
+}
+

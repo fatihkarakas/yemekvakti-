@@ -3,28 +3,75 @@ using System.Text.Json;
 
 namespace YemekVakti.Api.Services;
 
-public record AiCandidate(int Index, string Name, string Cuisines, int DistanceM, double? GoogleRating, double? MyRating, int? DaysSinceLastVisit, string? LastNote);
+public record AiCandidate(
+    int Index,
+    string Name,
+    string Cuisines,
+    int DistanceM,
+    int? PriceTl,
+    double? GoogleRating,
+    int? GoogleRatingCount,
+    double? MyRating,
+    int? DaysSinceLastVisit,
+    string? LastNote
+);
+
 public record AiPick(int Index, string Reason);
 
-/// <summary>Gemini API ile aday listesinden seçim + kısa Türkçe gerekçe.</summary>
+/// <summary>Gemini API ile aday listesinden öğle yemeğine en uygun seçim + kısa Türkçe gerekçe.</summary>
 public class GeminiService(HttpClient http, IConfiguration config, ILogger<GeminiService> log)
 {
     private string? ApiKey => config["Google:GeminiApiKey"];
-    private string Model => config["Google:GeminiModel"] ?? "gemini-2.5-flash";
-    public bool Enabled => !string.IsNullOrWhiteSpace(ApiKey);
+    private string Model
+    {
+        get
+        {
+            var m = config["Google:GeminiModel"];
+            if (string.IsNullOrWhiteSpace(m) || m == "gemini-3.8-flash") return "gemini-2.5-flash";
+            return m;
+        }
+    }
 
-    public async Task<AiPick?> PickAsync(string userName, IReadOnlyList<AiCandidate> candidates, string? wantedCuisines, CancellationToken ct)
+    public bool Enabled => !string.IsNullOrWhiteSpace(ApiKey) && ApiKey.Length >= 20;
+
+    public async Task<AiPick?> PickAsync(
+        string userName,
+        IReadOnlyList<AiCandidate> candidates,
+        string? wantedCuisines,
+        CancellationToken ct,
+        string? userPrompt = null,
+        string? friendPrompt = null,
+        string? mood = null,
+        bool surpriseMe = false)
     {
         if (!Enabled || candidates.Count == 0) return null;
 
+        var contextLines = new List<string>();
+        if (!string.IsNullOrWhiteSpace(wantedCuisines))
+            contextLines.Add($"- Seçili mutfak filtreleri: {wantedCuisines}");
+        if (!string.IsNullOrWhiteSpace(userPrompt))
+            contextLines.Add($"- Kullanıcının ({userName}) aklından geçen / canının çektiği: \"{userPrompt.Trim()}\"");
+        if (!string.IsNullOrWhiteSpace(friendPrompt))
+            contextLines.Add($"- Yanındaki iş arkadaşının / ekibin istediği: \"{friendPrompt.Trim()}\" (İkisinin de mutlu olacağı ortak noktayı veya orta yolu bul!)");
+        if (!string.IsNullOrWhiteSpace(mood))
+            contextLines.Add($"- Öğle molası modu: {mood}");
+        if (surpriseMe)
+            contextLines.Add("- Ekip tamamen kararsız, işi şansa bıraktılar! Onları pişman etmeyecek, sürpriz ama garanti bir öğle yemeği noktası seç.");
+
+        var contextBlock = contextLines.Count > 0
+            ? "Özel Durum ve İstekler:\n" + string.Join("\n", contextLines)
+            : "Özel bir filtre yok; öğle molası için en mantıklı yeri seç.";
+
         var prompt = $$"""
-            Sen öğle yemeği asistanısın. Kullanıcı: {{userName}}.
-            Bugün öğle yemeği için aşağıdaki adaylardan BİRİNİ seç.
-            {{(string.IsNullOrEmpty(wantedCuisines) ? "" : $"Kullanıcının istediği tarz: {wantedCuisines}.")}}
-            Kurallar: Kullanıcının yüksek puan verdiği yerleri tercih et, düşük puanlı ve notunda şikayet olan yerlerden kaçın,
-            yakın olanı ve son zamanlarda gidilmemiş olanı öne çıkar, ara sıra çeşitlilik için yeni bir yer dene.
+            Sen bir beyaz yakalı öğle yemeği karar asistanısın. Kullanıcı: {{userName}} ve iş arkadaşları öğle yemeğine çıkacak ama karar veremiyorlar.
+            {{contextBlock}}
+            Kurallar:
+            1. Hem kullanıcının aklından geçeni hem de arkadaşının/ekibin isteğini dikkate al; ikisini aynı masada mutlu edecek veya en adil ortak noktayı oluşturacak gerçek restoranı seç.
+            2. Öğle yemeğine uygun, yakın mesafeli ve fiyat/performans dengesi iyi mekanları önceliklendir.
+            3. Kullanıcının yüksek puan verdiği yerleri tercih et; düşük puanlı veya şikayet notu olan yerlerden kaçın.
+            4. Aşırı pahalı (1000+ TL) lüks akşam yemeği mekanlarını veya sadece kahvaltı/pastane olan yerleri (kullanıcı özellikle istemediyse) seçme.
             Adaylar (JSON): {{JsonSerializer.Serialize(candidates)}}
-            Sadece şu JSON'u döndür: {"index": <seçilen Index>, "reason": "<en fazla 140 karakter, samimi, Türkçe, 1 emoji içerebilir>"}
+            Sadece şu JSON'u döndür: {"index": <seçilen Index>, "reason": "<en fazla 150 karakter, hem kullanıcının hem arkadaşının niyetine neden uyduğunu anlatan samimi beyaz yakalı Türkçesiyle gerekçe, 1 emoji>"}
             """;
 
         try
@@ -35,7 +82,7 @@ public class GeminiService(HttpClient http, IConfiguration config, ILogger<Gemin
             req.Content = JsonContent.Create(new
             {
                 contents = new[] { new { role = "user", parts = new[] { new { text = prompt } } } },
-                generationConfig = new { responseMimeType = "application/json", temperature = 0.9 }
+                generationConfig = new { responseMimeType = "application/json", temperature = 0.5 }
             });
             using var res = await http.SendAsync(req, ct);
             if (!res.IsSuccessStatusCode)
